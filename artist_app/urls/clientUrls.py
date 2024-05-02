@@ -6,6 +6,20 @@ urlpatterns = [
     path("verify-otp/", clientView.VerifyOtpViaMailView.as_view()),
     path("login/", clientView.LogInView.as_view()),
     path("resend-otp/",clientView.ResendOtpView.as_view()),
+
+    ################# ADDRESS-MANAGE #########################
+    path("address",clientView.AddClientNewAddressDetailsView.as_view()),
+    path("address-details/<int:id>",clientView.EditClientAddressDetailsView.as_view()),
+    path("all-address",clientView.ShowAllAddressesDetailsView.as_view()),
+    path("delete-address/<int:id>",clientView.DeleteClientAddressDetailsBYIDView.as_view()),
+
+        #######3############# category listing #####################
+    path("category",clientView.ListingAllCategories.as_view()),
+    path("sub-categories",clientView.ListingAllSubCategoriesBasedOnCategories.as_view()),
+    path("talent-detials",clientView.ListingAllTalent.as_view()),
+    path("talent-detials-by-id/<int:id>",clientView.TalentDetailsById.as_view()),
+    path("book-talent",clientView.BookTalentView.as_view()),
+    
     
     
 

@@ -29,3 +29,55 @@ class ResendOtpView(APIView):
     def post(self , request):
         result = userservice.resend_otp(request)
         return Response(result , result["status"])
+    
+
+################################ADDRESS MANAGE ##############################
+
+class AddClientNewAddressDetailsView(APIView):
+    def post(self, request):
+        result = userservice.add_address_using_token(request)
+        return Response(result, result["status"])
+
+class EditClientAddressDetailsView(APIView):
+    def put(self, request,id ):
+        result = userservice.edit_address_details(request,id)
+        return Response(result, result["status"])
+
+
+class DeleteClientAddressDetailsBYIDView(APIView):
+    def delete(self, request, id):
+        result = userservice.delete_address_details_by_id(request, id)
+        return Response(result, result["status"])
+
+class ShowAllAddressesDetailsView(APIView):
+    def get(self, request):
+        result = userservice.show_all_address_with_token(request)
+        return Response(result, result["status"])
+
+
+#-------------------------------booking talent -------------------------
+
+class ListingAllCategories(APIView):
+    def get(self, request):
+        result = userservice.All_categories(request)
+        return Response(result, status=result["status"])
+
+class ListingAllSubCategoriesBasedOnCategories(APIView):
+    def post(self, request):
+        result = userservice.all_sub_categories(request)
+        return Response(result, status=result["status"])
+
+class ListingAllTalent(APIView):
+    def post(self, request):
+        result = userservice.talents_details(request)
+        return Response(result, status=result["status"])
+
+class TalentDetailsById(APIView):
+    def get(self, request,id):
+        result = userservice.view_talent_all_details(request,id)
+        return Response(result, status=result["status"])
+
+class BookTalentView(APIView):
+    def post(self,request):
+        result = userservice.book_talent(request)
+        return Response(result,status=result["status"])

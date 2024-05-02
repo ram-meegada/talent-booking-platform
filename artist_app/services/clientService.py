@@ -1,11 +1,20 @@
 from re import I
+from django.db.models import Q
 from rest_framework.response import Response
-from artist_app.serializers.Clientserializer import CreateClientSerializers
+from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\
+    TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer
 from django.contrib.auth.hashers import check_password
 from artist_app.utils.sendOtp import send_otp_via_mail
 from rest_framework import status
 from artist_app.models.userModel import UserModel
 from rest_framework_simplejwt.tokens import RefreshToken
+from artist_app.models.manageAddressModel import ManageAddressModel
+from artist_app.utils import messages
+from artist_app.models.talentCategoryModel import TalentCategoryModel
+from artist_app.serializers.talentSerializer import TalentListingSerializer
+from artist_app.models.talentDetailsModel import TalentDetailsModel
+from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
+from artist_app.models import talentDetailsModel,bookingTalentModel
 
 class ClientService():
     def create_username(self , email):
@@ -112,5 +121,102 @@ class ClientService():
                 return {"message":str(e),"status":status.HTTP_400_BAD_REQUEST}
         elif "phone_in" in request.data:
             pass
+
+#################################ADDRESS MANAGER##########################
+
+    def show_all_address_with_token(self, request):
+        data = ManageAddressModel.objects.filter(user_id = request.user.id)
+
+        serializer = AddAddressDetailsSerializer(data, many=True)
+        return {"data":serializer.data, "status":status.HTTP_200_OK}
+
+    def add_address_using_token(self, request):
+        try:
+            admin = UserModel.objects.get(id = request.user.id)
+        except:
+            return {"data": None, "message": "RECORD_NOT_FOUND", "status": status.HTTP_404_NOT_FOUND}
+        try:
+            serializer = AddAddressDetailsSerializer(data = request.data)
+            if serializer.is_valid():
+                serializer.save(user_id = admin.id)
+                return {"data":serializer.data,"status":status.HTTP_200_OK}
+            else:
+                return {"message":messages.WENT_WRONG,"status":status.HTTP_400_BAD_REQUEST}
+        except Exception as e:
+            return {"message":str(e),"status":status.HTTP_400_BAD_REQUEST}
+        
+    def edit_address_details(self, request, id):
+        try:
+            address = ManageAddressModel.objects.get(id = id)
+        except Exception as e:
+            return {"message":str(e),"status":status.HTTP_400_BAD_REQUEST}
+        try:
+            serializer = AddAddressDetailsSerializer(address, data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data ,"message":messages.UPDATE,"status":status.HTTP_200_OK}
+            else:
+                return {"message":messages.WENT_WRONG,"status":status.HTTP_400_BAD_REQUEST}
+        except Exception as e:
+            return {"message":str(e),"status":status.HTTP_400_BAD_REQUEST}
+
+    def delete_address_details_by_id(self, request, id):
+        try:
+            address = ManageAddressModel.objects.get(id = id)
+            address.delete()
+            return {"message":messages.DELETE,"status":status.HTTP_200_OK}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":status.HTTP_400_BAD_REQUEST}
+
+
+#--------------------------booking talent -----------------------------------
+
+# listing all talent categories
+    def All_categories(self, request):
+        try:
+            category = TalentCategoryModel.objects.all()
+            serializer = TalentListingSerializer(category, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
+
+    def all_sub_categories(self, request):
+        try:
+            sub_category = TalentSubCategoryModel.objects.filter(category=request.data["category"])
+            serializer = SubCategories(sub_category, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
+
+    def talents_details(self , request):
+        try:
+            val = request.data.get("sub_category")
+            talent = TalentDetailsModel.objects.filter(sub_categories__contains = [val])
+            serializer = TalentBasedOnSubcategories(talent, many = True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
+    def view_talent_all_details(self, request,id):
+        try:
+            talent = TalentDetailsModel.objects.get(id=id)
+            serializer = TalentDetailsBasedOnSubcategories(talent)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e)
+            return {"message":messages.WENT_WRONG,"status":400}
+
+
+#----------------------------booking proposal -------------------------------
+    def book_talent(self , request):
+        try:
+            serializer = BookingDetailsSerializer(data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
 
             

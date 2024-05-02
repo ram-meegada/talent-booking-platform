@@ -9,6 +9,11 @@ from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.serializers.adminSerializer import CategorySerializer, SubCategorySerializer
 
+class TalentListingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TalentCategoryModel
+        fields = ["name"]
+
 class CreateUpdateTalentUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     class Meta:

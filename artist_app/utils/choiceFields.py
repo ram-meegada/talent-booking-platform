@@ -38,3 +38,10 @@ ADDRESS_CHOICE = [
     (2,"WORK"),
     (3,"OTHER"),
 ]
+
+
+BOOKING_STATUS =[
+    (1,"OFFER SENT"),
+    (2,"OFFER ACCEPTED"),
+    (2,"OFFER DECLINED"),
+]
