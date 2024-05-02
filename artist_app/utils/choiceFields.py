@@ -32,3 +32,9 @@ PROFILE_STATUS_CHOICES = [
     (1, "SIGN_UP_COMPLETED"),
     (2, "CATEGORIES ADDED"),
 ]
+
+ADDRESS_CHOICE = [
+    (1,"HOME"),
+    (2,"WORK"),
+    (3,"OTHER"),
+]
