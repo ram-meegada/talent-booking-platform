@@ -1,4 +1,3 @@
-from re import I
 from django.db.models import Q
 from rest_framework.response import Response
 from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\

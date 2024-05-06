@@ -1,3 +1,4 @@
+from multiprocessing import context
 import random
 import base64
 from django.utils import timezone
@@ -20,6 +21,22 @@ def send_otp_via_mail(email, first_name="There"):
     print('mail sent opt')
     return message
 
+def send_password_via_mail(email,first_name = "what's up"):
+    message:make_password()
+    name = first_name
+    context={
+        "password":message,
+        "Name":name,
+    }
+    temp = render_to_string("password.html",context)
+    msg = EmailMultiAlternatives("" , temp  , EMAIL_HOST_USER,[email])
+    msg.content_subtype = "html"
+    msg.send()
+    
+
+def make_password():
+    password = "helloworld"
+    return password
 def make_otp():
     # otp = "".join(str(random.randint(0,9))for _ in range(4))
     otp = "1234"
