@@ -2,7 +2,7 @@ from re import I
 from django.db.models import Q
 from rest_framework.response import Response
 from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\
-    TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer
+    TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer,ShowBookingDetailsSerializer
 from django.contrib.auth.hashers import check_password
 from artist_app.utils.sendOtp import send_otp_via_mail
 from rest_framework import status
@@ -14,7 +14,7 @@ from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.serializers.talentSerializer import TalentListingSerializer
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
-from artist_app.models import talentDetailsModel,bookingTalentModel
+from artist_app.models import TalentDetailsModel,BookingTalentModel
 
 class ClientService():
     def create_username(self , email):
@@ -215,8 +215,26 @@ class ClientService():
             serializer = BookingDetailsSerializer(data = request.data)
             if serializer.is_valid():
                 serializer.save()
-            return {"data":serializer.data,"status":200}
+                return {"data":serializer.data,"status":200}
+            else:
+                return{"message":serializer.errors, "status":400}
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
+
+    def get_booking_details_by_id(self, request, id):
+        try:
+            talent_details = BookingTalentModel.objects.get(id=id)
+            serializer = ShowBookingDetailsSerializer(talent_details)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e)
+            return {"message":messages.WENT_WRONG,"status":400}
+
+    # def get_talent_based_on_filters(self, request):
+    #     try:
+    #         all_talent = UserModel.objects.filter(role=2, country=request.data["country"])
+    #     except Exception as e:
+    #         return {"messgae":messages.WENT_WRONG,"status":400}
+            
 
             

@@ -10,6 +10,8 @@ class BookingTalentModel(BaseModel):
     address = models.ForeignKey(ManageAddressModel, on_delete=models.CASCADE)
     client = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     # booking details
+    # choose service  this field is left. we have to create in this model
+
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     duration = models.IntegerField(null=True, blank=True)
@@ -21,3 +23,7 @@ class BookingTalentModel(BaseModel):
 
     class Meta:
         db_table = "bookingDetails"
+
+    @property
+    def test(self):
+        return str(self.date) + str(self.time)    

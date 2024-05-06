@@ -1,8 +1,11 @@
+from shutil import ExecError
 from artist_app.utils import messages
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.serializers import adminSerializer
 from artist_app.models.faqModel import FAQModel
+from artist_app.models import TermAndConditionModel
+from artist_app.serializers.adminSerializer import TermAndConditionsSerializer
 
 class AdminService:
     def add_category(self, request):
@@ -60,3 +63,36 @@ class AdminService:
             return {"data":serializers.data,"status":200}
         except Exception as e:
             return {"message":str(e),"status":400}
+
+    #termsAndConditions
+    def add_terms_and_conditions(self, request):
+        try:
+            serializer = adminSerializer.TermAndConditionsSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data, "status":200}
+            else:
+                return {"message":messages.WENT_WRONG, "status":400}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG, "status":400}
+
+    def get_terms_and_conditions(self, request):
+        try:
+            terms = TermAndConditionModel.objects.all()
+            serializer = adminSerializer.TermAndConditionsSerializer(terms, many=True)
+            return {"data":serializer.data, "status":200}
+
+        except Exception as e:
+            return {"message":messages.WENT_WRONG, "status":400}
+    
+    def update_terms_and_conditions(self, request, id):
+        try:
+            terms = TermAndConditionModel.objects.get(id=id)
+            serializer = adminSerializer.TermAndConditionsSerializer(terms, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data, "status":200}
+            else:
+                return {"message":messages.WENT_WRONG, "status":400}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG, "status":400}

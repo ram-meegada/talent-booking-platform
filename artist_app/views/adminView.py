@@ -37,3 +37,20 @@ class GetAllQuestionsAnswers(APIView):
     def get(self , request):
         result = admin_obj.get_all_questions_answers(request)
         return Response(result, status=result["status"])
+
+#terms and conditions
+
+class AddTermsAndConditions(APIView):
+    def post(self, request):
+        result = admin_obj.add_terms_and_conditions(request)
+        return Response(result, status=result["status"])
+
+class UpdateTermsAndConditions(APIView):
+    def put(self, request,id):
+        result = admin_obj.update_terms_and_conditions(request, id)
+        return Response(result, status=result["status"])
+
+class GetTermsAndConditions(APIView):
+    def get(self,request):
+        result = admin_obj.get_terms_and_conditions(request)
+        return Response(result, status=result["status"])
