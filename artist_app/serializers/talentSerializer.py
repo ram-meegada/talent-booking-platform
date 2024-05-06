@@ -5,7 +5,7 @@ from artist_app.models.userModel import UserModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
-
+from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.serializers.adminSerializer import CategorySerializer, SubCategorySerializer
 
@@ -91,3 +91,19 @@ class TalentUserDetailsByTokenSerializer(serializers.ModelSerializer):
             return sub_cat_serializer.data
         except:
             return obj.sub_categories
+
+class UserSerializersForClientDetails(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    class Meta:
+        model = UserModel
+        fields = ["id","full_name"]
+
+    def get_full_name(self,obj):
+        return obj.first_name+" "+obj.last_name
+
+class BookedClientDetailSerializers(serializers.ModelSerializer):
+    client = UserSerializersForClientDetails()
+    class Meta:
+        model = BookingTalentModel
+        fields = ["id","client","offer_price","time","date","status","currency"]
+    

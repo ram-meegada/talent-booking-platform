@@ -37,3 +37,68 @@ class GetAllQuestionsAnswers(APIView):
     def get(self , request):
         result = admin_obj.get_all_questions_answers(request)
         return Response(result, status=result["status"])
+
+#terms and conditions
+
+class AddTermsAndConditions(APIView):
+    def post(self, request):
+        result = admin_obj.add_terms_and_conditions(request)
+        return Response(result, status=result["status"])
+
+class UpdateTermsAndConditions(APIView):
+    def put(self, request,id):
+        result = admin_obj.update_terms_and_conditions(request, id)
+        return Response(result, status=result["status"])
+
+class GetTermsAndConditions(APIView):
+    def get(self,request):
+        result = admin_obj.get_terms_and_conditions(request)
+        return Response(result, status=result["status"])
+
+# admin onboarding
+
+class AdminLoginView(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        result = admin_obj.admin_login(request)
+        return Response(result, status=result["status"])
+
+class VerifyOTPViewAdminSide(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        result = admin_obj.verify_otp(request)
+        return Response(result, status=result["status"])
+
+class resendOTPView(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        result = admin_obj.sent_otp(request)
+        return Response(result, status=result["status"])
+
+class ForgotPasswordView(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        result = admin_obj.forgot_password(request)
+        return Response(result, status=result["status"])
+
+#manage customers(clients)
+
+class GetAllCustomerView(APIView):
+    def get(self, request):
+        result = admin_obj.get_all_customers(request)
+        return Response(result, status=result["status"])
+
+class AddCustomerByAdminView(APIView):
+    def post(self, request):
+        result = admin_obj.add_new_customer(request)
+        return Response(result, status=result["status"])
+
+class updateCustomerDetailsByAdminView(APIView):
+    def put(self, request, id):
+        result = admin_obj.edit_customer_by_admin(request, id)
+        return Response(result, status=result["status"])
+
+class DeleteCustomerByAdminView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_customer_by_admin(request, id)
+        return Response(result, status=result["status"])

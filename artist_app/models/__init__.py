@@ -6,3 +6,4 @@ from .talentDetailsModel import TalentDetailsModel
 from .faqModel import FAQModel
 from .manageAddressModel import ManageAddressModel
 from .termAndConditionModel import TermAndConditionModel
+from .bookingTalentModel import BookingTalentModel

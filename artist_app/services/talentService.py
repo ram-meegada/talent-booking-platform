@@ -6,8 +6,10 @@ from artist_app.models.userModel import UserModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
-
+from datetime import datetime, timedelta
 from django.contrib.auth.hashers import make_password, check_password
+from django.db.models import Q
+from artist_app.models.bookingTalentModel import BookingTalentModel
 
 class TalentService:
     def sign_up(self, request):
@@ -218,3 +220,43 @@ class TalentService:
         user = TalentDetailsModel.objects.select_related("user").get(user_id=request.user.id)
         serializer = talentSerializer.TalentUserDetailsByTokenSerializer(user)
         return {"data": serializer.data, "message": messages.USER_DETAILS_FETCHED, "status": 200}
+    # Booking details from talent
+
+    def upcoming_clients_booking_listing(self, request):
+        try:
+            startdate = datetime.today().date()
+            time = datetime.now().time()
+            # upcoming_bookings = BookingTalentModel.objects.filter(
+            #     Q(date__range=[startdate, enddate]) & Q(time__gt=time)
+            # ).select_related('client')
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte = startdate).exclude(date = startdate,time__lt = time)
+            serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e)
+            return {"message":messages.WENT_WRONG,"status":400}
+
+    def past_client_booking_listing(self, request):
+        try:
+            enddate = datetime.today().date()  
+            print(enddate, '-------')
+            startdate = enddate - timedelta(days=6)
+            time = datetime.now().time()
+            print(datetime.now().time(),"1234567893456781234567812345678")
+            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate).exclude(date=enddate, time__gt = time)
+            serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e, 'eeeeee')
+            return {"message":messages.WENT_WRONG,"status":400}
+
+    def cancel_client_booking_list(self,request):
+        try:
+            canceled_bookings = BookingTalentModel.objects.filter(status=3)
+            serializer = talentSerializer.BookedClientDetailSerializers(canceled_bookings,many = True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
+
+

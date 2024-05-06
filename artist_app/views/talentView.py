@@ -50,3 +50,19 @@ class TalentUserDetailsView(APIView):
     def get(self, request):
         result = talent_service.user_details_by_token(request)
         return Response(result, status=result["status"])
+
+#clientBookinglisting
+
+class ClientUpcomingBookingListing(APIView):
+    def get(self, request):
+        result = talent_service.upcoming_clients_booking_listing(request)
+        return Response(result, status=result["status"])
+
+class ClientPastBookingListing(APIView):
+    def get(self, request):
+        result = talent_service.past_client_booking_listing(request)
+        return Response(result, status=result["status"])
+class ClientdeclineParamenterListing(APIView):
+    def get(self, request):
+        result= talent_service.cancel_client_booking_list(request)
+        return Response(result, status=result["status"])

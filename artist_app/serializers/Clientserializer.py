@@ -11,7 +11,7 @@ from artist_app.models.bookingTalentModel import BookingTalentModel
 class CreateClientSerializers(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ["first_name","last_name","password","email","phone_no","country_code","address","city","state","country","role"]
+        fields = ["first_name","last_name","email","phone_no","country_code","address","city","state","country","role"]
 
 class AddAddressDetailsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,3 +50,12 @@ class BookingDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookingTalentModel
         fields = "__all__"
+
+
+class ShowBookingDetailsSerializer(serializers.ModelSerializer):
+    # user = CreateClientSerializers()
+    class Meta:
+        model = BookingTalentModel
+        fields = "__all__"
+
+

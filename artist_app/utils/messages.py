@@ -7,6 +7,7 @@ WRONG_PASSWORD = "Incorrect password"
 EMAIL_EXISTS = "Email already exists"
 PHONE_EXISTS = "Phone number already exists"
 USER_DETAILS_FETCHED = "Profile details fetched successfully"
+FORGOT_PASSWORD = "Password Update successfully."
 
 OTP_SENT_TO_MAIL = "Otp sent to your mail successfully"
 OTP_SENT_TO_MOBILE = "Otp sent to your phone number successfully"
