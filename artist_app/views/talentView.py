@@ -9,25 +9,25 @@ talent_service = TalentService()
 class TalentSignUpView(APIView):
     permission_classes = (AllowAny, )
     def post(self, request):
-        result = talent_service.sign_up(request)
+        result = talent_service.user_signup(request)
         return Response(result, status=result["status"])
 
 class TalentLoginView(APIView):
     permission_classes = (AllowAny, )
     def post(self, request):
-        result = talent_service.user_login(request)
+        result = talent_service.login(request)
         return Response(result, status=result["status"])
     
 class SendEmailOrPhoneView(APIView):
     permission_classes = (AllowAny,)
     def post(self, request):
-        result = talent_service.send_otp_to_email_or_phone(request)
+        result = talent_service.resend_otp(request)
         return Response(result, status=result["status"])
 
 class VerifyMailOrPhoneView(APIView):
     permission_classes = (AllowAny,)
     def post(self, request):
-        result = talent_service.verify_mail_or_phone(request)
+        result = talent_service.verify_otp(request)
         return Response(result, status=result["status"])
 
 class SubCategoryListingView(APIView):

@@ -6,12 +6,29 @@ from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
-
+from artist_app.utils.sendOtp import generate_access_token
 
 class CreateClientSerializers(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ["first_name","last_name","email","phone_no","country_code","address","city","state","country","role"]
+        fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
+                  "date_of_birth", "experience", "address", "city", "state", "country")
+
+class GetUserSerializer(serializers.ModelSerializer):
+    token = serializers.SerializerMethodField()
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    class Meta:
+        model = UserModel
+        fields = ["id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
+                  "date_of_birth", "experience", "address", "city", "state", "country", "otp_email_verification",\
+                  "otp_phone_no_verification", "profile_status","token"]
+    def get_token(self, obj):
+        if self.context.get("give_token"):
+            token = generate_access_token(obj)
+            return token
+        else:
+            return ""
+
 
 class AddAddressDetailsSerializer(serializers.ModelSerializer):
     class Meta:

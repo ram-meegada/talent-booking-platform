@@ -30,7 +30,7 @@ class UserModel(AbstractUser):
     #Integer fields
     role = models.IntegerField(choices=ROLE_CHOICE, blank=True, null=True)
     gender = models.IntegerField(choices = GENDER_CHOICES, blank = True, null = True)
-    profile_status = models.IntegerField(choices=PROFILE_STATUS_CHOICES, blank=True, null=True)
+    profile_status = models.IntegerField(choices=PROFILE_STATUS_CHOICES, default=0)
 
     #foreign keys
     profile_picture = models.ForeignKey(UploadMediaModel, on_delete = models.SET_NULL, null = True)
@@ -39,6 +39,7 @@ class UserModel(AbstractUser):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     deleted_at = models.DateTimeField(blank = True , null = True)
+    otp_sent_time = models.DateTimeField(blank = True , null = True)
 
     #Date fields
     date_of_birth = models.DateField(blank = True, null = True)

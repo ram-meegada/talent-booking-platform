@@ -18,25 +18,27 @@ class CreateUpdateTalentUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ("id", "profile_picture", "first_name", "last_name", "gender", "country_code", \
+        fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
                   "date_of_birth", "experience", "address", "city", "state", "country", "token")
     def get_token(self, obj):
         token = generate_access_token(obj)
-        return token
+        return token    
     
 class GetTalentUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
+    profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ("id", "profile_picture", "first_name", "last_name", "gender", "country_code", \
-                  "date_of_birth", "experience", "address", "city", "state", "country", "profile_status", "token")
+        fields = ["id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
+                  "date_of_birth", "experience", "address", "city", "state", "country", "otp_email_verification",\
+                  "otp_phone_no_verification", "profile_status", "token"]
     def get_token(self, obj):
         if self.context.get("give_token"):
             token = generate_access_token(obj)
-            return token    
+            return token
         else:
             return ""
-        
+
 class CreateModelStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel

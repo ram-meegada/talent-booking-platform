@@ -1,7 +1,6 @@
-from django.db.models import Q
-from rest_framework.response import Response
 from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\
-    TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer,ShowBookingDetailsSerializer
+    TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer,ShowBookingDetailsSerializer,\
+    GetUserSerializer
 from django.contrib.auth.hashers import check_password
 from artist_app.utils.sendOtp import send_otp_via_mail
 from rest_framework import status
@@ -14,8 +13,186 @@ from artist_app.serializers.talentSerializer import TalentListingSerializer
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.models import TalentDetailsModel,BookingTalentModel
+from django.db.models import Q
+from threading import Thread
+from datetime import datetime
+import pytz
+from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
 
 class ClientService():
+    def user_signup(self, request):
+        if "encoded_id" in request.data:
+            user = UserModel.objects.get(encoded_id=request.data["encoded_id"])
+            serializer = CreateClientSerializers(user, data=request.data)
+        else:
+            try:
+                user = UserModel.objects.get(email=request.data["email"], profile_status__gte=1)
+                return {"data": None, "message": "Email already taken", "status": 400}
+            except:
+                pass
+            try:
+                user = UserModel.objects.get(phone_no=request.data["phone_no"], profile_status__gte=1)
+                return {"data": None, "message": "Phone number already taken", "status": 400}
+            except:
+                pass
+            check_user = UserModel.objects.filter(Q(email=request.data["email"], profile_status__lt=1) | \
+                                     Q(phone_no=request.data["phone_no"], profile_status__lt=1))
+            if check_user:
+                check_user.delete()    
+            encoded_id = generate_encoded_id()
+            request.data["encoded_id"] = encoded_id
+            serializer = CreateClientSerializers(data=request.data)
+        if serializer.is_valid():
+            otp = make_otp()
+            user_obj = serializer.save(role = 1)
+            user_obj.set_password(request.data["password"])
+            user_obj.save()
+            if user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
+                user_obj.profile_status = 1
+                user_obj.save()
+                return {"data": serializer.data, "message": "Account created successfully", "status": 201}
+            if not user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
+                user_obj.otp = otp
+                user_obj.otp_sent_time = datetime.now(tz=pytz.UTC)
+                Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
+                return {"data": None, "message": "Please verify your email", "status": 200}
+            if user_obj.otp_email_verification and not user_obj.otp_phone_no_verification:
+                user_obj.otp = otp
+                user_obj.otp_sent_time = datetime.now(tz=pytz.UTC)
+                user_obj.save()
+                return {"data": None, "message": "Please verify your phone number", "status": 200}
+            if not user_obj.otp_email_verification and not user_obj.otp_phone_no_verification:
+                user_obj.otp = otp
+                user_obj.otp_sent_time = datetime.now(tz=pytz.UTC)
+                user_obj.save()
+                return {"data": None, "message": "Please verify your phone number and email", "status": 200}
+        else:
+            print(serializer.error_messages, '=----=======-=-=-=-')
+            keys = list(serializer.errors.keys())
+            return {"data": None, "message": f"{keys[0]}: {serializer.errors[keys[0]][0]}", "status": 400}
+        
+    def verify_otp(self, request):
+        give_token = False
+        now = datetime.now(tz=pytz.UTC)
+        var = ""
+        if "encoded_id" in request.data and "email" in request.data:
+            var = "email"
+            user = UserModel.objects.get(encoded_id=request.data["encoded_id"])
+            if user.otp == request.data["otp"]:
+                user.otp_email_verification = True
+            else:
+                return {"data": None, "message": messages.WRONG_OTP, "status": 400}
+        if "encoded_id" in request.data and "phone_no" in request.data:
+            var = "Phone number"
+            user = UserModel.objects.get(encoded_id=request.data["encoded_id"])
+            if user.otp == request.data["otp"]:
+                user.otp_phone_no_verification = True
+            else:
+                return {"data": None, "message": messages.WRONG_OTP, "status": 400}
+        if "phone_no" in request.data:
+            try:
+                user = UserModel.objects.get(phone_no=request.data["phone_no"])
+            except UserModel.DoesNotExist:
+                return {"data": None, "message": messages.MOBILE_NOT_FOUND, "status": 400}
+            var = "Phone number"
+            if int((now - user.otp_sent_time).total_seconds()) > 60:
+                return {"data": None, "message": "Otp expired", "status": 400}
+            if user.otp == request.data["otp"]:
+                user.otp_phone_no_verification = True
+                if user.otp_email_verification is False:
+                    otp = make_otp()
+                    Thread(target=send_otp_via_mail, args=[user.email, otp]).start()
+                    user.otp = otp
+                    user.otp_sent_time = datetime.now(tz=pytz.UTC)
+            else:
+                return {"data": None, "message": messages.WRONG_OTP, "status": 400}
+        if "email" in request.data:
+            email = request.data["email"]
+            try:
+                user = UserModel.objects.get(email = email)
+            except UserModel.DoesNotExist:
+                return {"data": None, "message": messages.EMAIL_NOT_FOUND, "status": 400}
+            var = "Email"
+            if user.otp == request.data["otp"]:
+                user.otp_email_verification = True
+                if user.otp_phone_no_verification is False:
+                    otp = make_otp()
+                    user.otp = otp
+                    user.otp_sent_time = datetime.now(tz=pytz.UTC)
+            else:
+                return {"data": None, "message": messages.WRONG_OTP, "status": 400}
+        user.save()
+        if user.profile_status == 0 and user.otp_email_verification and user.otp_phone_no_verification:
+            user.profile_status = 1
+            user.save()
+        serializer = GetUserSerializer(user, context = {"give_token": give_token})
+        return {"data": serializer.data, "message": f"{var} verified successfully", "status": 200}    
+
+    def resend_otp(self, request):
+        encoded_id = ""
+        otp = make_otp()
+        if "encoded_id" in request.data and "email" in request.data:
+            user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
+            user.email = request.data["email"]
+            user.otp = otp
+            Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
+        elif "encoded_id" in request.data and "phone_no" in request.data:
+            user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
+            user.phone_no = request.data["phone_no"]
+            user.otp = otp
+        elif "email" in request.data:
+            email = request.data["email"]
+            try:
+                user = UserModel.objects.get(email = email)
+            except UserModel.DoesNotExist:
+                encoded_id = generate_encoded_id()
+                user = UserModel.objects.create(email=email, encoded_id=encoded_id)
+            Thread(target=send_otp_via_mail, args=[email, otp]).start()
+            user.otp = otp
+        elif "phone_no" in request.data:
+            phone_no = request.data["phone_no"]
+            try:
+                user = UserModel.objects.get(phone_no=phone_no)
+            except UserModel.DoesNotExist:
+                encoded_id = generate_encoded_id()
+                user = UserModel.objects.create(phone_no=phone_no, encoded_id=encoded_id)
+            user.otp = otp
+        user.otp_sent_time = datetime.now(tz=pytz.UTC)
+        user.save()
+        return {"data": {"encoded_id": user.encoded_id}, "message": "Otp resent successfully", "status": 200}
+    
+    def login(self, request):
+        give_token = False
+        if "phone_no" in request.data:
+            otp = make_otp()
+            try:
+                user = UserModel.objects.get(phone_no=request.data["phone_no"])
+                user.otp_sent_time = datetime.now(tz=pytz.UTC)
+                user.otp = otp
+                user.save()
+                return {"data": None, "message": "Otp sent to your phone number", "status": 200}
+            except UserModel.DoesNotExist:
+                return {"data": None, "message": "User with this phone number not found", "status": 400}
+        elif "email" in request.data:
+            try:
+                user = UserModel.objects.get(email = request.data["email"])
+            except UserModel.DoesNotExist:
+                return {"data": None, "message": messages.EMAIL_NOT_FOUND, "status": 400}
+            verify_password = check_password(request.data["password"], user.password)
+            if verify_password:
+                if user.profile_status >= 1:
+                    give_token = True
+                serializer = GetUserSerializer(user, context = {"give_token": give_token})
+                return {"data": serializer.data, "message": "Logged In successfully", "status": 200}
+            return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
+
+
+
+
+
+
+############################################################################################################
+
     def create_username(self , email):
         s = ""
         for i in email:
@@ -24,7 +201,7 @@ class ClientService():
             else:
                 s+=i 
         return s
-    def user_signup(self , request):
+    def signup(self , request):
         serializers = CreateClientSerializers(data = request.data)
         try :
             if serializers.is_valid():
@@ -39,7 +216,7 @@ class ClientService():
             return {"Error":str(e),"status":status.HTTP_400_BAD_REQUEST}
 
 
-    def verify_otp(self , request):
+    def verify_otp_service(self , request):
         if "email" in request.data:
             user = UserModel.objects.get(email = request.data["email"])
             enter_otp = request.data.get("otp")
@@ -88,7 +265,7 @@ class ClientService():
                 all_obj["refresh_token"] = str(token)
                 return {"data": all_obj, 'message': "LOGIN_SUCCESSFULLY", "status": status.HTTP_200_OK}
             else:
-                return {"message": "INVALID_CREDENTIAL", "status": status.HTTP_400_BAD_REQUEST}
+                return {"message": "Invalid credentials", "status": status.HTTP_400_BAD_REQUEST}
         elif "phone_no" in request.data:
             try:
                 user_obj = UserModel.objects.get(phone_no = request.data["phone_no"])    
@@ -107,7 +284,7 @@ class ClientService():
 
 
 
-    def resend_otp(self ,request):
+    def resend_otp_service(self ,request):
         if "email" in request.data:
             try:
                 User_obj = UserModel.objects.get(email = request.data["email"])

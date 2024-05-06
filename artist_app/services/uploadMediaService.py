@@ -21,5 +21,4 @@ class UploadMediaService:
                 response_data.append(serializer.data)    
             return {"data": response_data, "message": messages.MEDIA_UPLOADED, "status": 200}
         except Exception as error:
-            print(error, '-----------------')        
             return {"data": "", "message": messages.WENT_WRONG, "status": 400}

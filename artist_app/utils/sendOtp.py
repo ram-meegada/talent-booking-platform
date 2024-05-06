@@ -47,5 +47,8 @@ def generate_encoded_id():
     return encoded_id
 
 def generate_access_token(user_obj):
-    token = RefreshToken.for_user(user_obj)
-    return str(token.access_token)
+    try:
+        token = RefreshToken.for_user(user_obj)
+        return str(token.access_token)
+    except Exception as error:
+        return ""    

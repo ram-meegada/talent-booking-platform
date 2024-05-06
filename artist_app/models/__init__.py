@@ -7,3 +7,5 @@ from .faqModel import FAQModel
 from .manageAddressModel import ManageAddressModel
 from .termAndConditionModel import TermAndConditionModel
 from .bookingTalentModel import BookingTalentModel
+from .chatSessionModel import  ChatSessionModel
+from .chatStorageModel import ChatStorageModel

@@ -10,7 +10,7 @@ class SignUpView(APIView):
     permission_classes = (AllowAny,)
     def post(self,request):
         result = userservice.user_signup(request)
-        return Response(result,result["status"])
+        return Response(result, result["status"])
 
 class VerifyOtpViaMailView(APIView):
     permission_classes = (AllowAny,)
@@ -21,7 +21,7 @@ class VerifyOtpViaMailView(APIView):
 class LogInView(APIView):
     permission_classes = (AllowAny,)
     def post(self,request):
-        result= userservice.log_in(request)
+        result= userservice.login(request)
         return Response(result, result["status"])
 
 class ResendOtpView(APIView):
