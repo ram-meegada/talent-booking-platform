@@ -74,7 +74,7 @@ class ListingAllTalent(APIView):
 
 class TalentDetailsById(APIView):
     def get(self, request,id):
-        result = userservice.view_talent_all_details(request,id)
+        result = userservice.view_talent_all_details_by_id(request,id)
         return Response(result, status=result["status"])
 
 class BookTalentView(APIView):

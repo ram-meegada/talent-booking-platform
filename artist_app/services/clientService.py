@@ -375,7 +375,7 @@ class ClientService():
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
 
-    def view_talent_all_details(self, request,id):
+    def view_talent_all_details_by_id(self, request,id):
         try:
             talent = TalentDetailsModel.objects.get(id=id)
             serializer = TalentDetailsBasedOnSubcategories(talent)
