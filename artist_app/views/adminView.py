@@ -81,6 +81,21 @@ class ForgotPasswordView(APIView):
         result = admin_obj.forgot_password(request)
         return Response(result, status=result["status"])
 
+class GetAdminDetailsByTokenView(APIView):
+    def get(self, request):
+        result = admin_obj.get_admin_details_by_token(request)
+        return Response(result, status=result["status"])
+
+class ChangePasswordByTokenView(APIView):
+    def post(self, request):
+        result = admin_obj.change_password_by_token(request)
+        return Response(result, status=result["status"])
+
+class updateAdminDetailsByTokenView(APIView):
+    def put(self, request):
+        result = admin_obj.update_admin_details_By_token(request)
+        return Response(result, status= result["status"])
+
 #manage customers(clients)
 
 class GetAllCustomerView(APIView):

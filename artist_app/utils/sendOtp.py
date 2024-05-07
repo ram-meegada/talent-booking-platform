@@ -22,7 +22,7 @@ def send_otp_via_mail(email, first_name="There"):
     return message
 
 def send_password_via_mail(email,first_name = "what's up"):
-    message:make_password()
+    message=make_password()
     name = first_name
     context={
         "password":message,

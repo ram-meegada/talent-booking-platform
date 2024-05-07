@@ -1,3 +1,4 @@
+from unicodedata import category
 from artist_app.utils import messages
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
@@ -10,21 +11,32 @@ from artist_app.models import UserModel
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from artist_app.utils.sendOtp import send_otp_via_mail,make_otp,make_password,send_password_via_mail
+from artist_app.models import ManageAddressModel
 
 class AdminService:
     def add_category(self, request):
-        name = request.data["name"]
-        talent_obj = TalentCategoryModel.objects.create(name=name)
-        return {"data": request.data, "message": messages.CATEGORY_ADDED, "status": 201}
+        # name = request.data["name"]
+        # talent_obj = TalentCategoryModel.objects.create(name=name)
+        serializer =adminSerializer.CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return {"data": request.data, "message": messages.CATEGORY_ADDED, "status": 201}
+        else:
+            return {"message":messages.WENT_WRONG,"status":400}
     
     def add_sub_category(self, request):
-        name = request.data["name"]
-        category_id = request.data["category"]
-        talent_sub_category = TalentSubCategoryModel.objects.create(
-            name=name,
-            category_id=category_id
-        )
-        return {"data": request.data, "message": messages.SUB_CATEGORY_ADDED, "status": 201}
+        # name = request.data["name"]
+        # category_id = request.data["category"]
+        serializers = adminSerializer.SubCategorySerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+        # talent_sub_category = TalentSubCategoryModel.objects.create(
+        #     name=name,
+        #     category_id=category_id
+        # )
+            return {"data": serializers.data, "message": messages.SUB_CATEGORY_ADDED, "status": 201}
+        else:
+            return {"message":messages.WENT_WRONG,"status":400}
     
     def subcategory_listing_by_category_id(self, request):
         sub_categories = TalentSubCategoryModel.objects.filter(category = request.data["category"])
@@ -164,27 +176,59 @@ class AdminService:
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
     
+    def get_admin_details_by_token(self, request):
+        try:
+            user = UserModel.objects.get(id=request.user.id)
+            serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user)
+            return {"data":serializer.data, "status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG, "status":400}
+
+    def update_admin_details_By_token(self, request):
+        try:
+            user = UserModel.objects.get(id=request.user.id)
+            serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user,data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data, "status":200}
+            else:
+                return{"message":messages.WENT_WRONG, "status":400}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG, "status":400}
+
+    
+    def change_password_by_token(self, request):
+        try:
+            user = UserModel.objects.get(id = request.user.id)
+            old_password = request.data["old_password"]
+            new_password = request.data["new_password"]
+            verify_password = check_password(old_password,user.password)
+            if verify_password:
+                user.set_password(new_password)
+                user.save()
+                return {"message":messages.CHANGE_PASSWORD,"status":200}
+            else:
+                return {"message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            return {"message":messages.went_wrong,"status":400}
+    
 # manage customer module
     def add_new_customer(self, request):
         try:
             serializer = adminSerializer.AddNewClientByAdminSeriaizer(data = request.data)
-            print(serializer.is_valid())
-            print(serializer.errors)
             if serializer.is_valid():
-                print("1234567823456734567")
                 user = serializer.save()
                 password = make_password()
-                print(password)
                 user.set_password(password)
-                print(user.set_password(password))
                 send_password_via_mail(request.data["email"])
                 user.save()
-                print("hello world")
-                serializers = adminSerializer.ManageAddressByAdminSerializer(data= request.data["address"])
-                print(serializers.is_valid,"haksdjhfakjshdfalkjsdfhlaksjdf23456783456")
-                print(serializers.errors)
-                if serializers.is_valid():
-                    serializers.save(user=user)
+                address_location = request.data["address"]
+                print(user.id,"kajhdskjfhalksdjfh")
+                client_address = ManageAddressModel.objects.create(
+                    address_location = request.data["address"],
+                    user_id=user.id
+                )
+                client_address.save()
                 return {"data":serializer.data,"status":200}
             else:
                 return {"message":messages.WENT_WRONG,"status":400}
@@ -218,12 +262,52 @@ class AdminService:
     def get_all_customers(self, request):
         try:
             clients = UserModel.objects.filter(role=1)
-            print(clients,"dfhakljshdflakjhs")
-            serializer = adminSerializer.GetAllClientsDetailsSerializer(clients)
+            serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             print(e)
             return {"message":messages.WENT_WRONG,"status":400}
+
+
+# manage categories
+
+    def get_all_categories(self, request):
+        try:
+            categories = TalentCategoryModel.objects.all()
+            serializers = adminSerializer.GetAllCategoriesSerializers(categories, many = True)
+            return {"data":serializers.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+    
+    def get_categories_detail_by_id(self, request,id):
+        try:
+            category = TalentCategoryModel.objects.get(id=id)
+            serializer  = adminSerializer.CategorySerializer(category)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+    
+    def update_category_by_id(self, request,id):
+        try:
+            category = TalentCategoryModel.objects.get(id=id)
+            serializer = adminSerializer.CategorySerializer(category,data = request.data)
+            if serializer.is_valid():
+                return {"data":serializer.data,"status":200}
+            else:
+                return {"message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
+    def delete_category_by_id(self, request, id):
+        try:
+            category = TalentCategoryModel.objects.get(id=id)
+            category.delete()
+            return {"message":messages.DELETE,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
+    def get_subCategory_by_id(self, request, id):
+        pass
 
     
 
