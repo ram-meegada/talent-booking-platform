@@ -412,3 +412,6 @@ class ClientService():
     #     except Exception as e:
     #         return {"messgae":messages.WENT_WRONG,"status":400}
             
+    def filter_talent(self, request):
+        filters = Q()
+        pass

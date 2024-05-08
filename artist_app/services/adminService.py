@@ -126,7 +126,7 @@ class AdminService:
             verify_password = check_password(password,user.password)
             if verify_password:
                 token = RefreshToken.for_user(user)
-                all_obj = {"data": serializer.data}
+                all_obj = dict(serializer.data).copy()
                 all_obj["access_token"] = str(token.access_token)
                 all_obj["refresh_token"] = str(token)
                 return {"data": all_obj, 'message': messages.LOGGED_IN, "status": 200}
@@ -230,7 +230,7 @@ class AdminService:
         # jwt_token = JWTAuthentication().get_validated_token(request)
         # token = str(jwt_token)
         # BlacklistedToken(token=token).save()
-        return {"data": None, "message": messages.USER_LOGGED_OUT, "status": 250}
+        return {"data": None, "message": messages.USER_LOGGED_OUT, "status": 200}
     
 # manage customer module
     def add_new_customer(self, request):
