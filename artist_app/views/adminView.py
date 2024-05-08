@@ -97,11 +97,21 @@ class updateAdminDetailsByTokenView(APIView):
         result = admin_obj.update_admin_details_By_token(request)
         return Response(result, status= result["status"])
 
+class LogOutView(APIView):
+    def post(self, request):
+        result = admin_obj.logout(request)
+        return Response(result, status= result["status"])
+
 #manage customers(clients)
 
 class GetAllCustomerView(APIView):
     def get(self, request):
         result = admin_obj.get_all_customers(request)
+        return Response(result, status=result["status"])
+
+class GetAllCustomerDetailsByidView(APIView):
+    def get(self, request, id):
+        result = admin_obj.get_custome_details_by_id(request, id)
         return Response(result, status=result["status"])
 
 class AddCustomerByAdminView(APIView):
@@ -141,6 +151,30 @@ class DeleteCategoriesByIdView(APIView):
     def delete(self, request, id):
         result = admin_obj.delete_category_by_id(request, id)
         return Response(result, status=result["status"])
+
+class GetAllSubCategoryBasedOnCategoryView(APIView):
+    def post(self, request):
+        result= admin_obj.get_all_subCategory(request)
+        return Response(result, status=result["status"])
+
+class GetSubCategoryByIdView(APIView):
+    def get(self, request, id):
+        result = admin_obj.get_subcategory_by_id(request, id)
+        return Response(result, status=result["status"])
+class UpdateSubcategoryByIdView(APIView):
+    def put(self, request, id):
+        result = admin_obj.update_subcategory_details(request,id)
+        return Response(result, status=result["status"])
+
+class DeleteSubcategoryByIdView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_subcategory_by_id(request, id)
+        return Response(result, status=result["status"])
+        
+
+
+
+
 
 
 

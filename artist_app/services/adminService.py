@@ -22,7 +22,7 @@ class AdminService:
             serializer.save()
             return {"data": request.data, "message": messages.CATEGORY_ADDED, "status": 201}
         else:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
     def add_sub_category(self, request):
         # name = request.data["name"]
@@ -36,7 +36,7 @@ class AdminService:
         # )
             return {"data": serializers.data, "message": messages.SUB_CATEGORY_ADDED, "status": 201}
         else:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
     def subcategory_listing_by_category_id(self, request):
         sub_categories = TalentSubCategoryModel.objects.filter(category = request.data["category"])
@@ -50,7 +50,7 @@ class AdminService:
                 serializers.save()
             return {"data":serializers.data,"message":messages.ADD,"status":200}
         except Exception as e:
-            return {"message":str(e),"status":400}
+            return {"data": None, "message":str(e),"status":400}
 
     def update_questions_answers(self, request, id):
         questions = FAQModel.objects.get(id=id)
@@ -60,7 +60,7 @@ class AdminService:
                 serializers.save()
                 return {"data":serializers.data,"message":messages.UPDATE,"status":200}
             else:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
             return {"message":str(e),"status":400}
 
@@ -68,17 +68,17 @@ class AdminService:
         try:
             question = FAQModel.objects.get(id=id)
             question.delete()
-            return {"message":messages.DELETE, "status":200}
+            return {"data": None, "message":messages.DELETE, "status":200}
         except Exception as e:
-            return {"message":str(e), "status":400}
+            return {"data": None, "message":str(e), "status":400}
     
     def get_all_questions_answers(self , request):
         try:
             questions = FAQModel.objects.all()
             serializers = adminSerializer.FAQSerializer(questions, many=True)
-            return {"data":serializers.data,"status":200}
+            return {"data":serializers.data,"message":messages.QUESTION_FETCHED,"status":200}
         except Exception as e:
-            return {"message":str(e),"status":400}
+            return {"data":None, "message":str(e),"status":400}
 
     #termsAndConditions
     def add_terms_and_conditions(self, request):
@@ -86,20 +86,20 @@ class AdminService:
             serializer = adminSerializer.TermAndConditionsSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return {"data":serializer.data, "status":200}
+                return {"data":serializer.data,"messages":messages.QUESTION_ADDED, "status":200}
             else:
-                return {"message":messages.WENT_WRONG, "status":400}
+                return {"data":None, "message":messages.WENT_WRONG, "status":400}
         except Exception as e:
-            return {"message":messages.WENT_WRONG, "status":400}
+            return {"data":None, "message":messages.WENT_WRONG, "status":400}
 
     def get_terms_and_conditions(self, request):
         try:
             terms = TermAndConditionModel.objects.all()
             serializer = adminSerializer.TermAndConditionsSerializer(terms, many=True)
-            return {"data":serializer.data, "status":200}
+            return {"data":serializer.data,"message":messages.TERMSANDCONDTIONS_FETCHED, "status":200}
 
         except Exception as e:
-            return {"message":messages.WENT_WRONG, "status":400}
+            return {"data":None,"message":messages.WENT_WRONG, "status":400}
     
     def update_terms_and_conditions(self, request, id):
         try:
@@ -107,11 +107,11 @@ class AdminService:
             serializer = adminSerializer.TermAndConditionsSerializer(terms, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return {"data":serializer.data, "status":200}
+                return {"data":serializer.data,"message":messages.TERMSANDCONDTIONS_UPDATE, "status":200}
             else:
-                return {"message":messages.WENT_WRONG, "status":400}
+                return {"data":None ,"message":messages.WENT_WRONG, "status":400}
         except Exception as e:
-            return {"message":messages.WENT_WRONG, "status":400}
+            return {"data":None, "message":messages.WENT_WRONG, "status":400}
 # admin onboarding
     def admin_login(self, request):
         try:
@@ -120,7 +120,7 @@ class AdminService:
             try:
                 user = UserModel.objects.get(email = email)
             except UserModel.DoesNotExist:
-                return {"message": "User with this email doesnot exists","status":400}
+                return {"data":None ,"message": "User with this email doesnot exists","status":400}
             serializer = adminSerializer.AdminLoginserializer(user)
             verify_password = check_password(password,user.password)
             if verify_password:
@@ -130,10 +130,9 @@ class AdminService:
                 all_obj["refresh_token"] = str(token)
                 return {"data": all_obj, 'message': messages.LOGGED_IN, "status": 200}
             else:
-                return {"message":"Incorrect password", "status":400}
+                return {"data":None,"message":"Incorrect password", "status":400}
         except Exception as e:
-            print(e, '-------------eeeeeeeeee')
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
     
 
     def verify_otp(self, request):
@@ -143,15 +142,15 @@ class AdminService:
             try:
                 user = UserModel.objects.get(email=email)
             except UserModel.DoesNotExist:
-                return {"message":messages.EMAIL_NOT_FOUND,"status":400}
+                return {"data":None,"message":messages.EMAIL_NOT_FOUND,"status":400}
             if user.otp == otp:
                 user.otp_email_verification = True
                 user.save()
-                return {"message":messages.OTP_VERIFIED,"status":200}
+                return {"data":None,"message":messages.OTP_VERIFIED,"status":200}
             else:
-                return {"message":messages.WRONG_OTP,"status":400}
+                return {"data":None,"message":messages.WRONG_OTP,"status":400}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def sent_otp(self, request):
         OTP = make_otp()
@@ -161,9 +160,9 @@ class AdminService:
             send_otp_via_mail(request.data["email"])
             user.otp = OTP
             user.save()
-            return {"message":messages.OTP_SENT_TO_MAIL,"status":200}
+            return {"data":None,"message":messages.OTP_SENT_TO_MAIL,"status":200}
         except UserModel.DoesNotExist:
-            return{"message":messages.EMAIL_NOT_FOUND,"status":400}
+            return{"data":None,"message":messages.EMAIL_NOT_FOUND,"status":400}
     
     def forgot_password(self, request):
         email = request.data["email"]
@@ -171,29 +170,35 @@ class AdminService:
             user = UserModel.objects.get(email=email)
             user.set_password(request.data["password"])
             user.save()
-            return {"message":messages.FORGOT_PASSWORD,"status":200}
+            return {"data":None,"message":messages.FORGOT_PASSWORD,"status":200}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
     
     def get_admin_details_by_token(self, request):
         try:
             user = UserModel.objects.get(id=request.user.id)
             serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user)
-            return {"data":serializer.data, "status":200}
+            return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED, "status":200}
         except Exception as e:
-            return {"message":messages.WENT_WRONG, "status":400}
+            return {"data":None,"message":messages.WENT_WRONG, "status":400}
 
     def update_admin_details_By_token(self, request):
         try:
             user = UserModel.objects.get(id=request.user.id)
-            serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user,data=request.data)
+            username = request.data["name"]
+            user.username = username
+            user.save()
+            serializer = adminSerializer.updateAdminDetialsByTokenSerializer(user,data=request.data)
+            print(serializer.is_valid())
+            print(serializer.errors)
             if serializer.is_valid():
                 serializer.save()
-                return {"data":serializer.data, "status":200}
+                return {"data":serializer.data,"message":messages.UPDATE, "status":200}
             else:
-                return{"message":messages.WENT_WRONG, "status":400}
+                return{"data":None,"message":messages.WENT_WRONG, "status":400}
         except Exception as e:
-            return {"message":messages.WENT_WRONG, "status":400}
+            print(e)
+            return {"data":None,"message":messages.WENT_WRONG, "status":400}
 
     
     def change_password_by_token(self, request):
@@ -205,11 +210,26 @@ class AdminService:
             if verify_password:
                 user.set_password(new_password)
                 user.save()
-                return {"message":messages.CHANGE_PASSWORD,"status":200}
+                return {"data":None,"message":messages.CHANGE_PASSWORD,"status":200}
             else:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"data":None,"message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            return {"message":messages.went_wrong,"status":400}
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+
+    def logout(self, request):
+        # token = request.META["HTTP_AUTHORIZATION"].split(" ")[1]
+        # print(token, '-----')
+        # token_obj = AccessToken(token)
+        # BlacklistedToken(token=token_obj).save()
+        # # token_obj.blacklist()
+        # # jwt_token = JWTAuthentication().get_validated_token(request)
+        # # AccessToken(token).blacklist()
+
+        # return {"data": None, "message": messages.USER_LOGGED_OUT, "status": 200}
+        # jwt_token = JWTAuthentication().get_validated_token(request)
+        # token = str(jwt_token)
+        # BlacklistedToken(token=token).save()
+        return {"data": None, "message": messages.USER_LOGGED_OUT, "status": 250}
     
 # manage customer module
     def add_new_customer(self, request):
@@ -222,50 +242,58 @@ class AdminService:
                 send_password_via_mail(request.data["email"])
                 user.save()
                 address_location = request.data["address"]
-                print(user.id,"kajhdskjfhalksdjfh")
                 client_address = ManageAddressModel.objects.create(
                     address_location = request.data["address"],
                     user_id=user.id
                 )
                 client_address.save()
-                return {"data":serializer.data,"status":200}
+                return {"data": None, "data":serializer.data,"status":200}
             else:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            print(e)
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
+    
+    def get_custome_details_by_id(self, request, id):
+        try:
+            user = UserModel.objects.get(id=id)
+        except UserModel.DoesNotExist:
+            return {"data": None,"message":messages.WENT_WRONG,"status":400}
+        if user:
+            serializer = adminSerializer.AddNewClientByAdminSeriaizer(user)
+            return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
+        else:
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
     def edit_customer_by_admin(self,request,id):
         try:
             user = UserModel.objects.get(id = id)
         except UserModel.DoesNotExist:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None,"message":messages.WENT_WRONG,"status":400}
         if user:
             serializer = adminSerializer.AddNewClientByAdminSeriaizer(user, data = request.data)
             if serializer.is_valid():
                 serializer.save()
-                return {"data":serializer.data,"status":200}
+                return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
             else:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"data": None, "message":messages.WENT_WRONG,"status":400}
         else:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
     def delete_customer_by_admin(self, request, id):
         try:
             user= UserModel.objects.get(id=id)
         except UserModel.DoesNotExist:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
         user.delete()
-        return {"message":messages.DELETE,"status":200}
+        return {"data": None, "message":messages.DELETE,"status":200}
 
     def get_all_customers(self, request):
         try:
             clients = UserModel.objects.filter(role=1)
             serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
-            return {"data":serializer.data,"status":200}
+            return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
-            print(e)
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
 
 # manage categories
@@ -274,40 +302,51 @@ class AdminService:
         try:
             categories = TalentCategoryModel.objects.all()
             serializers = adminSerializer.GetAllCategoriesSerializers(categories, many = True)
-            return {"data":serializers.data,"status":200}
+            return {"data":serializers.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
     def get_categories_detail_by_id(self, request,id):
         try:
             category = TalentCategoryModel.objects.get(id=id)
             serializer  = adminSerializer.CategorySerializer(category)
-            return {"data":serializer.data,"status":200}
+            return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
     def update_category_by_id(self, request,id):
         try:
             category = TalentCategoryModel.objects.get(id=id)
             serializer = adminSerializer.CategorySerializer(category,data = request.data)
             if serializer.is_valid():
-                return {"data":serializer.data,"status":200}
+                return {"data":serializer.data,"message":messages.UPDATE,"status":200}
             else:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
     def delete_category_by_id(self, request, id):
         try:
             category = TalentCategoryModel.objects.get(id=id)
             category.delete()
-            return {"message":messages.DELETE,"status":200}
+            return {"data": None, "message":messages.DELETE,"status":200}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
-    def get_subCategory_by_id(self, request, id):
-        pass
+    def get_all_subCategory(self, request):
+        try:
+            subcategory = TalentSubCategoryModel.objects.get(category = request.data["category"])
+            serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(subcategory)
+            if serializer.is_valid():
+                return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            else:
+                return {"data": None, "message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
+        
+    def get_subcategory_by_id(self, request, id):
+       pass 
     
 
 

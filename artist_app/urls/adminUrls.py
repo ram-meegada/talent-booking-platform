@@ -2,7 +2,6 @@ from django.urls import path
 from artist_app.views import adminView
 
 urlpatterns = [
-    path("category/", adminView.AddTalentCategoryView.as_view()),
     path("sub-category/", adminView.AddTalentSubCategoryView.as_view()),
     # FAQs urls
     path("questions",adminView.AddQuestionsAndAnswersView.as_view()),
@@ -16,12 +15,28 @@ urlpatterns = [
     path("forgot-password",adminView.ForgotPasswordView.as_view()),
     path("send-otp",adminView.resendOTPView.as_view()),
     path("verify-otp",adminView.VerifyOTPViewAdminSide.as_view()),
+    path("change-password",adminView.ChangePasswordByTokenView.as_view()),
+    path("admin-details",adminView.GetAdminDetailsByTokenView.as_view()),
+    path("update-details",adminView.updateAdminDetailsByTokenView.as_view()),
+    path("admin-log-out",adminView.LogOutView.as_view()),
     # manage customer urls
 
     path("fetch-all-customers",adminView.GetAllCustomerView.as_view()),
     path("add-customer",adminView.AddCustomerByAdminView.as_view()),
+    path("customers-details-by-id/<int:id>",adminView.GetAllCustomerDetailsByidView.as_view()),
     path("edit-customer-by-id/<int:id>",adminView.updateCustomerDetailsByAdminView.as_view()),
     path("delete-customer-by-id/<int:id>",adminView.DeleteCustomerByAdminView.as_view()),
-    
+
+
+    # manage categories Urls
+    path("category", adminView.AddTalentCategoryView.as_view()),
+    path("all-category",adminView.GetAllCategoriesView.as_view()),
+    path("get-categories-details-by-id/<int:id>",adminView.GetCategoriesDetailsByIdView.as_view()),
+    path("update-categories-detail-by-id/<int:id>",adminView.UpdateCategoriesByIdView.as_view()),
+    path("delete-category-by-id/<int:id>",adminView.DeleteCategoriesByIdView.as_view()),
+    path("sub-category-based-on-category",adminView.GetAllSubCategoryBasedOnCategoryView.as_view()),
+
+
+
 
 ]
