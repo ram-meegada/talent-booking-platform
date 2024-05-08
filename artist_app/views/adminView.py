@@ -1,3 +1,4 @@
+from sys import api_version
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -117,3 +118,29 @@ class DeleteCustomerByAdminView(APIView):
     def delete(self, request, id):
         result = admin_obj.delete_customer_by_admin(request, id)
         return Response(result, status=result["status"])
+
+
+#manage categories
+
+class GetAllCategoriesView(APIView):
+    def get(self, request):
+        result = admin_obj.get_all_categories(request)
+        return Response(result, status=result["status"])
+
+class GetCategoriesDetailsByIdView(APIView):
+    def get(self, request, id):
+        result = admin_obj.get_categories_detail_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class UpdateCategoriesByIdView(APIView):
+    def put(self, request,id):
+        result = admin_obj.update_category_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class DeleteCategoriesByIdView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_category_by_id(request, id)
+        return Response(result, status=result["status"])
+
+
+
