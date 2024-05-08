@@ -6,11 +6,12 @@ from artist_app.serializers import adminSerializer
 from artist_app.models.faqModel import FAQModel
 from artist_app.models import TermAndConditionModel
 from django.contrib.auth.hashers import check_password
-from artist_app.serializers.adminSerializer import TermAndConditionsSerializer,AdminLoginserializer
+from artist_app.serializers.adminSerializer import TermAndConditionsSerializer,\
+                                            AdminLoginserializer
 from artist_app.models import UserModel
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from artist_app.utils.sendOtp import send_otp_via_mail,make_otp,make_password,send_password_via_mail
+from artist_app.utils.sendOtp import send_otp_via_mail,make_otp,make_password,\
+                                     send_password_via_mail, generate_encoded_id
 from artist_app.models import ManageAddressModel
 
 class AdminService:
@@ -136,6 +137,7 @@ class AdminService:
     
 
     def verify_otp(self, request):
+        ENCODED_ID = generate_encoded_id()
         try:
             email = request.data["email"]
             otp = request.data["otp"]
@@ -145,8 +147,10 @@ class AdminService:
                 return {"data":None,"message":messages.EMAIL_NOT_FOUND,"status":400}
             if user.otp == otp:
                 user.otp_email_verification = True
+                if not user.encoded_id:
+                    user.encoded_id = ENCODED_ID
                 user.save()
-                return {"data":None,"message":messages.OTP_VERIFIED,"status":200}
+                return {"data":{"encoded_id": ENCODED_ID}, "message":messages.OTP_VERIFIED,"status":200}
             else:
                 return {"data":None,"message":messages.WRONG_OTP,"status":400}
         except Exception as e:
@@ -165,9 +169,9 @@ class AdminService:
             return{"data":None,"message":messages.EMAIL_NOT_FOUND,"status":400}
     
     def forgot_password(self, request):
-        email = request.data["email"]
+        encoded_id = request.data["encoded_id"]
         try:
-            user = UserModel.objects.get(email=email)
+            user = UserModel.objects.get(encoded_id=encoded_id)
             user.set_password(request.data["password"])
             user.save()
             return {"data":None,"message":messages.FORGOT_PASSWORD,"status":200}

@@ -41,12 +41,13 @@ UPDATE = "Update successfully."
 ADD = "Add successfully."
 DELETE = "delete successfully."
 
-###FAQ
+### FAQ
 QUESTION_FETCHED = "Question/answer fetched successfully"
 QUESTION_ADDED = "Question added successfully "
 
-###Terms And Conditions
+### Terms And Conditions
 TERMSANDCONDTIONS_FETCHED = "Terms and Conditions fetched successfully"
 TERMSANDCONDTIONS_UPDATE = "Terms and Conditions update successfully"
 
-
+### Ratings
+ADDED_RATING = "Rating given successfully"
