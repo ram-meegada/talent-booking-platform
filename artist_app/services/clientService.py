@@ -412,5 +412,3 @@ class ClientService():
     #     except Exception as e:
     #         return {"messgae":messages.WENT_WRONG,"status":400}
             
-
-            

@@ -137,17 +137,18 @@ class AdminService:
     
 
     def verify_otp(self, request):
-        ENCODED_ID = generate_encoded_id()
         try:
             email = request.data["email"]
             otp = request.data["otp"]
             try:
                 user = UserModel.objects.get(email=email)
+                ENCODED_ID = user.encoded_id
             except UserModel.DoesNotExist:
                 return {"data":None,"message":messages.EMAIL_NOT_FOUND,"status":400}
             if user.otp == otp:
                 user.otp_email_verification = True
-                if not user.encoded_id:
+                if user.encoded_id == "":
+                    ENCODED_ID = generate_encoded_id()
                     user.encoded_id = ENCODED_ID
                 user.save()
                 return {"data":{"encoded_id": ENCODED_ID}, "message":messages.OTP_VERIFIED,"status":200}
@@ -175,8 +176,8 @@ class AdminService:
             user.set_password(request.data["password"])
             user.save()
             return {"data":None,"message":messages.FORGOT_PASSWORD,"status":200}
-        except Exception as e:
-            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+        except UserModel.DoesNotExist:
+            return {"data":None, "message":"Record not found", "status":400}
     
     def get_admin_details_by_token(self, request):
         try:

@@ -14,4 +14,4 @@ class RatingService():
     def get_talent_ratings(self, request, talent_id):
         ratings = ReviewAndRatingsModel.objects.filter(talent=talent_id)
         serializer = GetRatingSerializer(ratings, many=True)
-        return {"data": serializer.data, "message": "Ratings fetched successfully", "status": 200}    
+        return {"data": serializer.data, "message": "Ratings fetched successfully", "status": 200}
