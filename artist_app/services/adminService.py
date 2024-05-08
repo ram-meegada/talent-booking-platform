@@ -119,9 +119,8 @@ class AdminService:
             password = request.data["password"]
             try:
                 user = UserModel.objects.get(email = email)
-
             except UserModel.DoesNotExist:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"message": "User with this email doesnot exists","status":400}
             serializer = adminSerializer.AdminLoginserializer(user)
             verify_password = check_password(password,user.password)
             if verify_password:
@@ -131,9 +130,9 @@ class AdminService:
                 all_obj["refresh_token"] = str(token)
                 return {"data": all_obj, 'message': messages.LOGGED_IN, "status": 200}
             else:
-                return {"message":messages.WENT_WRONG,"status":400}
+                return {"message":"Incorrect password", "status":400}
         except Exception as e:
-            print(e)
+            print(e, '-------------eeeeeeeeee')
             return {"message":messages.WENT_WRONG,"status":400}
     
 

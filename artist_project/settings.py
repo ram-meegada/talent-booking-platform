@@ -26,11 +26,31 @@ SECRET_KEY = "django-insecure-v4lby=q&td6((j9+_50a-0zul^m&9aa#joj5&!an)$lxm^(r_g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["artistdevapi.appgrowthcompany.com"]
+ALLOWED_HOSTS = [
+    "artistdevapi.appgrowthcompany.com", 
+    "127.0.0.1"
+    ]
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
+
+CORS_ALLOW_HEADERS = [
+    'Content-Type',
+    'X-Requested-With',
+    'X-New-Header',
+    'Authorization',
+    "Hash",
+    "Sek",
+    "Device",
+]
+
 
 # Application definition
 
@@ -47,11 +67,14 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "rest_framework_simplejwt",
+
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
