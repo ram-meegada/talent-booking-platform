@@ -186,13 +186,9 @@ class AdminService:
         try:
             user = UserModel.objects.get(id=request.user.id)
             username = request.data["name"]
-            user.username = username
-            user.save()
-            serializer = adminSerializer.updateAdminDetialsByTokenSerializer(user,data=request.data)
-            print(serializer.is_valid())
-            print(serializer.errors)
+            serializer = adminSerializer.updateAdminDetialsByTokenSerializer(user, data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(username=username)
                 return {"data":serializer.data,"message":messages.UPDATE, "status":200}
             else:
                 return{"data":None,"message":messages.WENT_WRONG, "status":400}

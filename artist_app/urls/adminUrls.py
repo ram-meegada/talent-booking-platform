@@ -17,7 +17,7 @@ urlpatterns = [
     path("verify-otp",adminView.VerifyOTPViewAdminSide.as_view()),
     path("change-password",adminView.ChangePasswordByTokenView.as_view()),
     path("admin-details",adminView.GetAdminDetailsByTokenView.as_view()),
-    path("update-details",adminView.updateAdminDetailsByTokenView.as_view()),
+    path("update-details",adminView.UpdateAdminDetailsByTokenView.as_view()),
     path("admin-log-out",adminView.LogOutView.as_view()),
     # manage customer urls
 

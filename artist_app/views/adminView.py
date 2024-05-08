@@ -92,7 +92,7 @@ class ChangePasswordByTokenView(APIView):
         result = admin_obj.change_password_by_token(request)
         return Response(result, status=result["status"])
 
-class updateAdminDetailsByTokenView(APIView):
+class UpdateAdminDetailsByTokenView(APIView):
     def put(self, request):
         result = admin_obj.update_admin_details_By_token(request)
         return Response(result, status= result["status"])

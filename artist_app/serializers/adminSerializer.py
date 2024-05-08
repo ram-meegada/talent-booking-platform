@@ -94,18 +94,9 @@ class ShowAdminDetialsByTokenSerializer(serializers.ModelSerializer):
             return None
 
 class updateAdminDetialsByTokenSerializer(serializers.ModelSerializer):
-    address = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
         fields = ["id","username","country_code","email","phone_no","address","profile_picture"]
-
-    def get_address(self, obj):
-        try:
-            address = ManageAddressModel.objects.filter(user_id=obj).first
-            serializer = ManageAddressByAdminSerializer(address, many=True)
-            return serializer.data
-        except Exception as e:
-            return None
 
 class GetAllCategoriesSerializers(serializers.ModelSerializer):
     update_at = serializers.SerializerMethodField()
