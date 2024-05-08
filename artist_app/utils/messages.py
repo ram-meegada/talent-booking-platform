@@ -8,7 +8,8 @@ EMAIL_EXISTS = "Email already exists"
 PHONE_EXISTS = "Phone number already exists"
 USER_DETAILS_FETCHED = "Profile details fetched successfully"
 FORGOT_PASSWORD = "Password Update successfully."
-CHANGE_PASSWORD = "Passwor change successfully."
+CHANGE_PASSWORD = "Password change successfully."
+USER_LOGGED_OUT = "logout successfully"
 
 OTP_SENT_TO_MAIL = "Otp sent to your mail successfully"
 OTP_SENT_TO_MOBILE = "Otp sent to your phone number successfully"
@@ -39,3 +40,13 @@ MEDIA_UPLOADED = "Media uploaded successfully"
 UPDATE = "Update successfully."
 ADD = "Add successfully."
 DELETE = "delete successfully."
+
+###FAQ
+QUESTION_FETCHED = "Question/answer fetched successfully"
+QUESTION_ADDED = "Question added successfully "
+
+###Terms And Conditions
+TERMSANDCONDTIONS_FETCHED = "Terms and Conditions fetched successfully"
+TERMSANDCONDTIONS_UPDATE = "Terms and Conditions update successfully"
+
+

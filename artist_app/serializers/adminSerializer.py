@@ -79,16 +79,26 @@ class GetAllClientsDetailsSerializer(serializers.ModelSerializer):
 
 
 class ShowAdminDetialsByTokenSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
     address = serializers.SerializerMethodField()
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id","full_name","country_code","email","phone_no","address","profile_picture"]
+        fields = ["id","username","country_code","email","phone_no","address","profile_picture"]
 
-    def get_full_name(self, obj):
-        return obj.first_name +" "+obj.last_name
-    
+    def get_address(self, obj):
+        try:
+            address = ManageAddressModel.objects.filter(user_id=obj).first
+            serializer = ManageAddressByAdminSerializer(address, many=True)
+            return serializer.data
+        except Exception as e:
+            return None
+
+class updateAdminDetialsByTokenSerializer(serializers.ModelSerializer):
+    address = serializers.SerializerMethodField()
+    class Meta:
+        model = UserModel
+        fields = ["id","username","country_code","email","phone_no","address","profile_picture"]
+
     def get_address(self, obj):
         try:
             address = ManageAddressModel.objects.filter(user_id=obj).first
@@ -105,3 +115,13 @@ class GetAllCategoriesSerializers(serializers.ModelSerializer):
 
     def get_update_at(self, obj):
        return obj.update_at.date()
+
+class SubcategoryDetailsByCategoryIdSerializer(serializers.ModelSerializer):
+    update_at  = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TalentSubCategoryModel
+        fields = ["id","name","update_at","is_active"]
+
+        def get_update_at(self, obj):
+            return obj.update_at.date()
