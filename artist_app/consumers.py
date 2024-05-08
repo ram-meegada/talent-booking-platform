@@ -1,0 +1,48 @@
+import json
+from datetime import datetime
+from time import sleep
+from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
+from channels.generic.websocket import AsyncWebsocketConsumer
+from artist_app.models.chatSessionModel import ChatSessionModel
+from artist_app.models.chatStorageModel import ChatStorageModel
+from artist_app.models.userModel import UserModel
+from django.db.models import Q 
+
+class ChattingConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user1 = self.scope['url_route']['kwargs']['user1']
+        self.user2 = self.scope['url_route']['kwargs']['user2']
+        self.session = await database_sync_to_async(self.create_or_get_session)(self.user1, self.user2)
+        await self.channel_layer.group_add(self.session.session_id, self.channel_name)
+        await self.accept()
+
+    def create_or_get_session(self, user1, user2):
+        try:
+            session = ChatSessionModel.objects.get(Q(client_id=user1, talent_id=user2) |
+                                                   Q(client_id=user2, talent_id=user1))
+        except ChatSessionModel.DoesNotExist:
+            get_user1 = UserModel.objects.get(id=user1)
+            get_user2 = UserModel.objects.get(id=user2)
+            if get_user1.role == 1:
+                session = ChatSessionModel.objects.create(client_id=get_user1.id, talent_id=get_user2.id)
+            elif get_user1.role == 2:
+                session = ChatSessionModel.objects.create(client_id=get_user2.id, talent_id=get_user1.id)
+        return session
+        
+    async def receive(self, text_data):
+        newMessage = json.loads(text_data)
+        await self.channel_layer.group_send(self.session.session_id,
+                    {
+                        'type': 'chat_message',
+                        'msg': json.dumps(newMessage)
+                    }
+                )
+        save_chat = await database_sync_to_async(ChatStorageModel.objects.create)\
+                                                (session_id=self.session.id, user_id=self.user1, message=newMessage["message"])
+
+    async def chat_message(self, event):
+        await self.send(text_data=event["msg"])
+
+    async def disconnect(self, close_code):
+        print('websocket disconnected.....', close_code)
