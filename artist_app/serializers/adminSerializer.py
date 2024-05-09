@@ -32,10 +32,6 @@ class TermAndConditionsSerializer(serializers.ModelSerializer):
         model = TermAndConditionModel
         fields = ["id", "data"]
 
-class AdminLoginserializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserModel
-        fields = ["id","email"]
 
 class AdminVerifyOTPSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,7 +101,7 @@ class GetAllCategoriesSerializers(serializers.ModelSerializer):
         fields = ["id","name","update_at","is_active"]
 
     def get_update_at(self, obj):
-       return obj.update_at.date()
+       return obj.updated_at.date()
 
 class SubcategoryDetailsByCategoryIdSerializer(serializers.ModelSerializer):
     update_at  = serializers.SerializerMethodField()
