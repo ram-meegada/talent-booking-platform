@@ -13,7 +13,6 @@ urlpatterns = [
     path("admin-log-out",adminView.LogOutView.as_view()),
 
     # 
-    path("sub-category/", adminView.AddTalentSubCategoryView.as_view()),
 
     # FAQs urls
     path("questions",adminView.AddQuestionsAndAnswersView.as_view()),
@@ -39,4 +38,5 @@ urlpatterns = [
     path("update-categories-detail-by-id/<int:id>",adminView.UpdateCategoriesByIdView.as_view()),
     path("delete-category-by-id/<int:id>",adminView.DeleteCategoriesByIdView.as_view()),
     path("sub-category-based-on-category",adminView.GetAllSubCategoryBasedOnCategoryView.as_view()),
+    path("sub-category/", adminView.AddTalentSubCategoryView.as_view()),
 ]
