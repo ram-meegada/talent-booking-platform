@@ -168,6 +168,17 @@ class DeleteSubcategoryByIdView(APIView):
     def delete(self, request, id):
         result = admin_obj.delete_subcategory_by_id(request, id)
         return Response(result, status=result["status"])
+class CategoryFilterByNameView(APIView):
+    def post(self, request):
+        result = admin_obj.filter_category_by_name(request)
+        return Response(result, status=result["status"])
+
+class SubCategoryFilterByNameView(APIView):
+    def post(self, request):
+        result = admin_obj.filter_sub_category_by_name(request)
+        return Response(result, status=result["status"])
+
+
         
 
 

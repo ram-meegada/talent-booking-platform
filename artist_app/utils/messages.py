@@ -11,6 +11,8 @@ FORGOT_PASSWORD = "Password Update successfully."
 CHANGE_PASSWORD = "Password change successfully."
 USER_LOGGED_OUT = "logout successfully"
 
+
+
 OTP_SENT_TO_MAIL = "Otp sent to your mail successfully"
 OTP_SENT_TO_MOBILE = "Otp sent to your phone number successfully"
 OTP_VERIFIED = "Otp verified successfully"
@@ -28,6 +30,7 @@ BOOKING_METHOD_UPDATED = "Booking method updated successfully"
 WENT_WRONG = "Something went wrong. Please try after some time"
 
 ### talent categories
+CATEGORIES_LISTING = "categories listing fetched successfully"
 CATEGORY_ADDED = "Talent category added successfully"
 SUB_CATEGORY_ADDED = "Talent sub category added successfully"
 SUB_CATEGORIES_LISTING = "Sub-categories listing fetched successfully"
