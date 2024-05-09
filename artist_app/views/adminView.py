@@ -178,6 +178,13 @@ class SubCategoryFilterByNameView(APIView):
         result = admin_obj.filter_sub_category_by_name(request)
         return Response(result, status=result["status"])
 
+# manage artist 
+
+class GetAllArtistDetials(APIView):
+    def get(self, request):
+        result=admin_obj.get_all_artist_Details(request)
+        return Response(result, status=result["status"])
+
 
         
 
