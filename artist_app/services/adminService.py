@@ -31,12 +31,15 @@ class AdminService:
     def add_sub_category(self, request):
         try:
             serializers = adminSerializer.SubCategorySerializer(data=request.data)
+            print(serializers.is_valid())
+            print(serializers.errors)
             if serializers.is_valid():
                 serializers.save()
                 return {"data": serializers.data, "message": messages.SUB_CATEGORY_ADDED, "status": 201}
             else:
                 return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
+            print(e)
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
         # name = request.data["name"]
         # category_id = request.data["category"]
@@ -308,7 +311,7 @@ class AdminService:
         try:
             categories = TalentCategoryModel.objects.all()
             serializers = adminSerializer.GetAllCategoriesSerializers(categories, many = True)
-            return {"data":serializers.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            return {"data":serializers.data,"message":messages.CATEGORIES_LISTING,"status":200}
         except Exception as e:
             print(e)
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
@@ -317,7 +320,7 @@ class AdminService:
         try:
             category = TalentCategoryModel.objects.get(id=id)
             serializer  = adminSerializer.CategorySerializer(category)
-            return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            return {"data":serializer.data,"message":messages.CATEGORIES_LISTING,"status":200}
         except Exception as e:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
@@ -346,7 +349,7 @@ class AdminService:
             subcategory = TalentSubCategoryModel.objects.get(category = request.data["category"])
             serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(subcategory)
             if serializer.is_valid():
-                return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
+                return {"data":serializer.data,"message":messages.SUB_CATEGORIES_LISTING,"status":200}
             else:
                 return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
@@ -354,9 +357,54 @@ class AdminService:
 
         
     def get_subcategory_by_id(self, request, id):
-       pass 
+        try:
+            subcategory = TalentSubCategoryModel.objects.get(id=id)
+            serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(subcategory)
+            if serializer.is_valid():
+               return {"data":serializer.data,"message":messages.SUB_CATEGORIES_LISTING,"status":200}
+            else:
+                return {"data":None,"message":messages.WENT_WRONG,"status":400}
+            
+        except Exception as e:
+            return {"data":serializer.data,"message":messages.SUB_CATEGORIES_LISTING,"status":400}
 
+    def update_subcategory_details(self, request, id):
+        try:
+            subcategory = TalentSubCategoryModel.objects.get(id=id)
+            serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(subcategory,data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data,"message":messages.UPDATE,"status":200}
+            else:
+                return {"data":None,"message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
+    def delete_subcategory_by_id(self, request, id):
+        try:
+            sub_category = TalentSubCategoryModel.objects.get(id=id)
+            sub_category.delete()
+            return {"data":None,"message":messages.DELETE,"status":200}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+            
+    def filter_category_by_name(self, request):
+        try:
+            category = TalentCategoryModel.objects.filter(name__icontains=request.data["name"])
+            serializer =adminSerializer.GetAllCategoriesSerializers(category,many = True)
+            return {"data":serializer.data,"message":messages.CATEGORIES_LISTING,"status":200}
+        except Exception as e:
+            return {"data":None, "message":messages.WENT_WRONG,"status":400}
+
+    def filter_sub_category_by_name(self, request):
+        try:
+            sub_category = TalentSubCategoryModel.objects.filter(name__icontains = request.data["name"])
+            serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(sub_category,many = True)
+            return {"data":serializer.data,"message":messages.CATEGORIES_LISTING,"status":200}
+        except Exception as e:
+            print(e)
+            return {"data":None, "message":messages.WENT_WRONG,"status":400}
+            
 
 # manage Artist
 

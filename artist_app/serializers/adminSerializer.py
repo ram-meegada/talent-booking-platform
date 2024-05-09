@@ -16,7 +16,6 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 class SubCategorySerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
     class Meta:
         model = TalentSubCategoryModel
         fields = ["id", "name", "category"]
@@ -75,7 +74,6 @@ class GetAllClientsDetailsSerializer(serializers.ModelSerializer):
 
 
 class ShowAdminDetialsByTokenSerializer(serializers.ModelSerializer):
-    address = serializers.SerializerMethodField()
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
@@ -110,5 +108,5 @@ class SubcategoryDetailsByCategoryIdSerializer(serializers.ModelSerializer):
         model = TalentSubCategoryModel
         fields = ["id","name","update_at","is_active"]
 
-        def get_update_at(self, obj):
-            return obj.update_at.date()
+    def get_update_at(self, obj):
+        return obj.updated_at.date()
