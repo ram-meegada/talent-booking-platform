@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from artist_app.utils.sendOtp import send_otp_via_mail,make_otp,make_password,\
                                      send_password_via_mail, generate_encoded_id
 from artist_app.models import ManageAddressModel
+from artist_app.models.talentDetailsModel import TalentDetailsModel
 
 class AdminService:
     def add_category(self, request):
@@ -199,11 +200,12 @@ class AdminService:
     def update_admin_details_By_token(self, request):
         try:
             user = UserModel.objects.get(id=request.user.id)
-            serializer = adminSerializer.updateAdminDetialsByTokenSerializer(user, data=request.data)
+            serializer = adminSerializer.updateAdminDetialsByTokenSerializer(user, data=request.data, context ={"profile_picture":request.data["profile_picture"]})
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(profile_picture_id = request.data.get("profile_picture"))
                 return {"data":serializer.data,"message":messages.UPDATE, "status":200}
             else:
+                print(serializer.errors)
                 return{"data":None,"message":messages.WENT_WRONG, "status":400}
         except Exception as e:
             print(e)
@@ -408,10 +410,23 @@ class AdminService:
 
 # manage Artist
 
-    # def 
+    def get_all_artist_Details(self, request):
+        try:
+            user = TalentDetailsModel.objects.all()
+            serializer = adminSerializer.GetArtistDetailsSerializers(user,many = True)
+            return {"data":serializer.data,"messages":messages.USER_DETAILS_FETCHED,"status":200}
+        except Exception as e:
+            print(e)
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
     
 
-
+    def delete_artist_by_id(self, request, id):
+        try:
+            artist = UserModel.objects.get(id=id)
+            artist.delete()
+            return {"data":None,"message":messages.DELETE,"status":200}
+        except Exception as e:
+            return{"data":None,"message":messages.WENT_WRONG,"status":400}
 
 
 

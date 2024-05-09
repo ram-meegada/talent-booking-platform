@@ -44,6 +44,8 @@ urlpatterns = [
     path("get-subcategory-by-id/<int:id>",adminView.GetSubCategoryByIdView.as_view()),
     path("category-filter-by-name",adminView.CategoryFilterByNameView().as_view()),
     path("subcategory-filter-by-name",adminView.SubCategoryFilterByNameView.as_view()),
-    
 
+    #manage artist urls
+    path("get-all-artist-details",adminView.GetAllArtistDetials.as_view()),
+    
 ]
