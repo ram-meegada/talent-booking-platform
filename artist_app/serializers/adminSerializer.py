@@ -1,4 +1,4 @@
-from re import search
+
 from rest_framework import serializers
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
