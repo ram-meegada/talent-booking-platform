@@ -250,55 +250,76 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
         except:
             return obj.sub_categories
 
-class bookingClientArtistDetailsSerializer(serializers.ModelSerializer):
-    profile_picture = CreateUpdateUploadMediaSerializer()
-    full_name = serializers.SerializerMethodField()
-    class Meta:
-        model = UserModel
-        fields = ["id","full_name","profile_picture"]
+# class bookingClientArtistDetailsSerializer(serializers.ModelSerializer):
+#     profile_picture = CreateUpdateUploadMediaSerializer()
+#     full_name = serializers.SerializerMethodField()
+#     class Meta:
+#         model = UserModel
+#         fields = ["id","full_name","profile_picture"]
 
-    def get_full_name(self, obj):
-        return obj.first_name+" "+obj.last_name
+#     def get_full_name(self, obj):
+#         return obj.first_name+" "+obj.last_name
 
-class ManageAddressBookingDetailsModule(serializers.ModelSerializer):
-    class Meta:
-        model = ManageAddressModel
-        fields = "__all__"
+# class ManageAddressBookingDetailsModule(serializers.ModelSerializer):
+#     class Meta:
+#         model = ManageAddressModel
+#         fields = "__all__"
 
-#booking Module
-class BookingDetailsModule(serializers.ModelSerializer):
-    client = serializers.SerializerMethodField()
-    artist = serializers.SerializerMethodField()
-    address = serializers.SerializerMethodField()
-    profession= serializers.SerializerMethodField()   # category
-    description = serializers.SerializerMethodField()
-    service_fee = serializers.SerializerMethodField()
-    service = serializers.SerializerMethodField()   # sub-category
-    class Meta:
-        model = BookingTalentModel
-        fields = ["id","client","artist","profession","address","description","date","time","duration","offer_price","service_fee","service","status","currency"]
+# #booking Module
+# class BookingDetailsModuleSerializer(serializers.ModelSerializer):
+#     client = serializers.SerializerMethodField()
+#     artist = serializers.SerializerMethodField()
+#     address = serializers.SerializerMethodField()
+#     profession= serializers.SerializerMethodField()   # category
+#     description = serializers.SerializerMethodField()
+#     service_fee = serializers.SerializerMethodField()
+#     service = serializers.SerializerMethodField()   # sub-category
+#     class Meta:
+#         model = BookingTalentModel
+#         fields = ["id","client","artist","profession","address","description","date","time","duration","offer_price","service_fee","service","status","currency"]
 
-    def get_client(self, obj):
-        id = obj.client
-        user = UserModel.objects.get(id =id)
-        serializer = bookingClientArtistDetailsSerializer(user)
-        return serializer.data
+#     def get_client(self, obj):
+#         id=obj.first().client.id
+#         # id = obj.client
+#         user = UserModel.objects.get(id =id)
+#         serializer = bookingClientArtistDetailsSerializer(user)
+#         print(serializer.data,"44444444444444444444")
+#         return serializer.data
     
-    def get_artist(self, obj):
-        id = obj.talent
-        user = UserModel.objects.get(id =id)
-        serializer = bookingClientArtistDetailsSerializer(user)
-        return serializer.data
+#     def get_artist(self, obj):
+#         print(obj.first().talent.id,"2222222222")
+#         id = obj.first().talent.id
+#         user = UserModel.objects.get(id =id)
+#         serializer = bookingClientArtistDetailsSerializer(user)
+#         print(serializer.data,"4444444444444444444455555555555555")
+#         return serializer.data
 
-    def get_address(self, obj):
-        id = obj.address
-        address = ManageAddressModel.objects.get(id=id)
-        serializer = ManageAddressBookingDetailsModule(address)
-        return serializer.data
+#     def get_address(self, obj):
+#         id = obj.address
+#         address = ManageAddressModel.objects.get(id=id)
+#         serializer = ManageAddressBookingDetailsModule(address)
+#         return serializer.data
 
-    # def get_profession(self, obj):
-    #     id = obj.artist
-    #     category 
+#     def get_profession(self, obj):
+#         id = obj.artist
+#         category =TalentDetailsModel.objects.get(user_id=id).categories
+#         serializer = CategorySerializer(category, many=True)
+#         return serializer.data
+
+#     def get_service(self, obj):
+#         id = obj.artist
+#         sub_categories = TalentDetailsModel.objects.get(user_id=id).sub_categories
+#         serializers = SubCategorySerializer(sub_categories, many = True)
+#         return serializers.data
+
+#     def get_service_fee(self, obj):
+#         service = 15
+#         return service
+    
+#     def get_description(self, obj):
+#         return obj.comment
+        
+
         
 
 

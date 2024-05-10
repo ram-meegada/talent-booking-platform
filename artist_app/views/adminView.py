@@ -203,6 +203,13 @@ class FilterArtistBYnameView(APIView):
         result = admin_obj.Search_artist_by_name(request)
         return Response(result, status=result["status"])
 
+#booking module
+
+# class BookingDetailsView(APIView):
+#     def post(self, request):
+#         result = admin_obj.booking_details_listing(request)
+#         return Response(result, status=result["status"])
+
 
         
 
