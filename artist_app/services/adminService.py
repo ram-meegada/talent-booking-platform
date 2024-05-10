@@ -1,4 +1,4 @@
-from unicodedata import category
+
 from artist_app.utils import messages
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
@@ -313,7 +313,7 @@ class AdminService:
     def get_all_categories(self, request):
         try:
             categories = TalentCategoryModel.objects.all()
-            if not request.data["name"]:
+            if request.data["name"]:
                 category = categories.filter(name__icontains=request.data["name"])
                 serializers = adminSerializer.GetAllCategoriesSerializers(category, many = True)
             else:
@@ -353,7 +353,7 @@ class AdminService:
     def get_all_subCategory(self, request):
         try:
             subcategory = TalentSubCategoryModel.objects.all()
-            if not request.data["name"]:
+            if request.data["name"]:
                 sub_category = subcategory.filter(name__icontains = request.data["name"],category = request.data["category"])
                 serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(sub_category,many = True)
             else:
