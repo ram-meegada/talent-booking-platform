@@ -42,10 +42,14 @@ urlpatterns = [
     path("delete-subcategory-by-id/<int:id>",adminView.DeleteSubcategoryByIdView.as_view()),
     path("update-subcategory-by-id/<int:id>",adminView.UpdateSubcategoryByIdView.as_view()),
     path("get-subcategory-by-id/<int:id>",adminView.GetSubCategoryByIdView.as_view()),
-    path("category-filter-by-name",adminView.CategoryFilterByNameView().as_view()),
-    path("subcategory-filter-by-name",adminView.SubCategoryFilterByNameView.as_view()),
 
     #manage artist urls
-    path("get-all-artist-details",adminView.GetAllArtistDetials.as_view()),
+    path("get-all-artist-details",adminView.GetAllArtistDetialsView.as_view()),
+    path("get-artist-details-by-id/<int:id>",adminView.GetArtistDetailsByIdView.as_view()),
+    path("update-artist-details-by-id/<int:id>",adminView.UpdateArtistDetailsByIdView.as_view()),
+    path("delete-artist-details-by-id/<int:id>",adminView.DeleteArtistByIdView.as_view()),
+    path("add-artist-through-admin",adminView.AddArtistThroughAdminView.as_view()),
     
+
+
 ]

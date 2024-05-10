@@ -131,7 +131,7 @@ class DeleteCustomerByAdminView(APIView):
 #manage categories
 
 class GetAllCategoriesView(APIView):
-    def get(self, request):
+    def post(self, request):
         result = admin_obj.get_all_categories(request)
         return Response(result, status=result["status"])
 
@@ -168,21 +168,39 @@ class DeleteSubcategoryByIdView(APIView):
     def delete(self, request, id):
         result = admin_obj.delete_subcategory_by_id(request, id)
         return Response(result, status=result["status"])
-class CategoryFilterByNameView(APIView):
-    def post(self, request):
-        result = admin_obj.filter_category_by_name(request)
-        return Response(result, status=result["status"])
 
-class SubCategoryFilterByNameView(APIView):
-    def post(self, request):
-        result = admin_obj.filter_sub_category_by_name(request)
-        return Response(result, status=result["status"])
+
 
 # manage artist 
 
-class GetAllArtistDetials(APIView):
-    def get(self, request):
+class GetAllArtistDetialsView(APIView):
+    def post(self, request):
         result=admin_obj.get_all_artist_Details(request)
+        return Response(result, status=result["status"])
+
+class DeleteArtistByIdView(APIView):
+    def delete(self, request, id):
+        result= admin_obj.delete_artist_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class GetArtistDetailsByIdView(APIView):
+    def get(self, request, id):
+        result = admin_obj.get_artist_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class UpdateArtistDetailsByIdView(APIView):
+    def put(self, request, id):
+        result = admin_obj.Update_artist_details_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class AddArtistThroughAdminView(APIView):
+    def post(self, request, id):
+        result= admin_obj.add_artist_through_admin(request, id)
+        return Response(result, status=result["status"])
+
+class FilterArtistBYnameView(APIView):
+    def post(self, request, id):
+        result = admin_obj.Search_artist_by_name(request)
         return Response(result, status=result["status"])
 
 

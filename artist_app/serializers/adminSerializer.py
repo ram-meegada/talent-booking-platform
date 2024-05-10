@@ -1,3 +1,4 @@
+from re import search
 from rest_framework import serializers
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
@@ -8,6 +9,7 @@ from artist_app.models.manageAddressModel import ManageAddressModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.uploadMediaModel import UploadMediaModel
+from artist_app.models.bookingTalentModel import BookingTalentModel
 # from artist_python_backend.artist_app.models import manageAddressModel
 
 
@@ -127,6 +129,7 @@ class SubcategoryDetailsByCategoryIdSerializer(serializers.ModelSerializer):
 
 class GetArtistDetailsSerializers(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    country_code = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
     phone_no = serializers.SerializerMethodField()
     gender = serializers.SerializerMethodField()
@@ -139,7 +142,7 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = TalentDetailsModel
-        fields = ["id","name","email","profile_picture","gender","phone_no","date_of_birth","experience",'booking_method',"address","categories","sub_categories"]
+        fields = ["id","name","email","profile_picture","gender","country_code","phone_no","date_of_birth","experience",'booking_method',"address","categories","sub_categories"]
 
 
     def get_date_of_birth(self, obj):
@@ -159,6 +162,8 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
         return obj.user.email
     def get_phone_no(self, obj):
         return obj.user.phone_no
+    def get_country_code(self, obj):
+        return obj.user.country_code
     def get_gender(self, obj):
         return obj.user.gender
     def get_categories(self, obj):
@@ -176,6 +181,127 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
         except:
             return obj.sub_categories
 
-# class 
+class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
+    country_code = serializers.SerializerMethodField()
+    city = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    phone_no = serializers.SerializerMethodField()
+    gender = serializers.SerializerMethodField()
+    categories = serializers.SerializerMethodField()
+    sub_categories = serializers.SerializerMethodField()
+    date_of_birth = serializers.SerializerMethodField()
+    experience = serializers.SerializerMethodField()
+    address = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
+    cover_photo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TalentDetailsModel
+        fields = ["id","name","email","profile_picture","gender","state","city","country","country_code","phone_no","date_of_birth","experience",'booking_method',"address",\
+        "categories","sub_categories","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","portfolio",\
+        "cover_photo"]
+
+    def get_date_of_birth(self, obj):
+        return obj.user.date_of_birth
+
+    def get_experience(self, obj):
+        return obj.user.experience
+    def get_profile_picture(self, obj):
+        p_obj = obj.user.profile_picture
+        serializers= CreateUpdateUploadMediaSerializer(p_obj)
+        return serializers.data
+    def get_country(self, obj):
+        return obj.user.country
+    def get_city(self, obj):
+        return obj.user.city
+    def get_state(self, obj):
+        return obj.user.state
+    def get_cover_photo(self,obj):
+        image= obj.cover_photo
+        serializer = CreateUpdateUploadMediaSerializer(image)
+        return serializer.data
+    def get_name(self, obj):
+        return obj.user.first_name+" "+obj.user.last_name
+    def get_address(self, obj):
+        return obj.user.address
+    def get_email(self, obj):
+        return obj.user.email
+    def get_phone_no(self, obj):
+        return obj.user.phone_no
+    def get_country_code(self, obj):
+        return obj.user.country_code
+    def get_gender(self, obj):
+        return obj.user.gender
+    def get_categories(self, obj):
+        try:
+            categories = TalentCategoryModel.objects.filter(id__in=obj.categories)
+            cat_serializer = CategorySerializer(categories, many=True)
+            return cat_serializer.data
+        except:
+            return obj.categories
+    def get_sub_categories(self, obj):
+        try:
+            sub_categories = TalentSubCategoryModel.objects.select_related("category").filter(id__in=obj.sub_categories)
+            sub_cat_serializer = SubCategorySerializer(sub_categories, many=True)
+            return sub_cat_serializer.data
+        except:
+            return obj.sub_categories
+
+class bookingClientArtistDetailsSerializer(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    full_name = serializers.SerializerMethodField()
+    class Meta:
+        model = UserModel
+        fields = ["id","full_name","profile_picture"]
+
+    def get_full_name(self, obj):
+        return obj.first_name+" "+obj.last_name
+
+class ManageAddressBookingDetailsModule(serializers.ModelSerializer):
+    class Meta:
+        model = ManageAddressModel
+        fields = "__all__"
+
+#booking Module
+class BookingDetailsModule(serializers.ModelSerializer):
+    client = serializers.SerializerMethodField()
+    artist = serializers.SerializerMethodField()
+    address = serializers.SerializerMethodField()
+    profession= serializers.SerializerMethodField()   # category
+    description = serializers.SerializerMethodField()
+    service_fee = serializers.SerializerMethodField()
+    service = serializers.SerializerMethodField()   # sub-category
+    class Meta:
+        model = BookingTalentModel
+        fields = ["id","client","artist","profession","address","description","date","time","duration","offer_price","service_fee","service","status","currency"]
+
+    def get_client(self, obj):
+        id = obj.client
+        user = UserModel.objects.get(id =id)
+        serializer = bookingClientArtistDetailsSerializer(user)
+        return serializer.data
+    
+    def get_artist(self, obj):
+        id = obj.talent
+        user = UserModel.objects.get(id =id)
+        serializer = bookingClientArtistDetailsSerializer(user)
+        return serializer.data
+
+    def get_address(self, obj):
+        id = obj.address
+        address = ManageAddressModel.objects.get(id=id)
+        serializer = ManageAddressBookingDetailsModule(address)
+        return serializer.data
+
+    # def get_profession(self, obj):
+    #     id = obj.artist
+    #     category 
+        
+
+
+
         
 
