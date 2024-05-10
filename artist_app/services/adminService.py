@@ -434,10 +434,19 @@ class AdminService:
         pass
 
     # def  booking_details_listing(self, request):
-    #     book = BookingTalentModel.objects.all()
-    #     if not request.data["book_status"]:
-    #         serializer = adminSerializer.
+    #     try:
+    #         print("came here")
+    #         if not request.data.get("status"):
+    #             book = BookingTalentModel.objects.all()
+    #             serializer = adminSerializer.BookingDetailsModuleSerializer(book)
+    #         # elif request.data["status"]:
+    #         book = BookingTalentModel.objects.filter(status=request.data["status"])
+    #         serializer = adminSerializer.BookingDetailsModuleSerializer(book)
+
     #         return {"data":serializer.data,"messag":messages.USER_DETAILS_FETCHED,"status":200}
+    #     except Exception as e:
+    #         print(e)
+    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
 
 
