@@ -359,7 +359,7 @@ class GetSubAdminSerializer(serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id","username","country_code","email","phone_no","address","profile_picture", "permissions"]
+        fields = ["id","username", "email", "phone_no","profile_picture", "permissions"]
     def get_permissions(self, obj):
         try:
             p = PermissionModel.objects.filter(user=obj.id)
