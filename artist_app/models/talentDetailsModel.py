@@ -8,7 +8,7 @@ from artist_app.utils.choiceFields import HAIR_COLOR_CHOICES, EYE_COLOR_CHOICES,
 class TalentDetailsModel(BaseModel):
     
     #foreign keys
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
 
     #integer fields
     bust = models.IntegerField(help_text="in inches", blank=True, null=True)

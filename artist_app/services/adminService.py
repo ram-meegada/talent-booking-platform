@@ -408,10 +408,17 @@ class AdminService:
 # manage Artist
 
     def get_all_artist_Details(self, request):
+        users = UserModel.objects.filter(role=2)
+        users_id = [i.id for i in users]
         try:
-            user = TalentDetailsModel.objects.all()
-            serializer = adminSerializer.GetArtistDetailsSerializers(user,many = True)
-            return {"data":serializer.data,"messages":messages.USER_DETAILS_FETCHED,"status":200}
+            user = TalentDetailsModel.objects.filter(id__in=users_id)
+            pagination_obj = CustomPagination()
+            search_keys = ["first_name__icontains", "email__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                      adminSerializer.GetArtistDetailsSerializers, user)
+            return {"data":result,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            # serializer = adminSerializer.GetArtistDetailsSerializers(user,many = True)
+            # return {"data":serializer.data,"messages":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
             print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
@@ -427,7 +434,11 @@ class AdminService:
 
     def get_artist_by_id(self, request, id):
         try:
-            user = TalentDetailsModel.objects.get(id=id)
+            user_obj = UserModel.objects.get(id=id)
+        except:
+            return {"data":None,"messag":"User not found","status":400}
+        try:
+            user = TalentDetailsModel.objects.get(user_id=user_obj.id)
             serializer = adminSerializer.GetArtistDetailsByIdSerializer(user)
             return {"data":serializer.data,"messag":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
@@ -435,16 +446,28 @@ class AdminService:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def Update_artist_details_by_id(self, request, id):
-       pass
+        user_obj = UserModel.objects.get(id=id)
+        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=request.data["user_details"])
+        if user.is_valid():
+            user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
+
+        model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
+        model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=request.data["extra_details"])
+        if model_details.is_valid():
+            model_details.save(user_id=user_obj.id)
+        return {"data":None, "message":"Artist updated successfully" ,"status":201}
 
     def add_artist_through_admin(self, request):
         user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(data=request.data["user_details"])
         if user.is_valid():
-            user_obj = user.save()
-        request.data["extra_details"]["user"] = user_obj.id
+            user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
+            password = generate_password()
+            user_obj.set_password(password)
+            send_password_via_mail(request.data["email"], password)
+            user_obj.save()
         model_details = adminSerializer.CreateModelStatusSerializer(data=request.data["extra_details"])
         if model_details.is_valid():
-            model_details.save()
+            model_details.save(user_id=user_obj.id)
         return {"data":None, "message":"Artist added successfully" ,"status":201}
 
     # def  booking_details_listing(self, request):
