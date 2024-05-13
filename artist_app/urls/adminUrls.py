@@ -51,6 +51,7 @@ urlpatterns = [
     path("update-artist-details-by-id/<int:id>",adminView.UpdateArtistDetailsByIdView.as_view()),
     path("delete-artist-details-by-id/<int:id>",adminView.DeleteArtistByIdView.as_view()),
     path("add-artist",adminView.AddArtistThroughAdminView.as_view()),
+    path("verify-artist/<int:id>", adminView.VerifyArtistView.as_view()),
 
     # manage sub admin
     path("add-sub-admin", adminView.AddSubAdminView.as_view()),

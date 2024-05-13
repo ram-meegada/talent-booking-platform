@@ -9,3 +9,5 @@ from .termAndConditionModel import TermAndConditionModel
 from .bookingTalentModel import BookingTalentModel
 from .chatSessionModel import  ChatSessionModel
 from .chatStorageModel import ChatStorageModel
+from .operationalSlotsModel import OperationalSlotsModel
+from .permissionModel import PermissionModel

@@ -131,7 +131,7 @@ class DeleteCustomerByIdView(APIView):
     def delete(self, request, id):
         result = admin_obj.delete_subcategory_by_id(request, id)
         return Response(result, status=result["status"])
-        
+
 class UpdateStatusOfCustomerView(APIView):
     def put(self, request, id):
         result = admin_obj.change_status_of_customer_by_admin(request, id)
@@ -208,6 +208,10 @@ class FilterArtistBYnameView(APIView):
         result = admin_obj.Search_artist_by_name(request)
         return Response(result, status=result["status"])
 
+class VerifyArtistView(APIView):
+    def post(self, request, id):
+        result = admin_obj.verify_artist(request, id)
+        return Response(result, status=result["status"])
 
 
 ############## sub admin #####################

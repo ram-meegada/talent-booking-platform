@@ -417,7 +417,7 @@ class AdminService:
         users = UserModel.objects.filter(role=2)
         users_id = [i.id for i in users]
         try:
-            user = TalentDetailsModel.objects.filter(id__in=users_id)
+            user = TalentDetailsModel.objects.filter(user__in=users_id)
             pagination_obj = CustomPagination()
             search_keys = ["first_name__icontains", "email__icontains"]
             result = pagination_obj.custom_pagination(request, search_keys, \
@@ -596,3 +596,16 @@ class AdminService:
         except UserModel.DoesNotExist:
             return {"data":None,"message": "User not found", "status": 400}
 
+    def verify_artist(self, request, id):
+        VERIFICATION_STATUS = request.data["verification_status"]
+        try:
+            user = UserModel.objects.get(id=id)
+            user.verification_status = request.data["verification_status"]
+            user.save()
+            if VERIFICATION_STATUS == 1:
+                var = "approved"
+            else:
+                var = "rejected"    
+            return {"data":None, "message": f"Artist {var} successfully", "status": 200}
+        except UserModel.DoesNotExist:
+            return {"data":None,"message": "User not found", "status": 400}

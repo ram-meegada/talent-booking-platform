@@ -139,11 +139,12 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
     experience = serializers.SerializerMethodField()
     address = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
+    verification_status = serializers.SerializerMethodField()
 
     class Meta:
         model = TalentDetailsModel
         fields = ["id","name","email","profile_picture","gender","country_code","phone_no","date_of_birth",\
-                  "experience",'booking_method',"address","categories","sub_categories", "is_active"]
+                  "experience",'booking_method',"address","categories","sub_categories", "is_active", "verification_status"]
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
@@ -180,6 +181,11 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
             return sub_cat_serializer.data
         except:
             return obj.sub_categories
+    def get_verification_status(self, obj):
+        try:
+            return obj.user.get_verification_status_display()
+        except:
+            return obj.user.verification_status
 
 class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     country_code = serializers.SerializerMethodField()
