@@ -308,7 +308,6 @@ class AdminService:
             result = pagination_obj.custom_pagination(request, search_keys, \
                                                       adminSerializer.GetAllClientsDetailsSerializer, clients)
             # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
-            print(result, '--------------------')
             return {
                         "data":result["response_object"],
                         "total_records": result["total_records"],
@@ -423,7 +422,14 @@ class AdminService:
             search_keys = ["first_name__icontains", "email__icontains"]
             result = pagination_obj.custom_pagination(request, search_keys, \
                                                       adminSerializer.GetArtistDetailsSerializers, user)
-            return {"data":result,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message": "Artists fetched successfully", 
+                        "status":200
+                    }
             # serializer = adminSerializer.GetArtistDetailsSerializers(user,many = True)
             # return {"data":serializer.data,"messages":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:

@@ -66,7 +66,8 @@ class GetAllClientsDetailsSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id","full_name","email","phone_no","address", "is_active", "profile_picture"]
+        fields = ["id", "full_name", "email", "country_code", "phone_no", "address", "is_active", \
+                  "profile_picture", "city", "state", "country"]
 
     def get_full_name(self, obj):
         try:
@@ -141,8 +142,8 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = TalentDetailsModel
-        fields = ["id","name","email","profile_picture","gender","country_code","phone_no","date_of_birth","experience",'booking_method',"address","categories","sub_categories"]
-
+        fields = ["id","name","email","profile_picture","gender","country_code","phone_no","date_of_birth",\
+                  "experience",'booking_method',"address","categories","sub_categories", "is_active"]
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
