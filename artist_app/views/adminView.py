@@ -127,6 +127,15 @@ class DeleteCustomerByAdminView(APIView):
         result = admin_obj.delete_customer_by_admin(request, id)
         return Response(result, status=result["status"])
 
+class DeleteCustomerByIdView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_subcategory_by_id(request, id)
+        return Response(result, status=result["status"])
+        
+class UpdateStatusOfCustomerView(APIView):
+    def put(self, request, id):
+        result = admin_obj.change_status_of_customer_by_admin(request, id)
+        return Response(result, status=result["status"])
 
 #manage categories
 
@@ -164,10 +173,6 @@ class UpdateSubcategoryByIdView(APIView):
         result = admin_obj.update_subcategory_details(request,id)
         return Response(result, status=result["status"])
 
-class DeleteSubcategoryByIdView(APIView):
-    def delete(self, request, id):
-        result = admin_obj.delete_subcategory_by_id(request, id)
-        return Response(result, status=result["status"])
 
 
 
@@ -204,6 +209,8 @@ class FilterArtistBYnameView(APIView):
         return Response(result, status=result["status"])
 
 
+
+############## sub admin #####################
 
 class AddSubAdminView(APIView):
     def post(self, request):

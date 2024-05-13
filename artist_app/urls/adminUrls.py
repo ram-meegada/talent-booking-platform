@@ -30,6 +30,7 @@ urlpatterns = [
     path("customers-details-by-id/<int:id>",adminView.GetAllCustomerDetailsByidView.as_view()),
     path("edit-customer-by-id/<int:id>",adminView.updateCustomerDetailsByAdminView.as_view()),
     path("delete-customer-by-id/<int:id>",adminView.DeleteCustomerByAdminView.as_view()),
+    path("update-status-of-customer/<int:id>",adminView.UpdateStatusOfCustomerView.as_view()),
 
     # manage categories Urls
     path("category", adminView.AddTalentCategoryView.as_view()),
@@ -39,7 +40,6 @@ urlpatterns = [
     path("delete-category-by-id/<int:id>",adminView.DeleteCategoriesByIdView.as_view()),
     path("sub-category-based-on-category",adminView.GetAllSubCategoryBasedOnCategoryView.as_view()),
     path("sub-category/", adminView.AddTalentSubCategoryView.as_view()),
-    path("delete-subcategory-by-id/<int:id>",adminView.DeleteSubcategoryByIdView.as_view()),
     path("update-subcategory-by-id/<int:id>",adminView.UpdateSubcategoryByIdView.as_view()),
     path("get-subcategory-by-id/<int:id>",adminView.GetSubCategoryByIdView.as_view()),
 

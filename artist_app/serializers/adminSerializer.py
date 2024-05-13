@@ -44,7 +44,16 @@ class AdminVerifyOTPSerializer(serializers.ModelSerializer):
 class AddNewClientByAdminSeriaizer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ["id","email","first_name","last_name","phone_no","address","city","state","country", "profile_picture", "country_code"]
+        fields = ["id","email","first_name","last_name","phone_no","address","city","state","country", \
+                  "profile_picture", "country_code"]
+
+class GetClientByAdminSeriaizer(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    class Meta:
+        model = UserModel
+        fields = ["id","email","first_name","last_name","phone_no","address","city","state","country", \
+                  "profile_picture", "country_code"]
 
 
 class ManageAddressByAdminSerializer(serializers.ModelSerializer):
@@ -54,27 +63,17 @@ class ManageAddressByAdminSerializer(serializers.ModelSerializer):
 
 class GetAllClientsDetailsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    addresses = serializers.SerializerMethodField()
+    profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id","full_name","email","phone_no","addresses"]
+        fields = ["id","full_name","email","phone_no","address", "is_active", "profile_picture"]
 
     def get_full_name(self, obj):
         try:
             fullname=obj.first_name +" "+ obj.last_name
             return fullname
         except:
-            return None
-    
-    def get_addresses(self,obj):
-        print(obj,"11122222112")
-        try:
-            user_obj= ManageAddressModel.objects.filter(user_id=obj)
-            print(user_obj,"8888888888888")
-            serializer=ManageAddressByAdminSerializer(user_obj, many=True)
-            return serializer.data
-        except:
-            return None
+            return None    
 
 
 class ShowAdminDetialsByTokenSerializer(serializers.ModelSerializer):

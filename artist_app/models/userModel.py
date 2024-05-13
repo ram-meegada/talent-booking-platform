@@ -2,7 +2,8 @@ from django.db import models
 from artist_app.models.baseModel import BaseModel
 from django.contrib.auth.models import AbstractUser
 from artist_app.models.uploadMediaModel import UploadMediaModel
-from artist_app.utils.choiceFields import GENDER_CHOICES, ROLE_CHOICE, PROFILE_STATUS_CHOICES
+from artist_app.utils.choiceFields import GENDER_CHOICES, ROLE_CHOICE, PROFILE_STATUS_CHOICES,\
+                                          VERIFICATION_STATUS_CHOICES
 
 class UserModel(AbstractUser):
     #Email field
@@ -32,6 +33,7 @@ class UserModel(AbstractUser):
     role = models.IntegerField(choices=ROLE_CHOICE, blank=True, null=True)
     gender = models.IntegerField(choices = GENDER_CHOICES, blank = True, null = True)
     profile_status = models.IntegerField(choices=PROFILE_STATUS_CHOICES, default=0)
+    verification_status = models.IntegerField(choices=VERIFICATION_STATUS_CHOICES, default=0)
 
     #foreign keys
     profile_picture = models.ForeignKey(UploadMediaModel, on_delete = models.SET_NULL, null = True)

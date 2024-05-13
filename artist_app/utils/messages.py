@@ -43,6 +43,7 @@ MEDIA_UPLOADED = "Media uploaded successfully"
 UPDATE = "Update successfully."
 ADD = "Add successfully."
 DELETE = "delete successfully."
+CUSTOMER_DELETE = "Customer deleted successfully."
 
 ### FAQ
 QUESTION_FETCHED = "Question/answer fetched successfully"

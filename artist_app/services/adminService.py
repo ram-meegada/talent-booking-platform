@@ -272,7 +272,7 @@ class AdminService:
         except UserModel.DoesNotExist:
             return {"data": None,"message":messages.WENT_WRONG,"status":400}
         if user:
-            serializer = adminSerializer.AddNewClientByAdminSeriaizer(user)
+            serializer = adminSerializer.GetClientByAdminSeriaizer(user)
             return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
         else:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
@@ -288,7 +288,7 @@ class AdminService:
                 serializer.save()
                 return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
             else:
-                return {"data": None, "message":messages.WENT_WRONG,"status":400}
+                return {"data": serializer.errors, "message":messages.WENT_WRONG,"status":400}
         else:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
@@ -298,7 +298,7 @@ class AdminService:
         except UserModel.DoesNotExist:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
         user.delete()
-        return {"data": None, "message":messages.DELETE,"status":200}
+        return {"data": None, "message":messages.CUSTOMER_DELETE,"status":200}
 
     def get_all_customers(self, request):
         try:
@@ -309,7 +309,7 @@ class AdminService:
                                                       adminSerializer.GetAllClientsDetailsSerializer, clients)
             # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
             print(result, '--------------------')
-            return {"data":result,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            return {"data":result["response_object"], "message":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
             print(e, 'eeeeeeeeeeeeeeee')
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
@@ -463,8 +463,11 @@ class AdminService:
             user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
             password = generate_password()
             user_obj.set_password(password)
-            send_password_via_mail(request.data["email"], password)
+            send_password_via_mail(request.data["user_details"]["email"], password)
             user_obj.save()
+        else:
+            return {"data":user.errors, "message":"Something went wrong while adding artist" ,"status":400}
+
         model_details = adminSerializer.CreateModelStatusSerializer(data=request.data["extra_details"])
         if model_details.is_valid():
             model_details.save(user_id=user_obj.id)
@@ -570,3 +573,13 @@ class AdminService:
         if serializer.is_valid():
             serializer.save()
         return {"data": serializer.data,"message":get_message(request, 'FETCH'), "status": status.HTTP_200_OK}
+    
+    def change_status_of_customer_by_admin(self, request, id):
+        try:
+            customer = UserModel.objects.get(pk=id)
+            customer.is_active = request.data["is_active"]
+            customer.save()
+            return {"data":None,"message": "status updated successfully", "status": 200}
+        except UserModel.DoesNotExist:
+            return {"data":None,"message": "User not found", "status": 400}
+
