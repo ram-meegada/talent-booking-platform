@@ -14,7 +14,7 @@ class UserModel(AbstractUser):
     first_name = models.CharField(max_length=255, default="")
     last_name = models.CharField(max_length=255, default="")
     country_code = models.CharField(max_length=100, default="")
-    phone_no = models.CharField(max_length=100, default="")
+    phone_no = models.CharField(max_length=100, unique = True, blank=True, null=True)
     city = models.CharField(max_length = 100, default = "")
     state = models.CharField(max_length = 100, default = "")
     country = models.CharField(max_length = 100, default = "")
