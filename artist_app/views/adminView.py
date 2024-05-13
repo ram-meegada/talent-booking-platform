@@ -194,8 +194,8 @@ class UpdateArtistDetailsByIdView(APIView):
         return Response(result, status=result["status"])
 
 class AddArtistThroughAdminView(APIView):
-    def post(self, request, id):
-        result= admin_obj.add_artist_through_admin(request, id)
+    def post(self, request):
+        result= admin_obj.add_artist_through_admin(request)
         return Response(result, status=result["status"])
 
 class FilterArtistBYnameView(APIView):

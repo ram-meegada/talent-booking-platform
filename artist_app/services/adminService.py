@@ -438,7 +438,14 @@ class AdminService:
        pass
 
     def add_artist_through_admin(self, request):
-        pass
+        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(data=request.data["user_details"])
+        if user.is_valid():
+            user_obj = user.save()
+        request.data["extra_details"]["user"] = user_obj.id
+        model_details = adminSerializer.CreateModelStatusSerializer(data=request.data["extra_details"])
+        if model_details.is_valid():
+            model_details.save()
+        return {"data":None, "message":"Artist added successfully" ,"status":201}
 
     # def  booking_details_listing(self, request):
     #     try:

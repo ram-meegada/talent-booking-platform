@@ -44,7 +44,7 @@ class AdminVerifyOTPSerializer(serializers.ModelSerializer):
 class AddNewClientByAdminSeriaizer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ["id","email","first_name","last_name","phone_no","address","city","state","country"]
+        fields = ["id","email","first_name","last_name","phone_no","address","city","state","country", "profile_picture", "country_code"]
 
 
 class ManageAddressByAdminSerializer(serializers.ModelSerializer):
@@ -326,3 +326,14 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
 
         
 
+class CreateUpdateTalentUserByAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
+                  "date_of_birth", "experience", "address", "city", "state", "country")
+        
+class CreateModelStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TalentDetailsModel
+        fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color',\
+                   'eye_color', 'booking_method', 'portfolio', 'cover_photo', 'categories', 'sub_categories')        
