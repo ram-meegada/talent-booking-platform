@@ -49,6 +49,14 @@ urlpatterns = [
     path("update-artist-details-by-id/<int:id>",adminView.UpdateArtistDetailsByIdView.as_view()),
     path("delete-artist-details-by-id/<int:id>",adminView.DeleteArtistByIdView.as_view()),
     path("add-artist",adminView.AddArtistThroughAdminView.as_view()),
+
+    # manage sub admin
+    path("add-sub-admin", adminView.AddSubAdminView.as_view()),
+    path("update-sub-admin/<int:id>", adminView.UpdateSubAdminView.as_view()),
+    path("get-sub-admin/<int:id>", adminView.SubAdminByIdView.as_view()),
+    path("get-all-sub-admin", adminView.GetAllSubAdminView.as_view()),
+    path("delete-sub-admin/<int:id>", adminView.DeleteSubAdminByIdView.as_view()),
+
     
     # booking module Urls
     # path("get_booking_details",adminView.BookingDetailsView.as_view()),

@@ -203,6 +203,33 @@ class FilterArtistBYnameView(APIView):
         result = admin_obj.Search_artist_by_name(request)
         return Response(result, status=result["status"])
 
+
+
+class AddSubAdminView(APIView):
+    def post(self, request):
+        result = admin_obj.add_sub_admin(request)
+        return Response(result, status=result["status"])
+
+class UpdateSubAdminView(APIView):
+    def put(self, request, id):
+        result = admin_obj.update_sub_admin_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class SubAdminByIdView(APIView):
+    def get(self, request, id):
+        result = admin_obj.get_sub_admin_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class DeleteSubAdminByIdView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_sub_admin_by_id(request, id)
+        return Response(result, status=result["status"])
+
+class GetAllSubAdminView(APIView):
+    def post(self, request):
+        result = admin_obj.get_all_sub_admin(request)
+        return Response(result, status=result["status"])
+
 #booking module
 
 # class BookingDetailsView(APIView):

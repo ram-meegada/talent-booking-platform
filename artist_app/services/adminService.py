@@ -1,4 +1,4 @@
-
+from artist_app.models.permissionModel import PermissionModel
 from artist_app.utils import messages
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
@@ -485,5 +485,88 @@ class AdminService:
     #         print(e)
     #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
+    def add_sub_admin(self, request):
+        try:
+            data = request.data
+            user_serializer = adminSerializer.CreateSubAdminSerializer(data=data)
+            if user_serializer.is_valid():
+                user_data = user_serializer.save(profile_status=1)
+                password=generate_password()
+                user_data.set_password(password)
+                user_data.save()
+                password = generate_password()
+                user_data.set_password(password)
+                send_password_via_mail(request.data["email"], password)
+                user_data.save()
+                for i in request.data['permissions']:
+                    role_serializer = adminSerializer.CreateRolePermissionSubAdminSerializer(data=i)
+                    if role_serializer.is_valid():
+                        save_role_permission = role_serializer.save(user_id = user_serializer.data['id'])
+                        save_role_permission.save()
+                    else:
+                        return {'data':role_serializer.errors, 'status':400}    
+                return {'data':request.data, 'message': "Sub admin created",'status':201}
+            return {'data':user_serializer.errors,"message": "Something went wrong",'status':400}
+        except Exception as e:
+            return {"error": str(e),"message":"Something went wrong", "status": 400}
+        
+    def update_sub_admin_by_id(self, request, id):
+        user = UserModel.objects.filter(id = id).first()
+        if not user:
+            return {'data':None, "message":"User not found", 'status':400}
+        try:
+            data = {**request.data}
+            role_permission_data = data.pop("permissions")
+            user_serializer = adminSerializer.CreateSubAdminSerializer(user, data=data)
+            if user_serializer.is_valid():
+                user_data = user_serializer.save()
+                for i in role_permission_data:
+                    try:
+                        get_permission = PermissionModel.objects.get(id = i["id"])
+                        role_serializer = adminSerializer.CreateRolePermissionSubAdminSerializer(get_permission, data=i)
+                    except:
+                        role_serializer = adminSerializer.CreateRolePermissionSubAdminSerializer(data=i)
+                    if role_serializer.is_valid():
+                        save_role_permission = role_serializer.save(user_id = user.id)
+                    else:
+                        return {'data':role_serializer.errors, 'status':400}    
+                return {'data':request.data, 'message': "Sub admin updated successfully",'status':201}
+            return {'data':user_serializer.errors,"message":"Something went wrong",'status':400}
+        except Exception as e:
+            return {"error": str(e),"message":"Internal server error", "status": 500}
 
 
+
+    def get_all_sub_admin(self, request):
+        sub_obj = UserModel.objects.filter(role=4).order_by("created_at")
+        pagination_obj = CustomPagination()
+        search_keys = ["email__icontains"]
+        result = pagination_obj.custom_pagination(request, search_keys, adminSerializer.GetSubAdminSerializer, sub_obj)
+        return{'data': result,'message': "Sub admins fetched successfully", 'status': 200}
+    
+
+    def get_sub_admin_by_id(self,request, id):
+        try:
+            sub_obj = UserModel.objects.get(pk=id)
+        except UserModel.DoesNotExist:
+            return {"data":None,"message":"User not found", "status": 400}
+        serializer = adminSerializer.GetSubAdminSerializer(sub_obj)
+        return {"data": serializer.data,"message": "Sub admin details fetched successfully", "status": 200}
+
+    def delete_sub_admin_by_id(self,request, id):
+        try:
+            sub_obj = UserModel.objects.get(pk=id)
+        except UserModel.DoesNotExist:
+            return {"data":None,"message":"User not found", "status": 400}
+        sub_obj.delete()
+        return {"data": None, "message": "Sub admin deleted successfully", "status": 200}
+
+    def edit_sub_admin_status_by_id(self,request, sub_admin_id):
+        try:
+            sub_obj = User.objects.get(pk=sub_admin_id)
+        except User.DoesNotExist:
+            return {"data":None,"message":get_message(request, 'NOT_FOUND'), "status": status.HTTP_404_NOT_FOUND}
+        serializer = adminSerializer.GeteditSubAdminSerializer(sub_obj,request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return {"data": serializer.data,"message":get_message(request, 'FETCH'), "status": status.HTTP_200_OK}

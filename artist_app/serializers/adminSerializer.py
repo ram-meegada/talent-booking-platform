@@ -1,4 +1,4 @@
-
+from artist_app.models.permissionModel import PermissionModel
 from rest_framework import serializers
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
@@ -337,3 +337,34 @@ class CreateModelStatusSerializer(serializers.ModelSerializer):
         model = TalentDetailsModel
         fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color',\
                    'eye_color', 'booking_method', 'portfolio', 'cover_photo', 'categories', 'sub_categories')        
+        
+class CreateRolePermissionSubAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PermissionModel
+        fields = ['id','module','can_add_edit','can_view','can_be_delete']
+
+class GetRolePermissionSubAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PermissionModel
+        fields = ['id','module', 'can_add_edit', 'can_view', 'can_be_delete']
+
+class GetSubAdminSerializer(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    permissions = serializers.SerializerMethodField()
+    class Meta:
+        model = UserModel
+        fields = ["id","username","country_code","email","phone_no","address","profile_picture", "permissions"]
+    def get_permissions(self, obj):
+        try:
+            p = PermissionModel.objects.filter(user=obj.id)
+            serializer = GetRolePermissionSubAdminSerializer(p, many=True)
+            return serializer.data
+        except:
+            return None  
+
+class CreateSubAdminSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = UserModel
+        fields = ("id","name","email","phone_no","profile_picture",'role')
+        extra_kwargs = {'role': {'default': 4}}
