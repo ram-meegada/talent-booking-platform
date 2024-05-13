@@ -5,8 +5,9 @@ GENDER_CHOICES = [
 ]
 
 ROLE_CHOICE =[
-    (1,"CLIENT"),
-    (2,"TALENT"),
+    (1, "CLIENT"),
+    (2, "TALENT"),
+    (3, "ADMIN"),
 ]
 
 HAIR_COLOR_CHOICES = [

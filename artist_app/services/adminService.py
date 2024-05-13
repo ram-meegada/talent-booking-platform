@@ -5,15 +5,16 @@ from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.serializers import adminSerializer
 from artist_app.models.faqModel import FAQModel
 from artist_app.models import TermAndConditionModel
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from artist_app.serializers.adminSerializer import TermAndConditionsSerializer
 from artist_app.models import UserModel
 from rest_framework_simplejwt.tokens import RefreshToken
-from artist_app.utils.sendOtp import send_otp_via_mail,make_otp,make_password,\
+from artist_app.utils.sendOtp import send_otp_via_mail,make_otp,generate_password,\
                                      send_password_via_mail, generate_encoded_id
 from artist_app.models import ManageAddressModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
+from artist_app.utils.customPagination import CustomPagination
 
 class AdminService:
     def add_category(self, request):
@@ -248,10 +249,10 @@ class AdminService:
         try:
             serializer = adminSerializer.AddNewClientByAdminSeriaizer(data = request.data)
             if serializer.is_valid():
-                user = serializer.save()
-                password = make_password()
+                user = serializer.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=1)
+                password = generate_password()
                 user.set_password(password)
-                send_password_via_mail(request.data["email"])
+                send_password_via_mail(request.data["email"], password)
                 user.save()
                 address_location = request.data["address"]
                 client_address = ManageAddressModel.objects.create(
@@ -261,7 +262,7 @@ class AdminService:
                 client_address.save()
                 return {"data": None, "data":serializer.data,"status":200}
             else:
-                return {"data": None, "message":messages.WENT_WRONG,"status":400}
+                return {"data": serializer.errors, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
@@ -302,9 +303,15 @@ class AdminService:
     def get_all_customers(self, request):
         try:
             clients = UserModel.objects.filter(role=1)
-            serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
-            return {"data":serializer.data,"message":messages.USER_DETAILS_FETCHED,"status":200}
+            pagination_obj = CustomPagination()
+            search_keys = ["first_name__icontains", "email__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                      adminSerializer.GetAllClientsDetailsSerializer, clients)
+            # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
+            print(result, '--------------------')
+            return {"data":result,"message":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
+            print(e, 'eeeeeeeeeeeeeeee')
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
 

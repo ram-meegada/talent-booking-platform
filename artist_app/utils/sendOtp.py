@@ -21,8 +21,7 @@ def send_otp_via_mail(email, first_name="There"):
     print('mail sent opt')
     return message
 
-def send_password_via_mail(email,first_name = "what's up"):
-    message=make_password()
+def send_password_via_mail(email, message, first_name = "User"):
     name = first_name
     context={
         "password":message,
@@ -34,8 +33,8 @@ def send_password_via_mail(email,first_name = "what's up"):
     msg.send()
     
 
-def make_password():
-    password = "helloworld"
+def generate_password():
+    password = generate_encoded_id()
     return password
 def make_otp():
     # otp = "".join(str(random.randint(0,9))for _ in range(4))

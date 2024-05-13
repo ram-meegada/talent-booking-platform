@@ -25,7 +25,7 @@ urlpatterns = [
 
 
     # manage customer urls
-    path("fetch-all-customers",adminView.GetAllCustomerView.as_view()),
+    path("all-customers",adminView.GetAllCustomerView.as_view()),
     path("add-customer",adminView.AddCustomerByAdminView.as_view()),
     path("customers-details-by-id/<int:id>",adminView.GetAllCustomerDetailsByidView.as_view()),
     path("edit-customer-by-id/<int:id>",adminView.updateCustomerDetailsByAdminView.as_view()),

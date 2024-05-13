@@ -103,7 +103,7 @@ class LogOutView(APIView):
 #manage customers(clients)
 
 class GetAllCustomerView(APIView):
-    def get(self, request):
+    def post(self, request):
         result = admin_obj.get_all_customers(request)
         return Response(result, status=result["status"])
 

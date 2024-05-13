@@ -20,6 +20,7 @@ class UserModel(AbstractUser):
     otp = models.CharField(max_length = 255, default = "")
     password = models.CharField(max_length=500, default="")
     encoded_id = models.CharField(max_length=500, default="")
+    name = models.CharField(max_length=500, default="")
 
     #Boolean fields
     otp_email_verification = models.BooleanField(default = False)
