@@ -309,7 +309,14 @@ class AdminService:
                                                       adminSerializer.GetAllClientsDetailsSerializer, clients)
             # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
             print(result, '--------------------')
-            return {"data":result["response_object"], "message":messages.USER_DETAILS_FETCHED,"status":200}
+            return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message":messages.USER_DETAILS_FETCHED, 
+                        "status":200
+                    }
         except Exception as e:
             print(e, 'eeeeeeeeeeeeeeee')
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
