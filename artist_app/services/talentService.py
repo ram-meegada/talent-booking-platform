@@ -87,6 +87,7 @@ class TalentService:
             except UserModel.DoesNotExist:
                 return {"data": None, "message": messages.MOBILE_NOT_FOUND, "status": 400}
             var = "Phone number"
+            print(int((now - user.otp_sent_time).total_seconds()), '--------------')
             if int((now - user.otp_sent_time).total_seconds()) > 60:
                 return {"data": None, "message": "Otp expired", "status": 400}
             if user.otp == request.data["otp"]:
@@ -142,7 +143,7 @@ class TalentService:
                 user = UserModel.objects.get(email = email)
             except UserModel.DoesNotExist:
                 encoded_id = generate_encoded_id()
-                user = UserModel.objects.create(email=email, encoded_id=encoded_id)
+                user = UserModel.objects.create(email=email, encoded_id=encoded_id, role=2)
             Thread(target=send_otp_via_mail, args=[email, otp]).start()
             user.otp = otp
         elif "phone_no" in request.data:
@@ -151,7 +152,7 @@ class TalentService:
                 user = UserModel.objects.get(phone_no=phone_no)
             except UserModel.DoesNotExist:
                 encoded_id = generate_encoded_id()
-                user = UserModel.objects.create(phone_no=phone_no, encoded_id=encoded_id)
+                user = UserModel.objects.create(phone_no=phone_no, encoded_id=encoded_id, role=2)
             user.otp = otp
         user.otp_sent_time = datetime.now(tz=pytz.UTC)
         user.save()
@@ -234,7 +235,7 @@ class TalentService:
                     user.save()
             return {"data": request.data, "message": messages.DETAILS_UPDATED, "status": 200}
         except Exception as error:
-            return {"data": None, "message": messages.WENT_WRONG, "status": 400}
+            return {"data": str(error), "message": messages.WENT_WRONG, "status": 400}
 
     def sub_category_listing(self, request):
         """

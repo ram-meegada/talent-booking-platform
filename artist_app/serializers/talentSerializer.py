@@ -31,7 +31,7 @@ class GetTalentUserSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = ["id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
                   "date_of_birth", "experience", "address", "city", "state", "country", "otp_email_verification",\
-                  "otp_phone_no_verification", "profile_status", "token"]
+                  "otp_phone_no_verification", "profile_status", "encoded_id", "token"]
     def get_token(self, obj):
         if self.context.get("give_token"):
             token = generate_access_token(obj)

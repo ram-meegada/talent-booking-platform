@@ -146,7 +146,7 @@ class ClientService():
                 user = UserModel.objects.get(email = email)
             except UserModel.DoesNotExist:
                 encoded_id = generate_encoded_id()
-                user = UserModel.objects.create(email=email, encoded_id=encoded_id)
+                user = UserModel.objects.create(email=email, encoded_id=encoded_id, role=1)
             Thread(target=send_otp_via_mail, args=[email, otp]).start()
             user.otp = otp
         elif "phone_no" in request.data:
@@ -155,7 +155,7 @@ class ClientService():
                 user = UserModel.objects.get(phone_no=phone_no)
             except UserModel.DoesNotExist:
                 encoded_id = generate_encoded_id()
-                user = UserModel.objects.create(phone_no=phone_no, encoded_id=encoded_id)
+                user = UserModel.objects.create(phone_no=phone_no, encoded_id=encoded_id, role=1)
             user.otp = otp
         user.otp_sent_time = datetime.now(tz=pytz.UTC)
         user.save()
@@ -390,7 +390,7 @@ class ClientService():
         try:
             serializer = BookingDetailsSerializer(data = request.data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(status=1)
                 return {"data":serializer.data,"status":200}
             else:
                 return{"message":serializer.errors, "status":400}
