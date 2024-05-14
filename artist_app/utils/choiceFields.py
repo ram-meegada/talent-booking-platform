@@ -1,7 +1,6 @@
 GENDER_CHOICES = [
     (1, "MALE"),
-    (2, "FEMALE"),
-    (3, "OTHER"),
+    (2, "FEMALE")
 ]
 
 ROLE_CHOICE =[
@@ -51,9 +50,10 @@ ADDRESS_CHOICE = [
 
 
 BOOKING_STATUS =[
-    (1,"OFFER SENT"),
-    (2,"OFFER ACCEPTED"),
-    (2,"OFFER DECLINED"),
+    (1,"PENDING"),
+    (2,"ACCEPTED"),
+    (3,"DECLINED"),
+    (4,"CANCELLED"),
 ]
 
 MODULE_CHOICES = [

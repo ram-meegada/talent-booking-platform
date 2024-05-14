@@ -30,6 +30,7 @@ urlpatterns = [
     path("customers-details-by-id/<int:id>",adminView.GetAllCustomerDetailsByidView.as_view()),
     path("edit-customer-by-id/<int:id>",adminView.updateCustomerDetailsByAdminView.as_view()),
     path("delete-customer-by-id/<int:id>",adminView.DeleteCustomerByAdminView.as_view()),
+    path("customer-bookings/<int:id>", adminView.BookingsOfCustomerView.as_view()),
 
     #
     path("update-status-of-user/<int:id>",adminView.UpdateStatusOfCustomerView.as_view()),
@@ -54,6 +55,7 @@ urlpatterns = [
     path("delete-artist-details-by-id/<int:id>",adminView.DeleteArtistByIdView.as_view()),
     path("add-artist",adminView.AddArtistThroughAdminView.as_view()),
     path("verify-artist/<int:id>", adminView.VerifyArtistView.as_view()),
+    path("artist-bookings/<int:id>", adminView.BookingsOfArtistView.as_view()),
 
     # manage sub admin
     path("add-sub-admin", adminView.AddSubAdminView.as_view()),
@@ -63,8 +65,9 @@ urlpatterns = [
     path("delete-sub-admin/<int:id>", adminView.DeleteSubAdminByIdView.as_view()),
 
     
-    #booking module Urls
-    # path("get_booking_details",adminView.BookingDetailsView.as_view()),
+    # booking module Urls
+    path("bookings", adminView.AllBookingsView.as_view()),
+    path("booking/<int:id>", adminView.BookingdetaisByIdView.as_view()),
 
 
 

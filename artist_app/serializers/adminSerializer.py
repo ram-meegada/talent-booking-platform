@@ -11,7 +11,7 @@ from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
 # from artist_python_backend.artist_app.models import manageAddressModel
-
+from artist_app.serializers.Clientserializer import TalentBasicDetails
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -128,6 +128,7 @@ class SubcategoryDetailsByCategoryIdSerializer(serializers.ModelSerializer):
 
 
 class GetArtistDetailsSerializers(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     country_code = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
@@ -148,6 +149,9 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
+    
+    def get_id(self, obj):
+        return obj.user.id
 
     def get_experience(self, obj):
         return obj.user.experience
@@ -374,3 +378,23 @@ class CreateSubAdminSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = ("id","name","email","phone_no","profile_picture",'role')
         extra_kwargs = {'role': {'default': 4}}
+
+class BookingsSerializer(serializers.ModelSerializer):
+    talent = TalentBasicDetails()
+    client = TalentBasicDetails()
+    address = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    class Meta:
+        model = BookingTalentModel
+        fields = ["id", "talent", "client", "address", "date", "time", "duration", "offer_price", "comment",\
+                   "currency", "status"]
+    def get_address(self, obj):
+        try:
+            return obj.client.address
+        except Exception as e:
+            return None    
+    def get_status(self, obj):
+        try:
+            return obj.get_status_display()
+        except Exception as e:
+            return obj.status

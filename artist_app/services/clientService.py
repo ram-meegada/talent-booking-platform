@@ -379,8 +379,8 @@ class ClientService():
 
     def view_talent_all_details_by_id(self, request,id):
         try:
-            talent = TalentDetailsModel.objects.get(id=id)
-            serializer = TalentDetailsBasedOnSubcategories(talent)
+            talent = UserModel.objects.get(id=id)
+            serializer = TalentBasicDetails(talent)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             print(e)
@@ -390,14 +390,14 @@ class ClientService():
 #----------------------------booking proposal -------------------------------
     def book_talent(self , request):
         try:
-            serializer = BookingDetailsSerializer(data = request.data)
+            serializer = BookingDetailsSerializer(data = request.data, context={"request": request})
             if serializer.is_valid():
                 serializer.save(status=1)
                 return {"data":serializer.data,"status":200}
             else:
                 return{"message":serializer.errors, "status":400}
         except Exception as e:
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": str(e), "message":messages.WENT_WRONG,"status":400}
 
     def get_booking_details_by_id(self, request, id):
         try:

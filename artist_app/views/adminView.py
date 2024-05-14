@@ -107,6 +107,11 @@ class GetAllCustomerView(APIView):
         result = admin_obj.get_all_customers(request)
         return Response(result, status=result["status"])
 
+class BookingsOfCustomerView(APIView):
+    def post(self, request, id):
+        result = admin_obj.bookings_of_customer(request, id)
+        return Response(result, status=result["status"])
+
 class GetAllCustomerDetailsByidView(APIView):
     def get(self, request, id):
         result = admin_obj.get_custome_details_by_id(request, id)
@@ -198,6 +203,11 @@ class UpdateArtistDetailsByIdView(APIView):
         result = admin_obj.Update_artist_details_by_id(request, id)
         return Response(result, status=result["status"])
 
+class BookingsOfArtistView(APIView):
+    def post(self, request, id):
+        result = admin_obj.bookings_of_artist(request, id)
+        return Response(result, status=result["status"])
+
 class AddArtistThroughAdminView(APIView):
     def post(self, request):
         result= admin_obj.add_artist_through_admin(request)
@@ -241,12 +251,17 @@ class GetAllSubAdminView(APIView):
         result = admin_obj.get_all_sub_admin(request)
         return Response(result, status=result["status"])
 
-#booking module
+####### booking module
 
-# class BookingDetailsView(APIView):
-#     def post(self, request):
-#         result = admin_obj.booking_details_listing(request)
-#         return Response(result, status=result["status"])
+class AllBookingsView(APIView):
+    def post(self, request):
+        result = admin_obj.all_bookings(request)
+        return Response(result, status=result["status"])
+
+class BookingdetaisByIdView(APIView):
+    def get(self, request, id):
+        result = admin_obj.booking_details_by_id(request, id)
+        return Response(result, status=result["status"])
 
 
         

@@ -48,7 +48,9 @@ class TalentBasedOnSubcategories(serializers.ModelSerializer):
 class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
-        fields =["id","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","booking_method","portfolio","cover_photo"]
+        fields =["id","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color",\
+                 "booking_method","portfolio","cover_photo", "categories", "sub_categories"]
+
 class TalentBasicDetails(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     professional_details = serializers.SerializerMethodField()
@@ -72,6 +74,7 @@ class BookingProposalSerializers(serializers.ModelSerializer):
 
 
 class BookingDetailsSerializer(serializers.ModelSerializer):
+    client = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = BookingTalentModel
         fields = "__all__"

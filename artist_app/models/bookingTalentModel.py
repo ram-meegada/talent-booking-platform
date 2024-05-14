@@ -6,7 +6,7 @@ from artist_app.utils.choiceFields import BOOKING_STATUS
 
 class BookingTalentModel(BaseModel):
     # Foreign Keys
-    talent = models.ForeignKey(TalentDetailsModel, on_delete=models.CASCADE)
+    talent = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="talent_booking_user")
     address = models.ForeignKey(ManageAddressModel, on_delete=models.CASCADE)
     client = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     # booking details
@@ -14,7 +14,7 @@ class BookingTalentModel(BaseModel):
 
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
-    duration = models.IntegerField(null=True, blank=True)
+    duration = models.IntegerField(null=True, blank=True, help_text="in hours")
     status = models.IntegerField(choices=BOOKING_STATUS, blank=True, null=True)
     offer_price = models.IntegerField(default=0)
     comment = models.TextField(default="")

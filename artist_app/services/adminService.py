@@ -320,6 +320,30 @@ class AdminService:
         except Exception as e:
             print(e, 'eeeeeeeeeeeeeeee')
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
+        
+    def bookings_of_customer(self, request, id):
+        if request.data["key"] == 1:
+            bookings = BookingTalentModel.objects.filter(client=id)
+        elif request.data["key"] == 2:
+            bookings = BookingTalentModel.objects.filter(client=id, status=2)
+        elif request.data["key"] == 3:
+            bookings = BookingTalentModel.objects.filter(client=id, status=1)
+        elif request.data["key"] == 4:
+            bookings = BookingTalentModel.objects.filter(client=id, status=4)
+        elif request.data["key"] == 5:
+            bookings = BookingTalentModel.objects.filter(client=id, status=3)
+        pagination_obj = CustomPagination()
+        search_keys = ["talent__email__icontains", "client__email__icontains"]
+        result = pagination_obj.custom_pagination(request, search_keys, \
+                                                    adminSerializer.BookingsSerializer, bookings)
+        return {
+                    "data":result["response_object"],
+                    "total_records": result["total_records"],
+                    "start": result["start"],
+                    "length": result["length"], 
+                    "message": "Artists fetched successfully", 
+                    "status":200
+                }    
 
 
 # manage categories
@@ -498,6 +522,30 @@ class AdminService:
         if model_details.is_valid():
             model_details.save(user_id=user_obj.id)
         return {"data":None, "message":"Artist updated successfully" ,"status":201}
+    
+    def bookings_of_artist(self, request, id):
+        if request.data["key"] == 1:
+            bookings = BookingTalentModel.objects.filter(talent=id)
+        elif request.data["key"] == 2:
+            bookings = BookingTalentModel.objects.filter(talent=id, status=2)
+        elif request.data["key"] == 3:
+            bookings = BookingTalentModel.objects.filter(talent=id, status=1)
+        elif request.data["key"] == 4:
+            bookings = BookingTalentModel.objects.filter(talent=id, status=4)
+        elif request.data["key"] == 5:
+            bookings = BookingTalentModel.objects.filter(talent=id, status=3)
+        pagination_obj = CustomPagination()
+        search_keys = ["talent__email__icontains", "client__email__icontains"]
+        result = pagination_obj.custom_pagination(request, search_keys, \
+                                                    adminSerializer.BookingsSerializer, bookings)
+        return {
+                    "data":result["response_object"],
+                    "total_records": result["total_records"],
+                    "start": result["start"],
+                    "length": result["length"], 
+                    "message": "Artists fetched successfully", 
+                    "status":200
+                }
 
     def add_artist_through_admin(self, request):
         data = {"user_details": {}, "extra_details": {}}
@@ -671,11 +719,20 @@ class AdminService:
             return {"data":None,"message": "User not found", "status": 400}
         
     def all_bookings(self, request):
-        bookings = BookingTalentModel.objects.all()
+        if request.data["key"] == 1:
+            bookings = BookingTalentModel.objects.all()
+        elif request.data["key"] == 2:
+            bookings = BookingTalentModel.objects.filter(status=2)
+        elif request.data["key"] == 3:
+            bookings = BookingTalentModel.objects.filter(status=1)
+        elif request.data["key"] == 4:
+            bookings = BookingTalentModel.objects.filter(status=4)
+        elif request.data["key"] == 5:
+            bookings = BookingTalentModel.objects.filter(status=3)
         pagination_obj = CustomPagination()
-        search_keys = ["talent____icontains", "email__icontains"]
+        search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
-                                                    adminSerializer.GetArtistDetailsSerializers, user)
+                                                    adminSerializer.BookingsSerializer, bookings)
         return {
                     "data":result["response_object"],
                     "total_records": result["total_records"],
@@ -684,3 +741,11 @@ class AdminService:
                     "message": "Artists fetched successfully", 
                     "status":200
                 }
+    
+    def booking_details_by_id(self, request, id):
+        try:
+            booking = BookingTalentModel.objects.get(id=id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        serializer = adminSerializer.BookingsSerializer(booking)
+        return {"data": serializer.data, "message": "Booking details fetched successfully", "status": 400}
