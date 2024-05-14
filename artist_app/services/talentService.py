@@ -3,6 +3,7 @@ from threading import Thread
 from artist_app.utils import messages
 from artist_app.serializers import talentSerializer, adminSerializer
 from artist_app.models.userModel import UserModel
+from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
@@ -43,7 +44,10 @@ class TalentService:
             if user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
                 user_obj.profile_status = 1
                 user_obj.save()
-                return {"data": serializer.data, "message": "Account created successfully", "status": 201}
+                media_url = UploadMediaModel.objects.filter(id=serializer.data["profile_picture"]).first()
+                data = {**serializer.data}
+                data["profile_picture"] = media_url.media_file_url
+                return {"data": data, "message": "Account created successfully", "status": 201}
             if not user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
                 user_obj.otp = otp
                 user_obj.otp_sent_time = datetime.now(tz=pytz.UTC)
