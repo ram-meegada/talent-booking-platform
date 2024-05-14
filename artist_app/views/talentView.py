@@ -69,7 +69,11 @@ class ClientdeclineParamenterListing(APIView):
         return Response(result, status=result["status"])
 
 class AddSlotsView(APIView):
-    permission_classes = [AllowAny]
     def post(self, request):
         result= talent_service.add_slots(request)
+        return Response(result, status=result["status"])
+
+class AllCategoriesView(APIView):
+    def get(self, request):
+        result= talent_service.all_categories(request)
         return Response(result, status=result["status"])

@@ -16,6 +16,9 @@ urlpatterns = [
     path("past-booked-client-list",talentView.ClientPastBookingListing.as_view()),
     path("cancel-booked-client-list",talentView.ClientdeclineParamenterListing.as_view()),
 
+    path("all-categories", talentView.AllCategoriesView.as_view()),
+    path("sub-categories", talentView.SubCategoryListingView.as_view()),
+
     path("add-slots", talentView.AddSlotsView.as_view()),
 
 ]

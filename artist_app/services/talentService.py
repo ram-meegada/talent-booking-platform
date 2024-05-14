@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from datetime import datetime, date
+from artist_app.models.talentCategoryModel import TalentCategoryModel
 
 class TalentService:    
     def user_signup(self, request):
@@ -301,4 +302,10 @@ class TalentService:
     def add_slots(self, request):
         # print(date.today(), '----------------------')
         payload_date = request.data[0]["date"]
+        stripped_payload_date = datetime.strptime(payload_date, "%Y-%m-%d").date()
+        print(stripped_payload_date, '--------------------')
         return {"data": str(date.today()), "message": "Slots generated successfully", "status": 200}
+    
+    def all_categories(self, request):
+        categories = TalentCategoryModel.objects.values()
+        return {"data": categories, "message": "Categories listing fetched successfully", "status": 200}
