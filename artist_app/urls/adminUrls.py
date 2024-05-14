@@ -1,5 +1,5 @@
 from django.urls import path
-from artist_app.views import adminView
+from artist_app.views import adminView, talentView
 
 urlpatterns = [
     #  admin onboarding urls
@@ -45,6 +45,8 @@ urlpatterns = [
     path("update-subcategory-by-id/<int:id>",adminView.UpdateSubcategoryByIdView.as_view()),
     path("get-subcategory-by-id/<int:id>",adminView.GetSubCategoryByIdView.as_view()),
 
+    path("sub-categories", talentView.SubCategoryListingView.as_view()),
+
     #manage artist urls
     path("get-all-artist-details",adminView.GetAllArtistDetialsView.as_view()),
     path("get-artist-details-by-id/<int:id>",adminView.GetArtistDetailsByIdView.as_view()),
@@ -61,7 +63,7 @@ urlpatterns = [
     path("delete-sub-admin/<int:id>", adminView.DeleteSubAdminByIdView.as_view()),
 
     
-    # booking module Urls
+    #booking module Urls
     # path("get_booking_details",adminView.BookingDetailsView.as_view()),
 
 

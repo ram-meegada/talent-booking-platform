@@ -577,15 +577,15 @@ class AdminService:
         sub_obj.delete()
         return {"data": None, "message": "Sub admin deleted successfully", "status": 200}
 
-    def edit_sub_admin_status_by_id(self,request, sub_admin_id):
-        try:
-            sub_obj = User.objects.get(pk=sub_admin_id)
-        except User.DoesNotExist:
-            return {"data":None,"message":get_message(request, 'NOT_FOUND'), "status": status.HTTP_404_NOT_FOUND}
-        serializer = adminSerializer.GeteditSubAdminSerializer(sub_obj,request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return {"data": serializer.data,"message":get_message(request, 'FETCH'), "status": status.HTTP_200_OK}
+    # def edit_sub_admin_status_by_id(self,request, sub_admin_id):
+    #     try:
+    #         sub_obj = User.objects.get(pk=sub_admin_id)
+    #     except User.DoesNotExist:
+    #         return {"data":None,"message":get_message(request, 'NOT_FOUND'), "status": status.HTTP_404_NOT_FOUND}
+    #     serializer = adminSerializer.GeteditSubAdminSerializer(sub_obj,request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #     return {"data": serializer.data,"message":get_message(request, 'FETCH'), "status": status.HTTP_200_OK}
     
     def change_status_of_customer_by_admin(self, request, id):
         try:
@@ -609,3 +609,18 @@ class AdminService:
             return {"data":None, "message": f"Artist {var} successfully", "status": 200}
         except UserModel.DoesNotExist:
             return {"data":None,"message": "User not found", "status": 400}
+        
+    def all_bookings(self, request):
+        bookings = BookingTalentModel.objects.all()
+        pagination_obj = CustomPagination()
+        search_keys = ["talent____icontains", "email__icontains"]
+        result = pagination_obj.custom_pagination(request, search_keys, \
+                                                    adminSerializer.GetArtistDetailsSerializers, user)
+        return {
+                    "data":result["response_object"],
+                    "total_records": result["total_records"],
+                    "start": result["start"],
+                    "length": result["length"], 
+                    "message": "Artists fetched successfully", 
+                    "status":200
+                }
