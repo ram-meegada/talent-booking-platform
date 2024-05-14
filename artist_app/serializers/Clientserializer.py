@@ -40,22 +40,30 @@ class SubCategories(serializers.ModelSerializer):
         model = TalentSubCategoryModel
         fields =["name"]
 class TalentBasedOnSubcategories(serializers.ModelSerializer):
-    class Meta:
-        model = TalentDetailsModel
-        fields = '__all__'
-
-class TalentBasicDetails(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
-        model = UserModel
-        fields = ["first_name","last_name","profile_picture","experience","phone_no","city","country","state"]
-
+        model = TalentDetailsModel
+        fields = fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color', 'eye_color', 'booking_method')
 
 class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
-    user = TalentBasicDetails()
     class Meta:
         model = TalentDetailsModel
-        fields =["id", "user","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","booking_method","portfolio","cover_photo"]
+        fields =["id","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","booking_method","portfolio","cover_photo"]
+class TalentBasicDetails(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    professional_details = serializers.SerializerMethodField()
+    class Meta:
+        model = UserModel
+        fields = ["id", "first_name","last_name","profile_picture","experience","phone_no","city","country",\
+                  "state", "professional_details"]
+    def get_professional_details(self, obj):
+        details = TalentDetailsModel.objects.filter(user=obj.id).first()
+        if details:
+            serializer = TalentDetailsBasedOnSubcategories(details)
+            return serializer.data
+        else:
+            return {}    
+
 
 class BookingProposalSerializers(serializers.ModelSerializer):
     pass

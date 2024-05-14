@@ -15,6 +15,7 @@ from artist_app.models import ManageAddressModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.utils.customPagination import CustomPagination
+from threading import Thread
 
 class AdminService:
     def add_category(self, request):
@@ -459,31 +460,90 @@ class AdminService:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def Update_artist_details_by_id(self, request, id):
+        data = {"user_details": {}, "extra_details": {}}
+        data["user_details"]["first_name"] = request.data["first_name"]
+        data["user_details"]["last_name"] = request.data["last_name"]
+        data["user_details"]["email"] = request.data["email"]
+        data["user_details"]["phone_no"] = request.data["phone_no"]
+        data["user_details"]["date_of_birth"] = request.data["date_of_birth"]
+        data["user_details"]["experience"] = request.data["experience"]
+        data["user_details"]["gender"] = request.data["gender"]
+        data["user_details"]["country_code"] = request.data["country_code"]
+        data["user_details"]["address"] = request.data["address"]
+        data["user_details"]["city"] = request.data["city"]
+        data["user_details"]["state"] = request.data["state"]
+        data["user_details"]["country"] = request.data["country"]
+        data["user_details"]["profile_picture"] = request.data["profile_picture"]
+
+        data["extra_details"]["bust"] = request.data["bust"]
+        data["extra_details"]["waist"] = request.data["waist"]
+        data["extra_details"]["hips"] = request.data["hips"]
+        data["extra_details"]["height_feet"] = request.data["height_feet"]
+        data["extra_details"]["height_inches"] = request.data["height_inches"]
+        data["extra_details"]["weight"] = request.data["weight"]
+        data["extra_details"]["hair_color"] = request.data["hair_color"]
+        data["extra_details"]["eye_color"] = request.data["eye_color"]
+        data["extra_details"]["booking_method"] = request.data["booking_method"]
+        data["extra_details"]["portfolio"] = [request.data["portfolio"]]
+        data["extra_details"]["cover_photo"] = request.data["cover_photo"]
+        data["extra_details"]["categories"] = request.data["categories"]
+        data["extra_details"]["sub_categories"] = request.data["sub_categories"]
         user_obj = UserModel.objects.get(id=id)
-        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=request.data["user_details"])
+        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
         if user.is_valid():
             user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
 
         model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
-        model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=request.data["extra_details"])
+        model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=data["extra_details"])
         if model_details.is_valid():
             model_details.save(user_id=user_obj.id)
         return {"data":None, "message":"Artist updated successfully" ,"status":201}
 
     def add_artist_through_admin(self, request):
-        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(data=request.data["user_details"])
+        data = {"user_details": {}, "extra_details": {}}
+        data["user_details"]["first_name"] = request.data["first_name"]
+        data["user_details"]["last_name"] = request.data["last_name"]
+        data["user_details"]["email"] = request.data["email"]
+        data["user_details"]["phone_no"] = request.data["phone_no"]
+        data["user_details"]["date_of_birth"] = request.data["date_of_birth"]
+        data["user_details"]["experience"] = request.data["experience"]
+        data["user_details"]["gender"] = request.data["gender"]
+        data["user_details"]["country_code"] = request.data["country_code"]
+        data["user_details"]["address"] = request.data["address"]
+        data["user_details"]["city"] = request.data["city"]
+        data["user_details"]["state"] = request.data["state"]
+        data["user_details"]["country"] = request.data["country"]
+        data["user_details"]["profile_picture"] = request.data["profile_picture"]
+
+        data["extra_details"]["bust"] = request.data["bust"]
+        data["extra_details"]["waist"] = request.data["waist"]
+        data["extra_details"]["hips"] = request.data["hips"]
+        data["extra_details"]["height_feet"] = request.data["height_feet"]
+        data["extra_details"]["height_inches"] = request.data["height_inches"]
+        data["extra_details"]["weight"] = request.data["weight"]
+        data["extra_details"]["hair_color"] = request.data["hair_color"]
+        data["extra_details"]["eye_color"] = request.data["eye_color"]
+        data["extra_details"]["booking_method"] = request.data["booking_method"]
+        data["extra_details"]["portfolio"] = [request.data["portfolio"]]
+        data["extra_details"]["cover_photo"] = request.data["cover_photo"]
+        data["extra_details"]["categories"] = request.data["categories"]
+        data["extra_details"]["sub_categories"] = request.data["sub_categories"]
+
+        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(data=data["user_details"])
         if user.is_valid():
             user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
             password = generate_password()
             user_obj.set_password(password)
-            send_password_via_mail(request.data["user_details"]["email"], password)
+            Thread(target=send_password_via_mail, args=(data["user_details"]["email"], password)).start()
             user_obj.save()
         else:
             return {"data":user.errors, "message":"Something went wrong while adding artist" ,"status":400}
 
-        model_details = adminSerializer.CreateModelStatusSerializer(data=request.data["extra_details"])
+        model_details = adminSerializer.CreateModelStatusSerializer(data=data["extra_details"])
         if model_details.is_valid():
             model_details.save(user_id=user_obj.id)
+        else:
+            return {"data":model_details.errors, "message":"Something went wrong while adding artist" ,"status":400}
         return {"data":None, "message":"Artist added successfully" ,"status":201}
 
     # def  booking_details_listing(self, request):
