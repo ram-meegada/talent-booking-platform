@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 from artist_app.models.bookingTalentModel import BookingTalentModel
+from datetime import datetime, date
 
 class TalentService:    
     def user_signup(self, request):
@@ -292,6 +293,8 @@ class TalentService:
             return {"data":serializer.data,"status":200}
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
-
-
-
+        
+    def add_slots(self, request):
+        # print(date.today(), '----------------------')
+        payload_date = request.data[0]["date"]
+        return {"data": str(date.today()), "message": "Slots generated successfully", "status": 200}

@@ -8,6 +8,8 @@ class OperationalSlotsModel(BaseModel):
     day = models.CharField(max_length=100)
     start = models.TimeField()
     end = models.TimeField()
+
+    date = models.DateField(blank=True, null=True)
     
     class Meta:
         db_table = "Operational slots"

@@ -19,7 +19,7 @@ class CreateUpdateTalentUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
-                  "date_of_birth", "experience", "address", "city", "state", "country", "token")
+                  "date_of_birth", "experience", "address", "city", "state", "country", "token", 'profile_status')
     def get_token(self, obj):
         token = generate_access_token(obj)
         return token    
@@ -42,7 +42,8 @@ class GetTalentUserSerializer(serializers.ModelSerializer):
 class CreateModelStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
-        fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color', 'eye_color', 'booking_method')
+        fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color',\
+                   'eye_color', 'booking_method')
         
 class TalentUserDetailsByTokenSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
@@ -57,7 +58,8 @@ class TalentUserDetailsByTokenSerializer(serializers.ModelSerializer):
     sub_categories = serializers.SerializerMethodField()
     class Meta:
         model = TalentDetailsModel
-        fields = ('id', 'full_name', 'profile_picture', 'email', 'phone_no', 'address', 'weight', 'hair_color', 'eye_color', 'categories', 'sub_categories')
+        fields = ('id', 'full_name', 'profile_picture', 'email', 'phone_no', 'address', \
+                  'weight', 'hair_color', 'eye_color', 'categories', 'sub_categories', 'profile_status')
 
     def get_full_name(self, obj):
         return obj.user.first_name + " " + obj.user.last_name

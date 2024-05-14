@@ -62,7 +62,14 @@ class ClientPastBookingListing(APIView):
     def get(self, request):
         result = talent_service.past_client_booking_listing(request)
         return Response(result, status=result["status"])
+
 class ClientdeclineParamenterListing(APIView):
     def get(self, request):
         result= talent_service.cancel_client_booking_list(request)
+        return Response(result, status=result["status"])
+
+class AddSlotsView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        result= talent_service.add_slots(request)
         return Response(result, status=result["status"])

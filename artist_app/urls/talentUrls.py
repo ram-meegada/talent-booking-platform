@@ -10,12 +10,12 @@ urlpatterns = [
     path("verify-otp", talentView.VerifyMailOrPhoneView.as_view()),
     path("resend-otp", talentView.ResendOtpView.as_view()),
 
-    
     path("update-profile", talentView.ProfileSetUpAndUpdateView.as_view()),
     path("profile-details", talentView.TalentUserDetailsView.as_view()),
     path("upcoming-bookings-listing",talentView.ClientUpcomingBookingListing.as_view()),
     path("past-booked-client-list",talentView.ClientPastBookingListing.as_view()),
-    path("cancel-booked-client-list",talentView.ClientdeclineParamenterListing.as_view())
+    path("cancel-booked-client-list",talentView.ClientdeclineParamenterListing.as_view()),
 
+    path("add-slots", talentView.AddSlotsView.as_view()),
 
 ]
