@@ -441,12 +441,12 @@ class AdminService:
 # manage Artist
 
     def get_all_artist_Details(self, request):
-        if request.data["verification_status"] == 1:
+        if request.data["verification_status"] == 0:
+            users = UserModel.objects.filter(role=2, verification_status=0)
+        elif request.data["verification_status"] == 1:
             users = UserModel.objects.filter(role=2, verification_status=1)
         elif request.data["verification_status"] == 2:
             users = UserModel.objects.filter(role=2, verification_status=2)
-        elif request.data["verification_status"] == 3:
-            users = UserModel.objects.filter(role=2, verification_status=3)
         users_id = [i.id for i in users]
         try:
             user = TalentDetailsModel.objects.filter(user__in=users_id)
