@@ -37,8 +37,7 @@ SUB_CATEGORIES_LISTING = "Sub-categories listing fetched successfully"
 
 ### Media
 MEDIA_UPLOADED = "Media uploaded successfully"
-
-
+FETCH = "Fetched data"
 ### Crud 
 UPDATE = "Update successfully."
 ADD = "Add successfully."

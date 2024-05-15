@@ -262,7 +262,55 @@ class BookingdetaisByIdView(APIView):
     def get(self, request, id):
         result = admin_obj.booking_details_by_id(request, id)
         return Response(result, status=result["status"])
+####Dashboard module
 
+class DashboardKPIView(APIView):
+    def get(self, request):
+        result = admin_obj.kpi(request)
+        return Response(result, status=result["status"])
+
+class CustomerChartView(APIView):
+    def post(self, request):
+        result= admin_obj.client_chart(request)
+        return Response(result, status= result["status"])
+
+class RevenueChartView(APIView):
+    def post(self, request):
+        result = admin_obj.revenue_chart(request)
+        return Response(result, status=result["status"])
+
+class ArtistChartView(APIView):
+    def post(self, request):
+        result = admin_obj.artist_chart(request)
+        return Response(result, status=result["status"])
+
+class BookingChartView(APIView):
+    def post(self, request):
+        result = admin_obj.booking_chart(request)
+        return Response(result, status=result["status"])
+
+##privacy police
+
+# class AddPrivacyPolicy(APIView):
+#     def post(self, request):
+#         result = admin_obj.add_privacy_poicy(self, request)
+#         return Response(result, status=result["status"])
+
+# class GetPrivacyPolicy(APIView):
+#     def get(self, request):
+#         result = admin_obj.get_privacy_policy(self, request)
+#         return Response(result, status=result["status"])
+# #customer support
+
+# class AddCustomerSupport(APIView):
+#     def post(self, request):
+#         result = admin_obj.add_customer_support(self, request)
+#         return Response(result, status=result["status"])
+
+# class getCustomerSupport(APIView):
+#     def get(self, request):
+#         result = admin_obj.get_customer_support(self, request)
+#         return Response(result, status=result["status"])
 
         
 

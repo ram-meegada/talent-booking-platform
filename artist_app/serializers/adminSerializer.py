@@ -398,3 +398,4 @@ class BookingsSerializer(serializers.ModelSerializer):
             return obj.get_status_display()
         except Exception as e:
             return obj.status
+
