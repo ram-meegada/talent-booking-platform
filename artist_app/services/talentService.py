@@ -216,8 +216,17 @@ class TalentService:
                 user.name = user_payload["first_name"] + " " + user_payload["last_name"]
                 user.save()
             if categories_payload:
-                talent_details.categories = categories_payload["categories"]
-                talent_details.sub_categories = categories_payload["sub_categories"]
+                categories = [i["category_id"] for i in request.data["category"]]
+                sub_categories = []
+                for i in request.data["category"]:
+                    if i["subcategory_id"]:
+                        sub_categories += i["subcategory_id"]
+                    else:
+                        crt = TalentSubCategoryModel.objects.create(name=i["subcategory_text"], 
+                                                                    category_id=i["category_id"])    
+                # return
+                talent_details.categories = categories
+                talent_details.sub_categories = sub_categories
                 talent_details.save()
                 if user.profile_status == 1:
                     user.profile_status = 2
