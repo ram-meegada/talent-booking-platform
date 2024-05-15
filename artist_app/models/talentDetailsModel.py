@@ -29,6 +29,7 @@ class TalentDetailsModel(BaseModel):
     #others
     categories = ArrayField(models.IntegerField(), default=list)
     sub_categories = ArrayField(models.IntegerField(), default=list)
+    services = models.JSONField(default=list)
 
     class Meta:
         db_table = "Talent details"

@@ -19,6 +19,7 @@ class BookingTalentModel(BaseModel):
     offer_price = models.IntegerField(default=0)
     comment = models.TextField(default="")
     currency = models.CharField(max_length=10, null=True, blank=True)
+    services = models.JSONField(default=list)
 
 
     class Meta:

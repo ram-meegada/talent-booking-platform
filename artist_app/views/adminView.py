@@ -219,7 +219,7 @@ class FilterArtistBYnameView(APIView):
         return Response(result, status=result["status"])
 
 class VerifyArtistView(APIView):
-    def post(self, request, id):
+    def patch(self, request, id):
         result = admin_obj.verify_artist(request, id)
         return Response(result, status=result["status"])
 

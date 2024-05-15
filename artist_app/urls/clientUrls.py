@@ -13,13 +13,16 @@ urlpatterns = [
     path("all-address",clientView.ShowAllAddressesDetailsView.as_view()),
     path("delete-address/<int:id>",clientView.DeleteClientAddressDetailsBYIDView.as_view()),
 
-        #######3############# category listing #####################
+    #################### category listing #####################
     path("category",clientView.ListingAllCategories.as_view()),
     path("sub-categories",clientView.ListingAllSubCategoriesBasedOnCategories.as_view()),
-    path("talent-detials",clientView.ListingAllTalent.as_view()),
+
+    ############### booking #####################
+    path("talent-detials", clientView.ListingAllTalent.as_view()),
     path("talent-detials-by-id/<int:id>",clientView.TalentDetailsById.as_view()),
     path("book-talent",clientView.BookTalentView.as_view()),
     path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),
+    path("all-services/<int:id>", clientView.FetchAllTalentServicesView.as_view()),
     
     
     

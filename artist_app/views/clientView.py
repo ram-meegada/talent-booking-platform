@@ -86,3 +86,8 @@ class GetAllBookTalentDetails(APIView):
     def get(self, request, id):
         result = userservice.get_booking_details_by_id(request, id)
         return Response(result,status=result["status"])
+
+class FetchAllTalentServicesView(APIView):
+    def get(self, request, id):
+        result = userservice.talent_services(request, id)
+        return Response(result,status=result["status"])

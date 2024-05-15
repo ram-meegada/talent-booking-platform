@@ -417,3 +417,12 @@ class ClientService():
     def filter_talent(self, request):
         filters = Q()
         pass
+
+    def talent_services(self, request, id):
+        try:
+            talent_obj = TalentDetailsModel.objects.get(user_id=id)
+        except TalentDetailsModel.DoesNotExist:
+            return {"data": None, "message": "Data not found", "status":400}
+        return {"data": talent_obj.services, "message": "Services fetched successfully", "status": 200}
+
+

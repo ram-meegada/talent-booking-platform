@@ -46,18 +46,52 @@ class TalentBasedOnSubcategories(serializers.ModelSerializer):
         fields = fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color', 'eye_color', 'booking_method')
 
 class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
+    hair_color = serializers.SerializerMethodField()
+    eye_color = serializers.SerializerMethodField()
+    booking_method = serializers.SerializerMethodField()
+    portfolio = serializers.SerializerMethodField()
+    cover_photo = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = TalentDetailsModel
         fields =["id","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color",\
                  "booking_method","portfolio","cover_photo", "categories", "sub_categories"]
+    def get_hair_color(self, obj):
+        try:
+            return obj.get_hair_color_display()
+        except:
+            return obj.hair_color
+    def get_eye_color(self, obj):
+        try:
+            return obj.get_eye_color_display()
+        except:
+            return obj.eye_color
+    def get_booking_method(self, obj):
+        try:
+            return obj.get_booking_method_display()
+        except:
+            return obj.booking_method
+    def get_portfolio(self, obj):
+        data = []
+        try:
+            for i in obj.portfolio:
+                media = UploadMediaModel.objects.filter(id=i).first()
+                if media:
+                    data.append(CreateUpdateUploadMediaSerializer(media).data)
+                else:
+                    pass
+            return data        
+        except:
+            return obj.portfolio
 
 class TalentBasicDetails(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     professional_details = serializers.SerializerMethodField()
+    services = serializers.SerializerMethodField()
+    gender = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id", "first_name","last_name","profile_picture","experience","phone_no","city","country",\
-                  "state", "profile_status", "professional_details"]
+        fields = ["id", "first_name","last_name","profile_picture", "gender", "experience","phone_no","city","country",\
+                  "state", "profile_status", "professional_details", "services"]
     def get_professional_details(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()
         if details:
@@ -65,6 +99,17 @@ class TalentBasicDetails(serializers.ModelSerializer):
             return serializer.data
         else:
             return {}    
+    def get_gender(self, obj):
+        try:
+            return obj.get_gender_display()
+        except:
+            return obj.gender
+    def get_services(self, obj):
+        details = TalentDetailsModel.objects.filter(user=obj.id).first()
+        if details:
+            return details.services
+        else:
+            return []
 
 
 class BookingProposalSerializers(serializers.ModelSerializer):
