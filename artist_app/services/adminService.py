@@ -1,3 +1,4 @@
+from shutil import ExecError
 from artist_app.models.permissionModel import PermissionModel
 from artist_app.utils import messages
 from artist_app.models.talentCategoryModel import TalentCategoryModel
@@ -16,6 +17,7 @@ from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.utils.customPagination import CustomPagination
 from threading import Thread
+from django.utils import timezone
 
 class AdminService:
     def add_category(self, request):
@@ -749,3 +751,287 @@ class AdminService:
             return {"data": None, "message": "Record not found", "status": 400}
         serializer = adminSerializer.BookingsSerializer(booking)
         return {"data": serializer.data, "message": "Booking details fetched successfully", "status": 400}
+
+###### Dashboard Module
+
+
+    def kpi(self, request):
+        kpi_s ={}
+        kpi_s["Total_customers"]=UserModel.objects.filter(role=1, is_deleted=False).count()
+        kpi_s["Total_booking"]=0
+        kpi_s["Total_Artist"]=UserModel.objects.filter(role=2).count()
+        return {"data":kpi_s,"message":messages.FETCH,"status":200}
+
+
+    def client_chart(self, request):
+        interval = request.data.get("interval")
+        now = timezone.now()
+
+        filtered_users = UserModel.objects.filter(role=1)
+        if not interval:
+            current_year = now.year
+            start_date = timezone.datetime(current_year, 1, 1).date()
+            end_date = now.date()
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
+                date_counts[current_date.strftime("%Y-%m")] = count
+                current_date = current_date.replace(month=current_date.month + 1)
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+            
+            return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+
+
+        if interval == "daily":
+            start_date = timezone.datetime(now.year, now.month, 1).date()
+            end_date = now.date()
+            delta = timezone.timedelta(days=1)
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__date=current_date).count()
+                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                current_date += delta
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        elif interval == "weekly":
+            last_4_weeks = now - timezone.timedelta(weeks=4)
+            start_date = last_4_weeks.date()
+            end_date = now.date()
+            delta = timezone.timedelta(weeks=1)
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__date__range=[current_date, current_date + delta]).count()
+                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                current_date += delta
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        elif interval == "monthly":
+            current_year = now.year
+            start_date = timezone.datetime(current_year, 1, 1).date()
+            end_date = now.date()
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
+                date_counts[current_date.strftime("%Y-%m")] = count
+                current_date = current_date.replace(month=current_date.month + 1)
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        else:
+            return {"data":None,'message': messages.WENT_WRONG, "status":400}
+        
+        return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+
+    def artist_chart(self, request):
+        interval = request.data.get("interval")
+        now = timezone.now()
+
+        filtered_users = UserModel.objects.filter(role=2)
+        if not interval:
+            current_year = now.year
+            start_date = timezone.datetime(current_year, 1, 1).date()
+            end_date = now.date()
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
+                date_counts[current_date.strftime("%Y-%m")] = count
+                current_date = current_date.replace(month=current_date.month + 1)
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+            
+            return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+
+
+        if interval == "daily":
+            start_date = timezone.datetime(now.year, now.month, 1).date()
+            end_date = now.date()
+            delta = timezone.timedelta(days=1)
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__date=current_date).count()
+                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                current_date += delta
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        elif interval == "weekly":
+            last_4_weeks = now - timezone.timedelta(weeks=4)
+            start_date = last_4_weeks.date()
+            end_date = now.date()
+            delta = timezone.timedelta(weeks=1)
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__date__range=[current_date, current_date + delta]).count()
+                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                current_date += delta
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        elif interval == "monthly":
+            current_year = now.year
+            start_date = timezone.datetime(current_year, 1, 1).date()
+            end_date = now.date()
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
+                date_counts[current_date.strftime("%Y-%m")] = count
+                current_date = current_date.replace(month=current_date.month + 1)
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        else:
+            return {"data":None,'message': messages.WENT_WRONG, "status":400}
+        
+        return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+
+    def revenue_chart(self, request):
+        pass
+
+    def booking_chart(self, request):
+        interval = request.data.get("interval")
+        now = timezone.now()
+
+        filtered_users = BookingTalentModel.objects.all()
+        if not interval:
+            current_year = now.year
+            start_date = timezone.datetime(current_year, 1, 1).date()
+            end_date = now.date()
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
+                date_counts[current_date.strftime("%Y-%m")] = count
+                current_date = current_date.replace(month=current_date.month + 1)
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+            
+            return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+
+
+        if interval == "daily":
+            start_date = timezone.datetime(now.year, now.month, 1).date()
+            end_date = now.date()
+            delta = timezone.timedelta(days=1)
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__date=current_date).count()
+                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                current_date += delta
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        elif interval == "weekly":
+            last_4_weeks = now - timezone.timedelta(weeks=4)
+            start_date = last_4_weeks.date()
+            end_date = now.date()
+            delta = timezone.timedelta(weeks=1)
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__date__range=[current_date, current_date + delta]).count()
+                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                current_date += delta
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        elif interval == "monthly":
+            current_year = now.year
+            start_date = timezone.datetime(current_year, 1, 1).date()
+            end_date = now.date()
+            date_counts = {}
+
+            current_date = start_date
+            while current_date <= end_date:
+                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
+                date_counts[current_date.strftime("%Y-%m")] = count
+                current_date = current_date.replace(month=current_date.month + 1)
+            
+            # Organize data into label and value arrays
+            labels = list(date_counts.keys())
+            values = list(date_counts.values())
+
+        else:
+            return {"data":None,'message': messages.WENT_WRONG, "status":400}
+        
+        return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+
+## Manage CMs
+
+    # def add_privacy_poicy(self, request):
+    #     try:
+    #         serializer = adminSerializer.TermAndConditionsSerializer(data = request.data)
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             return {"data":serializer.data,"message":messages.ADD,"status":200}
+    #         else:
+    #             return {"data":None,"message":messages.WENT_WRONG,"status":400}
+    #     except Exception as e:
+    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
+
+    # def get_privacy_policy(self, request):
+    #     pass
+
+    # def add_customer_support(self, request):
+    #     try:
+    #         serializer = adminSerializer.CustomerSupport(data=request.data)
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             return {"data":serializer.data,"message":messages.ADD,"status":200}
+    #         else:
+    #             return {"data":None,"message":messages.WENT_WRONG,"status":400}
+    #     except Exception as e:
+    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
+
+
+    # def get_customer_support(self, request):
+    #     try:
+    #         data = CustomerSupportModel.objects.all()
+    #         serializer = adminSerializer.CustomerSupport(data,many = True)
+    #         return {"data":serializer.data,"message":messages.ADD,"status":200}
+    #     except Exception as e:
+    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}

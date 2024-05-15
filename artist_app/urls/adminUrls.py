@@ -70,5 +70,15 @@ urlpatterns = [
     path("booking/<int:id>", adminView.BookingdetaisByIdView.as_view()),
 
 
+    # Dashboard module urls
+
+    path("kpi",adminView.DashboardKPIView.as_view()),
+    path("client_chart",adminView.CustomerChartView.as_view()),
+    path("revenue_chart",adminView.RevenueChartView.as_view()),
+    path("artist_chart",adminView.ArtistChartView.as_view()),
+    path("booking_chart",adminView.BookingChartView.as_view()),
+
+
+
 
 ]
