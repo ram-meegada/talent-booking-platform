@@ -258,7 +258,8 @@ class TalentService:
             if cat_obj:
                 all_sub_categories = TalentSubCategoryModel.objects.filter(category=cat_obj.id)
                 serializer = adminSerializer.SubCategorySerializer(all_sub_categories, many=True)
-                response_dict[cat_obj.name] = serializer.data
+                response_dict["Categoryname"] = cat_obj.name
+                response_dict["CategoryData"] = serializer.data
                 response.append(response_dict)
             else:
                 pass
