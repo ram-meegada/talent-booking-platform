@@ -49,11 +49,11 @@ urlpatterns = [
     path("sub-categories", talentView.SubCategoryListingView.as_view()),
 
     #manage artist urls
-    path("get-all-artist-details",adminView.GetAllArtistDetialsView.as_view()),
-    path("get-artist-details-by-id/<int:id>",adminView.GetArtistDetailsByIdView.as_view()),
-    path("update-artist-details-by-id/<int:id>",adminView.UpdateArtistDetailsByIdView.as_view()),
-    path("delete-artist-details-by-id/<int:id>",adminView.DeleteArtistByIdView.as_view()),
-    path("add-artist",adminView.AddArtistThroughAdminView.as_view()),
+    path("get-all-artist-details", adminView.GetAllArtistDetialsView.as_view()),
+    path("get-artist-details-by-id/<int:id>", adminView.GetArtistDetailsByIdView.as_view()),
+    path("update-artist-details-by-id/<int:id>", adminView.UpdateArtistDetailsByIdView.as_view()),
+    path("delete-artist-details-by-id/<int:id>", adminView.DeleteArtistByIdView.as_view()),
+    path("add-artist", adminView.AddArtistThroughAdminView.as_view()),
     path("verify-artist/<int:id>", adminView.VerifyArtistView.as_view()),
     path("artist-bookings/<int:id>", adminView.BookingsOfArtistView.as_view()),
 

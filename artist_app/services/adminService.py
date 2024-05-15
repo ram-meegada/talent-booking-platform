@@ -521,8 +521,10 @@ class AdminService:
         data["extra_details"]["sub_categories"] = request.data["sub_categories"]
         user_obj = UserModel.objects.get(id=id)
         user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
+        NAME = request.data["first_name"] + " " + request.data["last_name"]
         if user.is_valid():
-            user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
+            user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, \
+                                 profile_status=1, role=2, name=NAME)
 
         model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
         model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=data["extra_details"])
@@ -556,7 +558,8 @@ class AdminService:
 
     def add_artist_through_admin(self, request):
         data = {"user_details": {}, "extra_details": {}}
-        data["user_details"]["name"] = request.data["name"]
+        data["user_details"]["first_name"] = request.data["first_name"]
+        data["user_details"]["last_name"] = request.data["last_name"]
         data["user_details"]["email"] = request.data["email"]
         data["user_details"]["phone_no"] = request.data["phone_no"]
         data["user_details"]["date_of_birth"] = request.data["date_of_birth"]
@@ -584,8 +587,10 @@ class AdminService:
         data["extra_details"]["sub_categories"] = request.data["sub_categories"]
 
         user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(data=data["user_details"])
+        NAME = request.data["first_name"] + " " + request.data["last_name"]
         if user.is_valid():
-            user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, profile_status=1, role=2)
+            user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True,\
+                                 profile_status=1, role=2, name=NAME)
             password = generate_password()
             user_obj.set_password(password)
             Thread(target=send_password_via_mail, args=(data["user_details"]["email"], password)).start()

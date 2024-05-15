@@ -197,6 +197,8 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     state = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
     phone_no = serializers.SerializerMethodField()
     gender = serializers.SerializerMethodField()
@@ -214,7 +216,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TalentDetailsModel
-        fields = ["id","name","email","profile_picture","gender","state","city","country","country_code",\
+        fields = ["id", "first_name", "last_name", "name","email","profile_picture","gender","state","city","country","country_code",\
                   "phone_no","date_of_birth","experience",'booking_method',"address", "categories","sub_categories",\
                   "bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","portfolio",\
                   "cover_photo"]
@@ -248,6 +250,10 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
         return serializer.data
     def get_name(self, obj):
         return obj.user.name
+    def get_first_name(self, obj):
+        return obj.user.first_name
+    def get_last_name(self, obj):
+        return obj.user.last_name
     def get_address(self, obj):
         return obj.user.address
     def get_email(self, obj):
@@ -360,7 +366,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
 class CreateUpdateTalentUserByAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ("id", "profile_picture", "name", "email", "gender", "country_code", "phone_no",\
+        fields = ("id", "profile_picture", "first_name", "last_name", "email", "gender", "country_code", "phone_no",\
                   "date_of_birth", "experience", "address", "city", "state", "country")
         
 class CreateModelStatusSerializer(serializers.ModelSerializer):
