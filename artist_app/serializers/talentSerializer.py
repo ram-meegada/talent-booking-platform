@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from artist_app.utils.sendOtp import generate_access_token
-
+from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.models.userModel import UserModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentCategoryModel import TalentCategoryModel
@@ -59,7 +59,7 @@ class TalentUserDetailsByTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
         fields = ('id', 'full_name', 'profile_picture', 'email', 'phone_no', 'address', \
-                  'weight', 'hair_color', 'eye_color', 'categories', 'sub_categories', 'profile_status')
+                  'weight', 'hair_color', 'eye_color', 'categories', 'sub_categories')
 
     def get_full_name(self, obj):
         return obj.user.first_name + " " + obj.user.last_name
@@ -111,3 +111,7 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
         model = BookingTalentModel
         fields = ["id","client","offer_price","time","date","status","currency"]
     
+class SlotsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OperationalSlotsModel
+        fields = ["id", "user", "day", "start", "end", "date", "is_active"]

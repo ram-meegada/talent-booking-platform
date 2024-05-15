@@ -68,12 +68,19 @@ class ClientdeclineParamenterListing(APIView):
         result= talent_service.cancel_client_booking_list(request)
         return Response(result, status=result["status"])
 
-class AddSlotsView(APIView):
-    def post(self, request):
-        result= talent_service.add_slots(request)
-        return Response(result, status=result["status"])
-
 class AllCategoriesView(APIView):
     def get(self, request):
         result= talent_service.all_categories(request)
+        return Response(result, status=result["status"])
+
+
+############# slots ###############
+class GenerateSlotsView(APIView):
+    def post(self, request):
+        result = talent_service.add_slots(request)
+        return Response(result, status=result["status"])
+
+class FetchWeeklyTimingsView(APIView):
+    def get(self, request):
+        result = talent_service.fetch_weekly_timings(request)
         return Response(result, status=result["status"])

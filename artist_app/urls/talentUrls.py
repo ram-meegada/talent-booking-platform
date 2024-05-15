@@ -19,6 +19,7 @@ urlpatterns = [
     path("all-categories", talentView.AllCategoriesView.as_view()),
     path("sub-categories", talentView.SubCategoryListingView.as_view()),
 
-    path("add-slots", talentView.AddSlotsView.as_view()),
+    path("add-slots", talentView.GenerateSlotsView.as_view()),
+    path("week-timings", talentView.FetchWeeklyTimingsView.as_view()),
 
 ]

@@ -13,6 +13,7 @@ from django.db.models import Q
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from datetime import datetime, date
 from artist_app.models.talentCategoryModel import TalentCategoryModel
+from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 
 class TalentService:    
     def user_signup(self, request):
@@ -250,16 +251,27 @@ class TalentService:
         """
         #payload
         categories = request.data["categories"]
-        all_sub_categories = TalentSubCategoryModel.objects.filter(category__in=categories)
-        serializer = adminSerializer.SubCategorySerializer(all_sub_categories, many=True)
-        return {"data": serializer.data, "message": messages.SUB_CATEGORIES_LISTING, "status": 200}
+        response = []
+        for cat in categories:
+            response_dict = {}
+            cat_obj = TalentCategoryModel.objects.filter(id=cat).first()
+            if cat_obj:
+                all_sub_categories = TalentSubCategoryModel.objects.filter(category=cat_obj.id)
+                serializer = adminSerializer.SubCategorySerializer(all_sub_categories, many=True)
+                response_dict[cat_obj.name] = serializer.data
+                response.append(response_dict)
+            else:
+                pass
+        return {"data": response, "message": messages.SUB_CATEGORIES_LISTING, "status": 200}
 
     def log_out(self, request):
         pass
 
     def user_details_by_token(self, request):
-        user = TalentDetailsModel.objects.select_related("user").get(user_id=request.user.id)
-        serializer = talentSerializer.TalentUserDetailsByTokenSerializer(user)
+        # user = TalentDetailsModel.objects.select_related("user").get(user_id=request.user.id)
+        # serializer = talentSerializer.TalentUserDetailsByTokenSerializer(user)
+        user = UserModel.objects.get(id=request.user.id)
+        serializer = adminSerializer.TalentBasicDetails(user)
         return {"data": serializer.data, "message": messages.USER_DETAILS_FETCHED, "status": 200}
     # Booking details from talent
 
@@ -299,13 +311,54 @@ class TalentService:
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
         
-    def add_slots(self, request):
-        # print(date.today(), '----------------------')
-        payload_date = request.data[0]["date"]
-        stripped_payload_date = datetime.strptime(payload_date, "%Y-%m-%d").date()
-        print(stripped_payload_date, '--------------------')
-        return {"data": str(date.today()), "message": "Slots generated successfully", "status": 200}
     
     def all_categories(self, request):
         categories = TalentCategoryModel.objects.values()
         return {"data": categories, "message": "Categories listing fetched successfully", "status": 200}
+
+
+################################# slots #################################
+
+    def add_slots(self, request):
+        day_representations = {0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 
+                               4: "Friday", 5: "Saturday", 6: "Sunday"}
+        try:
+            required_date = date.today()
+            week_day_num = required_date.weekday()
+            for i in range(week_day_num):
+                required_date -= timedelta(days=1) 
+            for i in range(0, 7):
+                find_user_slot = OperationalSlotsModel.objects.filter(
+                                                                        user=request.user.id, 
+                                                                        date=required_date
+                                                                     ).first()
+                payload_data = {
+                    "user": request.user.id,
+                    "day": day_representations[i],
+                    "start" : request.data[i]["start"],
+                    "end" : request.data[i]["end"],
+                    "date" : required_date,
+                    "is_active": request.data[i]["is_active"]
+                }
+                if find_user_slot:
+                    serializer = talentSerializer.SlotsSerializer(find_user_slot, data=payload_data)
+                    if serializer.is_valid():
+                        serializer.save()
+                    else:
+                        return {"data": serializer.errors, "message": "Something went wrong", "status": 400}
+                elif not find_user_slot:
+                    serializer = talentSerializer.SlotsSerializer(data=payload_data)
+                    if serializer.is_valid():
+                        serializer.save()
+                    else:
+                        return {"data": serializer.errors, "message": "Something went wrong", "status": 400}
+                required_date += timedelta(days=1)
+            return {"data": request.data, "message": "Slots updated successfully for this week", "status": 200}
+        except Exception as error:
+            return {"data": str(error), "message": "Something went wrong", "status": 400}
+
+    def fetch_weekly_timings(self, request):
+        all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id)
+        serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
+        return {"data": serializer.data, "message": "Weekly timings fetched successfullt", "status": 200}
+    
