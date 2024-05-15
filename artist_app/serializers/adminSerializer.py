@@ -206,16 +206,27 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     experience = serializers.SerializerMethodField()
     address = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
-    cover_photo = serializers.SerializerMethodField()
+    cover_photo = CreateUpdateUploadMediaSerializer()
+    portfolio = serializers.SerializerMethodField()
+    booking_method = serializers.SerializerMethodField()
+    hair_color = serializers.SerializerMethodField()
+    eye_color = serializers.SerializerMethodField()
 
     class Meta:
         model = TalentDetailsModel
-        fields = ["id","name","email","profile_picture","gender","state","city","country","country_code","phone_no","date_of_birth","experience",'booking_method',"address",\
-        "categories","sub_categories","bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","portfolio",\
-        "cover_photo"]
+        fields = ["id","name","email","profile_picture","gender","state","city","country","country_code",\
+                  "phone_no","date_of_birth","experience",'booking_method',"address", "categories","sub_categories",\
+                  "bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","portfolio",\
+                  "cover_photo"]
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
+    def get_date_of_birth(self, obj):
+        return obj.user.date_of_birth
+    def get_hair_color(self, obj):
+        return obj.get_hair_color_display()
+    def get_eye_color(self, obj):
+        return obj.get_eye_color_display()
 
     def get_experience(self, obj):
         return obj.user.experience
@@ -225,6 +236,8 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
         return serializers.data
     def get_country(self, obj):
         return obj.user.country
+    def get_booking_method(self, obj):
+        return obj.get_booking_method_display()
     def get_city(self, obj):
         return obj.user.city
     def get_state(self, obj):
@@ -234,7 +247,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
         serializer = CreateUpdateUploadMediaSerializer(image)
         return serializer.data
     def get_name(self, obj):
-        return obj.user.first_name+" "+obj.user.last_name
+        return obj.user.name
     def get_address(self, obj):
         return obj.user.address
     def get_email(self, obj):
@@ -244,7 +257,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_country_code(self, obj):
         return obj.user.country_code
     def get_gender(self, obj):
-        return obj.user.gender
+        return obj.user.get_gender_display()
     def get_categories(self, obj):
         try:
             categories = TalentCategoryModel.objects.filter(id__in=obj.categories)
@@ -259,6 +272,14 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
             return sub_cat_serializer.data
         except:
             return obj.sub_categories
+    def get_portfolio(self, obj):
+        try:
+            media = UploadMediaModel.objects.filter(id=obj.portfolio[0]).first()
+            if media:
+                serializer = CreateUpdateUploadMediaSerializer(media)
+                return serializer.data
+        except:
+            return obj.portfolio[0]
 
 # class bookingClientArtistDetailsSerializer(serializers.ModelSerializer):
 #     profile_picture = CreateUpdateUploadMediaSerializer()
@@ -339,7 +360,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
 class CreateUpdateTalentUserByAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
+        fields = ("id", "profile_picture", "name", "email", "gender", "country_code", "phone_no",\
                   "date_of_birth", "experience", "address", "city", "state", "country")
         
 class CreateModelStatusSerializer(serializers.ModelSerializer):

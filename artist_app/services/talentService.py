@@ -40,7 +40,8 @@ class TalentService:
             serializer = talentSerializer.CreateUpdateTalentUserSerializer(data=request.data)
         if serializer.is_valid():
             otp = make_otp()
-            user_obj = serializer.save(role = 2)
+            name = request.data["first_name"] + " " + request.data["last_name"]
+            user_obj = serializer.save(role = 2, name=name)
             user_obj.set_password(request.data["password"])
             user_obj.save()
             if user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
@@ -212,6 +213,7 @@ class TalentService:
                 user.first_name = user_payload["first_name"]
                 user.last_name = user_payload["last_name"]
                 user.address = user_payload["address"]
+                user.name = user_payload["first_name"] + " " + user_payload["last_name"]
                 user.save()
             if categories_payload:
                 talent_details.categories = categories_payload["categories"]

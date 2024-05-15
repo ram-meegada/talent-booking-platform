@@ -556,8 +556,7 @@ class AdminService:
 
     def add_artist_through_admin(self, request):
         data = {"user_details": {}, "extra_details": {}}
-        data["user_details"]["first_name"] = request.data["first_name"]
-        data["user_details"]["last_name"] = request.data["last_name"]
+        data["user_details"]["name"] = request.data["name"]
         data["user_details"]["email"] = request.data["email"]
         data["user_details"]["phone_no"] = request.data["phone_no"]
         data["user_details"]["date_of_birth"] = request.data["date_of_birth"]
