@@ -363,3 +363,5 @@ class TalentService:
         serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
         return {"data": serializer.data, "message": "Weekly timings fetched successfullt", "status": 200}
     
+    def get_slots_by_date(self, request):
+        pass
