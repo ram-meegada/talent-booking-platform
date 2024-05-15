@@ -57,7 +57,7 @@ class TalentBasicDetails(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ["id", "first_name","last_name","profile_picture","experience","phone_no","city","country",\
-                  "state", "professional_details"]
+                  "state", "profile_status", "professional_details"]
     def get_professional_details(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()
         if details:
