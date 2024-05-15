@@ -11,3 +11,4 @@ from .chatSessionModel import  ChatSessionModel
 from .chatStorageModel import ChatStorageModel
 from .operationalSlotsModel import OperationalSlotsModel
 from .permissionModel import PermissionModel
+from .notificationModel import NotificationModel
