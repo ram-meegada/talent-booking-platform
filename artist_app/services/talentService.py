@@ -277,7 +277,7 @@ class TalentService:
         return {"data": response, "message": messages.SUB_CATEGORIES_LISTING, "status": 200}
     
     def sub_category_listing_angular(self, request):
-        all_sub_categories = TalentSubCategoryModel.objects.all()
+        all_sub_categories = TalentSubCategoryModel.objects.filter(category__in=request.data["categories"])
         serializer = adminSerializer.SubCategorySerializer(all_sub_categories, many=True)
         return {"data": serializer.data, "message": messages.SUB_CATEGORIES_LISTING, "status": 200}
 
@@ -381,7 +381,13 @@ class TalentService:
         return {"data": serializer.data, "message": "Weekly timings fetched successfullt", "status": 200}
     
     def generate_day_slots(start, end):
-        pass
+        data = {}
+        start_time = datetime.strptime(start, "%H:%M")
+        end_time = datetime.strptime(end, "%H:%M")
+        while start_time <= end_time:
+            stripped_start_time = start_time.strftime("%H")
+            data[stripped_start_time] = {}
+            start_time += timedelta(hours=1)
     
     def get_slots_by_date(self, request):
         pass
