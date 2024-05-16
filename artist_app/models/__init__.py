@@ -12,3 +12,5 @@ from .chatStorageModel import ChatStorageModel
 from .operationalSlotsModel import OperationalSlotsModel
 from .permissionModel import PermissionModel
 from .notificationModel import NotificationModel
+from .termAndConditionModel import TermAndConditionModel
+from .contactUsModel import ContactUsModel
