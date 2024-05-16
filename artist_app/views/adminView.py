@@ -289,6 +289,18 @@ class BookingChartView(APIView):
         result = admin_obj.booking_chart(request)
         return Response(result, status=result["status"])
 
+#### Notification Module
+
+class AddNotificationsView(APIView):
+    def post(self, request):
+        result = admin_obj.add_notification(request)
+        return Response(result, status=result["status"])
+
+class GetNotificationsView(APIView):
+    def get(self, request):
+        result = admin_obj.get_all_notification_listing(request)
+        return Response(result, status=result["status"])
+
 ##privacy police
 
 # class AddPrivacyPolicy(APIView):

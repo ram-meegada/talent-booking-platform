@@ -1,4 +1,7 @@
 ### talent onboarding
+from http.client import NOT_FOUND
+
+
 ACCOUNT_CREATED = "Account created successfully"
 EMAIL_NOT_FOUND = "User with this email not found"
 MOBILE_NOT_FOUND = "User with this phone number not found"
@@ -54,3 +57,5 @@ TERMSANDCONDTIONS_UPDATE = "Terms and Conditions update successfully"
 
 ### Ratings
 ADDED_RATING = "Rating given successfully"
+
+NOT_FOUND = " Not Found"

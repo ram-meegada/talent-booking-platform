@@ -15,3 +15,11 @@ class RatingService():
         ratings = ReviewAndRatingsModel.objects.filter(talent=talent_id)
         serializer = GetRatingSerializer(ratings, many=True)
         return {"data": serializer.data, "message": "Ratings fetched successfully", "status": 200}
+
+    def get_all_ratings(self, request):
+        try:
+            rating = ReviewAndRatingsModel.objects.all()
+            serializer = GetRatingSerializer(rating)
+            return {"data":serializer.data,"message":messages.FETCH,"status":200}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}

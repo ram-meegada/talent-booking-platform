@@ -6,6 +6,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from  artist_project.settings import *
 from rest_framework_simplejwt.tokens import RefreshToken
+import threading
+from threading import Thread
+
 
 def send_otp_via_mail(email, first_name="There"):
     message = make_otp()
@@ -50,4 +53,22 @@ def generate_access_token(user_obj):
         token = RefreshToken.for_user(user_obj)
         return str(token.access_token)
     except Exception as error:
-        return ""    
+        return ""  
+
+
+class Email(threading.Thread):
+    def __init__(self, recipient_list, title, message):
+        self.title = title
+        self.recipient_list = recipient_list
+        self.message = message
+        threading.Thread.__init__(self)
+    def run(self):
+        context = {'message':self.message}
+        temp = render_to_string('email/notification.html', context)
+        msg = EmailMultiAlternatives(f"{self.title}", temp, DEFAULT_FROM_EMAIL, self.recipient_list)
+        msg.content_subtype = 'html'
+        msg.send()
+        print('sent')
+        return None
+def send_notification_to_mail(recipient_list, title, message):
+    Email(recipient_list, title, message).start()  
