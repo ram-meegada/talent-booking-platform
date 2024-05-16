@@ -12,6 +12,7 @@ from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
 # from artist_python_backend.artist_app.models import manageAddressModel
 from artist_app.serializers.Clientserializer import TalentBasicDetails
+from artist_app.models.contactUsModel import ContactUsModel
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -34,6 +35,11 @@ class TermAndConditionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = TermAndConditionModel
         fields = ["id", "data"]
+
+class TermAndConditionsPPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TermAndConditionModel
+        fields = ["id", "privacy_policy"]
 
 
 class AdminVerifyOTPSerializer(serializers.ModelSerializer):
@@ -483,3 +489,9 @@ class ArtistBookingsAdminSerializer(serializers.ModelSerializer):
             return service_fee
         except:
             return None
+
+
+class CustomerSupportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= ContactUsModel
+        fields = "__all__"

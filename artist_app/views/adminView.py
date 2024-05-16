@@ -303,26 +303,26 @@ class GetNotificationsView(APIView):
 
 ##privacy police
 
-# class AddPrivacyPolicy(APIView):
-#     def post(self, request):
-#         result = admin_obj.add_privacy_poicy(self, request)
-#         return Response(result, status=result["status"])
+class AddPrivacyPolicy(APIView):
+    def post(self, request):
+        result = admin_obj.add_privacy_poicy(self, request)
+        return Response(result, status=result["status"])
 
-# class GetPrivacyPolicy(APIView):
-#     def get(self, request):
-#         result = admin_obj.get_privacy_policy(self, request)
-#         return Response(result, status=result["status"])
-# #customer support
+class GetPrivacyPolicy(APIView):
+    def get(self, request):
+        result = admin_obj.get_privacy_policy(self, request)
+        return Response(result, status=result["status"])
+#customer support
 
-# class AddCustomerSupport(APIView):
-#     def post(self, request):
-#         result = admin_obj.add_customer_support(self, request)
-#         return Response(result, status=result["status"])
+class AddCustomerSupport(APIView):
+    def post(self, request):
+        result = admin_obj.add_customer_support(self, request)
+        return Response(result, status=result["status"])
 
-# class getCustomerSupport(APIView):
-#     def get(self, request):
-#         result = admin_obj.get_customer_support(self, request)
-#         return Response(result, status=result["status"])
+class getCustomerSupport(APIView):
+    def get(self, request):
+        result = admin_obj.get_customer_support(self, request)
+        return Response(result, status=result["status"])
 
         
 

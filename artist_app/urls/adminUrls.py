@@ -22,6 +22,10 @@ urlpatterns = [
     # terms and conditions urls
     path("terms-and-conditions",adminView.AddTermsAndConditions.as_view()),
     path("update-terms-and-conditions/<int:id>",adminView.UpdateTermsAndConditions.as_view()),
+    path("add-privacy-policy",adminView.AddPrivacyPolicy.as_view()),
+    path("get-policy",adminView.GetPrivacyPolicy.as_view()),
+    path("add-contact-us",adminView.AddCustomerSupport.as_view()),
+    path("get-contact-us",adminView.getCustomerSupport),
 
 
     # manage customer urls
