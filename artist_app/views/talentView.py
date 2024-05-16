@@ -89,3 +89,8 @@ class FetchWeeklyTimingsView(APIView):
     def get(self, request):
         result = talent_service.fetch_weekly_timings(request)
         return Response(result, status=result["status"])
+
+class GetSlotsByDateView(APIView):
+    def post(self, request):
+        result = talent_service.get_slots_by_date(request)
+        return Response(result, status=result["status"])

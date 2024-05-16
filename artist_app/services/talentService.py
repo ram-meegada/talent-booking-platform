@@ -14,6 +14,7 @@ from artist_app.models.bookingTalentModel import BookingTalentModel
 from datetime import datetime, date
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
+from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 
 class TalentService:    
     def user_signup(self, request):
@@ -49,7 +50,7 @@ class TalentService:
                 user_obj.save()
                 media_url = UploadMediaModel.objects.filter(id=serializer.data["profile_picture"]).first()
                 data = {**serializer.data}
-                data["profile_picture"] = media_url.media_file_url
+                data["profile_picture"] = CreateUpdateUploadMediaSerializer(media_url).data
                 return {"data": data, "message": "Account created successfully", "status": 201}
             if not user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
                 user_obj.otp = otp
@@ -361,7 +362,7 @@ class TalentService:
                 if find_user_slot:
                     serializer = talentSerializer.SlotsSerializer(find_user_slot, data=payload_data)
                     if serializer.is_valid():
-                        serializer.save()
+                        serializer.save(slots=slots)
                     else:
                         return {"data": serializer.errors, "message": "Something went wrong", "status": 400}
                 elif not find_user_slot:
@@ -378,9 +379,9 @@ class TalentService:
     def fetch_weekly_timings(self, request):
         all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id)
         serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
-        return {"data": serializer.data, "message": "Weekly timings fetched successfullt", "status": 200}
+        return {"data": serializer.data, "message": "Weekly timings fetched successfully", "status": 200}
     
-    def generate_day_slots(start, end):
+    def generate_day_slots(self, start, end):
         data = {}
         start_time = datetime.strptime(start, "%H:%M")
         end_time = datetime.strptime(end, "%H:%M")
@@ -388,6 +389,12 @@ class TalentService:
             stripped_start_time = start_time.strftime("%H")
             data[stripped_start_time] = {}
             start_time += timedelta(hours=1)
+        return data    
     
     def get_slots_by_date(self, request):
-        pass
+        date = request.data["date"]
+        try:
+            all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
+        except OperationalSlotsModel.DoesNotExist:
+            return {"data": None, "message": "No slots found", "status": 400}
+        return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}

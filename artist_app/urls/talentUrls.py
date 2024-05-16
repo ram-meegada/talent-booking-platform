@@ -21,5 +21,6 @@ urlpatterns = [
 
     path("add-slots", talentView.GenerateSlotsView.as_view()),
     path("week-timings", talentView.FetchWeeklyTimingsView.as_view()),
+    path("day-slots", talentView.GetSlotsByDateView.as_view()),
 
 ]
