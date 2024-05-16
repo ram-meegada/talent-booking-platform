@@ -13,4 +13,7 @@ urlpatterns = [
     #### ratings ####
     path("ratings/<int:talent_id>", ratingsView.AddRatingView.as_view()),
     path("user-ratings/<int:talent_id>", ratingsView.GetUserRatingView.as_view()),
+
+    ###change_password###
+    path("change-password",adminView.ChangePasswordByTokenView.as_view()),
 ]
