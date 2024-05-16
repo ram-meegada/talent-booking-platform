@@ -139,11 +139,15 @@ class TalentService:
         otp = make_otp()
         if "encoded_id" in request.data and "email" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
+            if UserModel.objects.filter(email=request.data["email"]).first():
+                return {"data": None, "message": "User with this email already exists", "status": 400}
             user.email = request.data["email"]
             user.otp = otp
             Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
+            if UserModel.objects.filter(phone_no=request.data["phone_no"]).first():
+                return {"data": None, "message": "User with this phone number already exists", "status": 400}
             user.phone_no = request.data["phone_no"]
             user.otp = otp
         elif "email" in request.data:
@@ -239,6 +243,8 @@ class TalentService:
                     if user.profile_status == 2:
                         user.profile_status = 3
                         user.save()
+                else:
+                    return {"data": serializer.errors, "message": "something went wrong", "status": 400}
             if portfolio_payload:
                 talent_details.portfolio = portfolio_payload["portfolio"]
                 talent_details.cover_photo_id = portfolio_payload["cover_photo"]

@@ -18,6 +18,7 @@ from threading import Thread
 from datetime import datetime
 import pytz
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
+from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 
 class ClientService():
     def user_signup(self, request):
@@ -133,11 +134,15 @@ class ClientService():
         otp = make_otp()
         if "encoded_id" in request.data and "email" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
+            if UserModel.objects.filter(email=request.data["email"]).first():
+                return {"data": None, "message": "User with this email already exists", "status": 400}
             user.email = request.data["email"]
             user.otp = otp
             Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
+            if UserModel.objects.filter(phone_no=request.data["phone_no"]).first():
+                return {"data": None, "message": "User with this phone number already exists", "status": 400}
             user.phone_no = request.data["phone_no"]
             user.otp = otp
         elif "email" in request.data:
@@ -369,8 +374,10 @@ class ClientService():
     def talents_details(self , request):
         try:
             val = request.data.get("sub_category")
-            talent = TalentDetailsModel.objects.filter(sub_categories__contains = [val]).values("user")
-            talent_details_ids = [i["user"] for i in talent]
+            talent_details_ids = []
+            for pk in val:
+                talent = TalentDetailsModel.objects.filter(sub_categories__contains=[pk]).values("user")
+                talent_details_ids += [i["user"] for i in talent]
             users = UserModel.objects.filter(id__in=talent_details_ids)
             serializer = TalentBasicDetails(users, many = True)
             return {"data":serializer.data,"status":200}
@@ -390,12 +397,28 @@ class ClientService():
 #----------------------------booking proposal -------------------------------
     def book_talent(self , request):
         try:
+            TIME_HOUR = request.data["time"].split(":")[0]
+            user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
+                                                              date=request.data["date"]).first()
+            if TIME_HOUR not in user_slots.slots:
+                return {"data": None, "message": "Desired slot not found", "status": 400}
+            elif TIME_HOUR in user_slots.slots:    
+                slots = user_slots.slots
+                iteration = []
+                for i in range(request.data["duration"]):
+                    iteration += [TIME_HOUR]
+                    temp = int(TIME_HOUR) + 1
+                    TIME_HOUR = str(temp)
             serializer = BookingDetailsSerializer(data = request.data, context={"request": request})
             if serializer.is_valid():
                 serializer.save(status=1)
-                return {"data":serializer.data,"status":200}
+                for i in iteration:
+                    slots[i] = serializer.data
+                user_slots.slots = slots
+                user_slots.save()    
+                return {"data": serializer.data, "message": "Booking request sent to artist successfully", "status":200}
             else:
-                return{"message":serializer.errors, "status":400}
+                return{"message": serializer.errors, "status": 400}
         except Exception as e:
             return {"data": str(e), "message":messages.WENT_WRONG,"status":400}
 

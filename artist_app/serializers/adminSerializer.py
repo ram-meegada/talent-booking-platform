@@ -432,3 +432,54 @@ class BookingsSerializer(serializers.ModelSerializer):
         except Exception as e:
             return obj.status
 
+class ArtistBookingsAdminSerializer(serializers.ModelSerializer):
+    customer_name = serializers.SerializerMethodField()
+    artist_name = serializers.SerializerMethodField()
+    profession = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    service = serializers.SerializerMethodField()
+    service_fee = serializers.SerializerMethodField()
+    class Meta:
+        model = BookingTalentModel
+        fields = ["id", "customer_name", "artist_name", "profession", "date", "time", "duration", \
+                  "service", "status", "service_fee", "offer_price"]
+    def get_customer_name(self, obj):
+        try:
+            return obj.client.name
+        except:
+            return obj.client
+    def get_artist_name(self, obj):
+        try:
+            return obj.talent.name
+        except:
+            return obj.talent
+    def get_profession(self, obj):
+        try:
+            talent_details = TalentDetailsModel.objects.get(user_id=obj.talent_id)
+            cat = talent_details.categories
+            cat_names = ", ".join([i[0] for i in TalentCategoryModel.objects.filter(id__in=cat).values_list("name")])
+            return cat_names
+        except Exception as err:
+            print(err, '-----------erriiiiiiiiiiiii')
+            return ""
+    def get_status(self, obj):
+        try:
+            return obj.get_status_display()
+        except:
+            return obj.status
+    def get_service(self, obj):
+        try:
+            service = ""
+            for i in obj.services:
+                service += ", " + i["service"]
+            return service
+        except:
+            return ""    
+    def get_service_fee(self, obj):
+        try:
+            service_fee = 0
+            for i in obj.services:
+                service_fee += i["price"]
+            return service_fee
+        except:
+            return None

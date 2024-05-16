@@ -341,13 +341,13 @@ class AdminService:
         pagination_obj = CustomPagination()
         search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
-                                                    adminSerializer.BookingsSerializer, bookings)
+                                                    adminSerializer.ArtistBookingsAdminSerializer, bookings)
         return {
                     "data":result["response_object"],
                     "total_records": result["total_records"],
                     "start": result["start"],
                     "length": result["length"], 
-                    "message": "Artists fetched successfully", 
+                    "message": "Customer bookings fetched successfully", 
                     "status":200
                 }    
 
@@ -550,13 +550,13 @@ class AdminService:
         pagination_obj = CustomPagination()
         search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
-                                                    adminSerializer.BookingsSerializer, bookings)
+                                                    adminSerializer.ArtistBookingsAdminSerializer, bookings)
         return {
                     "data":result["response_object"],
                     "total_records": result["total_records"],
                     "start": result["start"],
                     "length": result["length"], 
-                    "message": "Artists fetched successfully", 
+                    "message": "Artist bookings fetched successfully", 
                     "status":200
                 }
 
