@@ -18,8 +18,8 @@ class TalentDetailsModel(BaseModel):
     height_inches = models.IntegerField(help_text="in inches", blank=True, null=True)
     weight = models.IntegerField(help_text="in kgs", blank=True, null=True)
 
-    hair_color = models.IntegerField(choices=HAIR_COLOR_CHOICES, default=0)
-    eye_color = models.IntegerField(choices=EYE_COLOR_CHOICES, default=0)
+    hair_color = models.IntegerField(choices=HAIR_COLOR_CHOICES, default=0, blank=True, null=True)
+    eye_color = models.IntegerField(choices=EYE_COLOR_CHOICES, default=0, blank=True, null=True)
     booking_method = models.IntegerField(choices=BOOKING_METHOD_CHOICES, default=0)
 
     #media
