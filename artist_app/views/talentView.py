@@ -35,6 +35,11 @@ class SubCategoryListingView(APIView):
         result = talent_service.sub_category_listing(request)
         return Response(result, status=result["status"])
 
+class SubCategoryListingAngularView(APIView):
+    def post(self, request):
+        result = talent_service.sub_category_listing_angular(request)
+        return Response(result, status=result["status"])
+
 class ProfileSetUpAndUpdateView(APIView):
     def put(self, request):
         result = talent_service.profile_setup_and_edit(request)

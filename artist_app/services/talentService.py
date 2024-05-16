@@ -275,6 +275,11 @@ class TalentService:
             else:
                 pass
         return {"data": response, "message": messages.SUB_CATEGORIES_LISTING, "status": 200}
+    
+    def sub_category_listing_angular(self, request):
+        all_sub_categories = TalentSubCategoryModel.objects.all()
+        serializer = adminSerializer.SubCategorySerializer(all_sub_categories, many=True)
+        return {"data": serializer.data, "message": messages.SUB_CATEGORIES_LISTING, "status": 200}
 
     def log_out(self, request):
         pass
@@ -352,6 +357,7 @@ class TalentService:
                     "date" : required_date,
                     "is_active": request.data[i]["is_active"]
                 }
+                slots = self.generate_day_slots(payload_data["start"], payload_data["end"])
                 if find_user_slot:
                     serializer = talentSerializer.SlotsSerializer(find_user_slot, data=payload_data)
                     if serializer.is_valid():
@@ -373,6 +379,9 @@ class TalentService:
         all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id)
         serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
         return {"data": serializer.data, "message": "Weekly timings fetched successfullt", "status": 200}
+    
+    def generate_day_slots(start, end):
+        pass
     
     def get_slots_by_date(self, request):
         pass

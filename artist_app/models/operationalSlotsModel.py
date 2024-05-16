@@ -10,6 +10,7 @@ class OperationalSlotsModel(BaseModel):
     end = models.TimeField()
 
     date = models.DateField(blank=True, null=True)
+    slots = models.JSONField(default=dict)
     
     class Meta:
         db_table = "Operational slots"
