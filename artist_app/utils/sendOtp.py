@@ -57,14 +57,14 @@ def generate_access_token(user_obj):
 
 
 class Email(threading.Thread):
-    def __init__(self, recipient_list, title, message):
-        self.title = title
+    def __init__(self, recipient_list, notification_title, notification_description):
+        self.title = notification_title
         self.recipient_list = recipient_list
-        self.message = message
+        self.description = notification_description
         threading.Thread.__init__(self)
     def run(self):
-        context = {'message':self.message}
-        temp = render_to_string('email/notification.html', context)
+        context = {'description':self.description, 'title': self.title}
+        temp = render_to_string('notification.html', context)
         msg = EmailMultiAlternatives(f"{self.title}", temp, DEFAULT_FROM_EMAIL, self.recipient_list)
         msg.content_subtype = 'html'
         msg.send()

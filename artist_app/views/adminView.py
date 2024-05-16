@@ -297,7 +297,7 @@ class AddNotificationsView(APIView):
         return Response(result, status=result["status"])
 
 class GetNotificationsView(APIView):
-    def get(self, request):
+    def post(self, request):
         result = admin_obj.get_all_notification_listing(request)
         return Response(result, status=result["status"])
 

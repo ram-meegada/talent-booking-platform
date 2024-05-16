@@ -82,7 +82,8 @@ urlpatterns = [
     path("artist_chart",adminView.ArtistChartView.as_view()),
     path("booking_chart",adminView.BookingChartView.as_view()),
 
-
-
+    #notification
+    path("add-notifications", adminView.AddNotificationsView.as_view()),
+    path("all-notifications", adminView.GetNotificationsView.as_view()),
 
 ]

@@ -1015,86 +1015,56 @@ class AdminService:
         return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
 
 
-#### Notifications module 
+################### Notifications module ################### 
 
+    def add_notification(self, request):
+        all_email_to_send, device_tokens = [], []
+        try:
+            if request.data["notification_for"] == 1:
+                users = UserModel.objects.filter(role__in=[1,2])
+            elif request.data["notification_for"] == 2:
+                users = UserModel.objects.filter(role__in=[1])
+            elif request.data["notification_for"] == 3:
+                users = UserModel.objects.filter(role__in=[2])
+            for i in users:
+                all_email_to_send.append(i.email)
+            if request.data["notification_type"] in (1,):
+                send_notification_to_mail(all_email_to_send, request.data['notification_title'], request.data["notification_description"])   
+            if request.data["notification_type"] in (2,):
+                for i in device_tokens:
+                    try:
+                        push_service = FCMNotification(api_key=None)
+                        result = push_service.notify_single_device(
+                            registration_id=f"{i}",
+                            message_title=request.data["notification_title"],
+                            message_body=request.data["notification_description"],
+                            )
+                    except:
+                        pass    
+            NotificationModel.objects.create(
+                title = request.data['notification_title'],
+                description = request.data['notification_description'],
+                notification_type = request.data['notification_type'],
+                notification_for=request.data["notification_for"]
+            )
+            return {'data': None, 'message':"Notification sent successfully", 'status':200}    
+        except Exception as e:
+            return {'data':None, 'message':f"{e}", 'status':400}   
 
-    # def add_notification(self, request, format=None):
-    #     user_ids, all_email_to_send, device_tokens = [], [], []
-    #     try:
-    #         if request.data["notification_for"] == 1:
-    #             users = UserModel.objects.filter(role__in=[1,2,3,4,5])
-    #             for i in users:
-    #                 user_ids.append(i.id)
-    #                 all_email_to_send.append(i.email)
-    #                 try:
-    #                     device_tokens.append(UserSession.objects.get(user_id=i.id).device_token)
-    #                 except:
-    #                     pass
-    #         elif request.data["notification_for"] == 4:
-    #             users = UserModel.objects.filter(role__in=[3])
-    #             for i in users:
-    #                 user_ids.append(i.id)
-    #                 all_email_to_send.append(i.email)
-    #                 try:
-    #                     device_tokens.append(UserSession.objects.get(user_id=i.id).device_token)
-    #                 except:
-    #                     pass
-
-    #         elif request.data["notification_for"] == 5:
-    #             users = UserModel.objects.filter(role__in=[2])
-    #             for i in users:
-    #                 user_ids.append(i.id)
-    #                 all_email_to_send.append(i.email)
-    #                 try:
-    #                     device_tokens.append(UserSession.objects.get(user_id=i.id).device_token)
-    #                 except:
-    #                     pass
-    #         if request.data["notification_type"] in (2):
-    #             send_notification_to_mail(all_email_to_send, request.data['notification_title'], request.data["notification_description"])   
-    #         if request.data["notification_type"] in (1):
-    #             for i in device_tokens:
-    #                 try:
-    #                     push_service = FCMNotification(api_key=None)
-    #                     result = push_service.notify_single_device(
-    #                         registration_id=f"{i}",
-    #                         message_title=request.data["notification_title"],
-    #                         message_body=request.data["notification_description"],
-    #                         )
-    #                 except:
-    #                     pass    
-                        
-    #         starting_id_of_push_model = []    
-    #         for id in user_ids:
-    #             create_notification_obj = NotificationModel.objects.create(
-    #                 title = request.data['notification_title'],
-    #                 message = request.data['notification_description'],
-    #                 for_user_id = id,
-    #                 notification_type = request.data['notification_type'],
-    #                 notification_for=request.data["notification_for"]
-    #             )
-    #             if len(starting_id_of_push_model) < 1: starting_id_of_push_model.append(create_notification_obj.id)
-    #         create_null_user_push_obj = NotificationModel.objects.create(
-    #             title = f"{starting_id_of_push_model[0]}:{create_notification_obj.id}:{request.data['title']}",
-    #             message = f"{starting_id_of_push_model[0]}:{create_notification_obj.id}",
-    #             notification_type = request.data['notification_type'],
-    #             notification_for=request.data["notification_for"]
-    #         )
-    #         return {'data':None, 'message':"NOTIFICATION_SENT", 'status':200}    
-    #     except Exception as e:
-    #         return {'data':None, 'message':f"{e}", 'status':400}   
-        
-
-
-
-    # def get_all_notification_listing(self, request):
-    #     try:
-    #         notification_obj = NotificationModel.objects.order_by("created_at")
-    #     except :
-    #         return {"data":None,"message":messages.NOT_FOUND, "status": 400}
-    #     pagination_obj = CustomPagination()
-    #     search_keys = ["notification_title__icontains"]
-    #     result = pagination_obj.custom_pagination(request, search_keys, adminSerializer.NotificationSerializer, notification_obj)
-    #     return{'data': result,'message':messages.FETCH, "status":200}
+    def get_all_notification_listing(self, request):
+        notification_obj = NotificationModel.objects.order_by("created_at")
+        pagination_obj = CustomPagination()
+        search_keys = ["title__icontains"]
+        result = pagination_obj.custom_pagination(request, search_keys, \
+                                                  adminSerializer.NotificationSerializer, notification_obj)
+        return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message": "All notifications fetched successfully", 
+                        "status":200
+                    }
 
 ## Manage CMs
 

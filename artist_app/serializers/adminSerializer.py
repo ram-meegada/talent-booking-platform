@@ -13,7 +13,7 @@ from artist_app.models.bookingTalentModel import BookingTalentModel
 # from artist_python_backend.artist_app.models import manageAddressModel
 from artist_app.serializers.Clientserializer import TalentBasicDetails
 from artist_app.models.contactUsModel import ContactUsModel
-
+from artist_app.models.notificationModel import NotificationModel
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -495,3 +495,17 @@ class CustomerSupportSerializer(serializers.ModelSerializer):
     class Meta:
         model= ContactUsModel
         fields = "__all__"
+
+class NotificationSerializer(serializers.ModelSerializer):
+    notification_type = serializers.SerializerMethodField()
+    notification_for = serializers.SerializerMethodField()
+    date = serializers.SerializerMethodField()
+    class Meta:
+        model = NotificationModel
+        fields = ["id", "title", "description", "notification_type", "notification_for", "date"]
+    def get_notification_type(self, obj):
+        return obj.get_notification_type_display()
+    def get_notification_for(self, obj):
+        return obj.get_notification_for_display()
+    def get_date(self, obj):
+        return str(obj.created_at.date)

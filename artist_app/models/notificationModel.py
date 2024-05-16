@@ -7,7 +7,6 @@ NOTIFICATION_FOR = [(1, "all"), (2, "customer"), (3, "artist")]
 class NotificationModel(models.Model):
     title = models.CharField(max_length=254, null=True, blank=True)  
     description = models.TextField(null=True, blank=True)
-    for_user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True, related_name="for_user")
     notification_type = models.IntegerField(choices = NOTIFICATION_TYPE, default=1)  
     notification_for = models.IntegerField(choices = NOTIFICATION_FOR, default=1) 
  
