@@ -21,6 +21,7 @@ from threading import Thread
 from django.utils import timezone
 from artist_app.models import userModel, NotificationModel
 from pyfcm import FCMNotification
+from artist_app.models.contactUsModel import ContactUsModel
 
 
 class AdminService:
@@ -1097,36 +1098,41 @@ class AdminService:
 
 ## Manage CMs
 
-    # def add_privacy_poicy(self, request):
-    #     try:
-    #         serializer = adminSerializer.TermAndConditionsSerializer(data = request.data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return {"data":serializer.data,"message":messages.ADD,"status":200}
-    #         else:
-    #             return {"data":None,"message":messages.WENT_WRONG,"status":400}
-    #     except Exception as e:
-    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
+    def add_privacy_poicy(self, request):
+        try:
+            serializer = adminSerializer.TermAndConditionsPPSerializer(data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data,"message":messages.ADD,"status":200}
+            else:
+                return {"data":None,"message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
-    # def get_privacy_policy(self, request):
-    #     pass
+    def get_privacy_policy(self, request):
+        try:
+            pp = TermAndConditionModel.objects.all()
+            serializer = adminSerializer.TermAndConditionsPPSerializer(pp)
+            return {"data":serializer.data,"message":messages.FETCH,"status":200}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
-    # def add_customer_support(self, request):
-    #     try:
-    #         serializer = adminSerializer.CustomerSupport(data=request.data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return {"data":serializer.data,"message":messages.ADD,"status":200}
-    #         else:
-    #             return {"data":None,"message":messages.WENT_WRONG,"status":400}
-    #     except Exception as e:
-    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
+    def add_customer_support(self, request):
+        try:
+            serializer = adminSerializer.CustomerSupportSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return {"data":serializer.data,"message":messages.ADD,"status":200}
+            else:
+                return {"data":None,"message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
 
-    # def get_customer_support(self, request):
-    #     try:
-    #         data = CustomerSupportModel.objects.all()
-    #         serializer = adminSerializer.CustomerSupport(data,many = True)
-    #         return {"data":serializer.data,"message":messages.ADD,"status":200}
-    #     except Exception as e:
-    #         return {"data":None,"message":messages.WENT_WRONG,"status":400}
+    def get_customer_support(self, request):
+        try:
+            data = ContactUsModel.objects.all()
+            serializer = adminSerializer.CustomerSupportSerializer(data,many = True)
+            return {"data":serializer.data,"message":messages.ADD,"status":200}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
