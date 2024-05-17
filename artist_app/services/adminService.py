@@ -433,6 +433,17 @@ class AdminService:
             
         except Exception as e:
             return {"data":serializer.data,"message":messages.SUB_CATEGORIES_LISTING,"status":400}
+        
+    def update_status_of_category(self, request, id):
+        try:
+            cat = TalentCategoryModel.objects.get(id=id)
+            cat.is_active = request.data["is_active"]
+            cat.save()
+            return {"data": None, "message": "Status updated successfully", "status": 200}
+        except TalentCategoryModel.DoesNotExist:    
+            return {"data": None, "message": "Record not found", "status": 400}
+        except Exception as err:    
+            return {"data": None, "message": str(err), "status": 400}
 
     def update_subcategory_details(self, request, id):
         try:

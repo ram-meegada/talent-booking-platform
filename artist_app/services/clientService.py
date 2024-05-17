@@ -388,7 +388,7 @@ class ClientService():
         try:
             talent = UserModel.objects.get(id=id)
             serializer = TalentBasicDetails(talent)
-            return {"data":serializer.data,"status":200}
+            return {"data": serializer.data, "message": "Talent details fetched successfully", "status":200}
         except Exception as e:
             print(e)
             return {"message":messages.WENT_WRONG,"status":400}
@@ -411,7 +411,7 @@ class ClientService():
                     TIME_HOUR = str(temp)
             serializer = BookingDetailsSerializer(data = request.data, context={"request": request})
             if serializer.is_valid():
-                serializer.save(status=1)
+                serializer.save(status=1, track_booking=1)
                 for i in iteration:
                     slots[i] = serializer.data
                 user_slots.slots = slots
@@ -448,4 +448,11 @@ class ClientService():
             return {"data": None, "message": "Data not found", "status":400}
         return {"data": talent_obj.services, "message": "Services fetched successfully", "status": 200}
 
-
+    def get_slots_by_date(self, request):
+        date = request.data["date"]
+        user = request.data["user"]
+        try:
+            all_user_slot = OperationalSlotsModel.objects.get(user=user, date=date)
+        except OperationalSlotsModel.DoesNotExist:
+            return {"data": None, "message": "No slots found", "status": 400}
+        return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}

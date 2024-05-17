@@ -306,7 +306,8 @@ class TalentService:
             # upcoming_bookings = BookingTalentModel.objects.filter(
             #     Q(date__range=[startdate, enddate]) & Q(time__gt=time)
             # ).select_related('client')
-            upcoming_bookings = BookingTalentModel.objects.filter(date__gte = startdate).exclude(date = startdate,time__lt = time)
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte = startdate).exclude(
+                                                                                date = startdate,time__lt = time)
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:

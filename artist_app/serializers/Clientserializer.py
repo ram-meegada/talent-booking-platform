@@ -129,6 +129,7 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     # user = CreateClientSerializers()
     class Meta:
         model = BookingTalentModel
-        fields = "__all__"
+        fields = ["id", "talent", "address", "client", "date", "time", "duration", "status", "track_booking"\
+                  "offer_price", "counter_offer_price", "comment", "services"]
 
 

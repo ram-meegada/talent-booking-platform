@@ -82,6 +82,11 @@ class BookTalentView(APIView):
         result = userservice.book_talent(request)
         return Response(result,status=result["status"])
 
+class GetTalentSlotsView(APIView):
+    def post(self,request):
+        result = userservice.get_slots_by_date(request)
+        return Response(result,status=result["status"])
+
 class GetAllBookTalentDetails(APIView):
     def get(self, request, id):
         result = userservice.get_booking_details_by_id(request, id)

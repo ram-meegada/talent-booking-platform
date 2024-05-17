@@ -21,6 +21,7 @@ urlpatterns = [
     path("talent-detials", clientView.ListingAllTalent.as_view()),
     path("talent-detials-by-id/<int:id>",clientView.TalentDetailsById.as_view()),
     path("book-talent",clientView.BookTalentView.as_view()),
+    path("talent-slots-by-date", clientView.GetTalentSlotsView.as_view()),
     path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),
     path("all-services/<int:id>", clientView.FetchAllTalentServicesView.as_view()),
     
