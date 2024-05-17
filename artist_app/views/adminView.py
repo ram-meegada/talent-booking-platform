@@ -41,7 +41,7 @@ class GetAllQuestionsAnswers(APIView):
 #terms and conditions
 
 class AddTermsAndConditions(APIView):
-    def post(self, request):
+    def put(self, request):
         result = admin_obj.add_terms_and_conditions(request)
         return Response(result, status=result["status"])
 
@@ -305,7 +305,7 @@ class GetNotificationsView(APIView):
 ##privacy police
 
 class AddPrivacyPolicy(APIView):
-    def post(self, request):
+    def put(self, request):
         result = admin_obj.add_privacy_poicy(request)
         return Response(result, status=result["status"])
 
@@ -316,7 +316,7 @@ class GetPrivacyPolicy(APIView):
 #customer support
 
 class AddCustomerSupport(APIView):
-    def post(self, request):
+    def put(self, request):
         result = admin_obj.add_customer_support(request)
         return Response(result, status=result["status"])
 
