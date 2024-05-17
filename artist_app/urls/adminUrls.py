@@ -21,7 +21,7 @@ urlpatterns = [
     path("get-all-FAQ",adminView.GetAllQuestionsAnswers.as_view()),
 
     # terms and conditions urls
-    path("terms-and-conditions",adminView.AddTermsAndConditions.as_view()),
+    path("terms-and-condition",adminView.AddTermsAndConditions.as_view()),
     path("update-terms-and-conditions/<int:id>",adminView.UpdateTermsAndConditions.as_view()),
     path("get-all-terms-and-conditions",adminView.GetTermsAndConditions.as_view()),
     path("add-privacy-policy",adminView.AddPrivacyPolicy.as_view()),
@@ -90,6 +90,6 @@ urlpatterns = [
 
     #revenue urls 
     path("get-all-revenue-details",adminView.GetAllRevenueDetails.as_view()),
-    
+
 
 ]

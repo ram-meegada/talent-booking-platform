@@ -107,12 +107,22 @@ class AdminService:
     #termsAndConditions
     def add_terms_and_conditions(self, request):
         try:
-            serializer = adminSerializer.TermAndConditionsSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return {"data":serializer.data,"messages":messages.QUESTION_ADDED, "status":200}
+            terms = TermAndConditionModel.objects.filter(id = 1)
+            if not terms:
+                serializer = adminSerializer.TermAndConditionsSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"messages":messages.QUESTION_ADDED, "status":200}
+                else:
+                    return {"data":None, "message":messages.WENT_WRONG, "status":400}
             else:
-                return {"data":None, "message":messages.WENT_WRONG, "status":400}
+                terms = TermAndConditionModel.objects.get(id = 1)
+                serializer = adminSerializer.TermAndConditionsSerializer(terms, data = request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
         except Exception as e:
             return {"data":None, "message":messages.WENT_WRONG, "status":400}
 
@@ -1073,39 +1083,61 @@ class AdminService:
 
     def add_privacy_poicy(self, request):
         try:
-            serializer = adminSerializer.TermAndConditionsPPSerializer(data = request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return {"data":serializer.data,"message":messages.ADD,"status":200}
+            privacy_policy = TermAndConditionModel.objects.filter(id=1)
+            if not privacy_policy:
+                serializer = adminSerializer.TermAndConditionsPPSerializer(data = request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
             else:
-                return {"data":None,"message":messages.WENT_WRONG,"status":400}
+                privacy_policy = TermAndConditionModel.objects.get(id=1)
+                serializer = adminSerializer.TermAndConditionsPPSerializer(privacy_policy, data = request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def get_privacy_policy(self, request):
         try:
             pp = TermAndConditionModel.objects.all()
-            serializer = adminSerializer.TermAndConditionsPPSerializer(pp)
+            serializer = adminSerializer.TermAndConditionsPPSerializer(pp,many= True)
+            print(serializer.data,"jhasgdfjahgsfd")
             return {"data":serializer.data,"message":messages.FETCH,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def add_customer_support(self, request):
         try:
-            serializer = adminSerializer.CustomerSupportSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return {"data":serializer.data,"message":messages.ADD,"status":200}
+            support_data = ContactUsModel.objects.filter(id=1)
+            if not support_data:
+                serializer = adminSerializer.CustomerSupportSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
             else:
-                return {"data":None,"message":messages.WENT_WRONG,"status":400}
+                support_data = ContactUsModel.objects.get(id=1)
+                serializer = adminSerializer.CustomerSupportSerializer(support_data, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
         except Exception as e:
+            print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
 
     def get_customer_support(self, request):
         try:
             data = ContactUsModel.objects.all()
-            serializer = adminSerializer.CustomerSupportSerializer(data,many = True)
+            serializer = adminSerializer.CustomerSupportSerializer(data, many = True)
             return {"data":serializer.data,"message":messages.ADD,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
