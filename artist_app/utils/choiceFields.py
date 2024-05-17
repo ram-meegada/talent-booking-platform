@@ -3,6 +3,15 @@ GENDER_CHOICES = [
     (2, "FEMALE")
 ]
 
+EXPERIENCE_CHOICES = [
+    (1, "0-6 months"),
+    (2, "6 months to 1 year"),
+    (3, "1+ years"),
+    (4, "2+ years"),
+    (5, "3+ years"),
+    (6, "4+ years"),
+]
+
 ROLE_CHOICE =[
     (1, "CLIENT"),
     (2, "TALENT"),
@@ -76,3 +85,10 @@ MODULE_CHOICES = [
     (9,"Manage Reviews"),
     (10,"Manage CMS"),
 ]
+
+NOTIFICATION_TYPE_CHOICES = [
+    (1, "OFFER ACCEPTED BY TALENT"),
+    (2, "OFFER CANCELLED BY TALENT"),
+    (3, "TRANSACTION SUCCESS BY CLIENT"),
+    (4, "OFFER CANCELLED BY TALENT"),
+] 

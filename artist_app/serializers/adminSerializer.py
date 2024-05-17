@@ -540,4 +540,4 @@ class NotificationSerializer(serializers.ModelSerializer):
     def get_notification_for(self, obj):
         return obj.get_notification_for_display()
     def get_date(self, obj):
-        return str(obj.created_at.date)
+        return str(obj.created_at.date())
