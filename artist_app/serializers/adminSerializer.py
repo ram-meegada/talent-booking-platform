@@ -182,7 +182,10 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
     def get_country_code(self, obj):
         return obj.user.country_code
     def get_gender(self, obj):
-        return obj.user.gender
+        try:
+            obj.user.get_gender_display()
+        except:    
+            return obj.user.gender
     def get_categories(self, obj):
         try:
             categories = TalentCategoryModel.objects.filter(id__in=obj.categories)

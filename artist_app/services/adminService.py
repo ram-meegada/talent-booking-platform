@@ -195,7 +195,7 @@ class AdminService:
         email = request.data["email"]
         try:
             user = UserModel.objects.get(email=email)
-            send_otp_via_mail(request.data["email"])
+            Thread(target=send_otp_via_mail, args=(request.data["email"], ))
             user.otp = OTP
             user.save()
             return {"data":None,"message":messages.OTP_SENT_TO_MAIL,"status":200}
