@@ -68,14 +68,19 @@ class RecentOffersView(APIView):
         result = talent_service.recent_offers_of_talent(request)
         return Response(result, status=result["status"])
 
+class CounterOfferByTalentView(APIView):
+    def post(self, request):
+        result = talent_service.counter_offer(request)
+        return Response(result, status=result["status"])
+
 class ClientPastBookingListing(APIView):
     def get(self, request):
         result = talent_service.past_client_booking_listing(request)
         return Response(result, status=result["status"])
 
-class ClientdeclineParamenterListing(APIView):
+class CancelledBookingsView(APIView):
     def get(self, request):
-        result= talent_service.cancel_client_booking_list(request)
+        result= talent_service.cancelled_bookings(request)
         return Response(result, status=result["status"])
 
 class AllCategoriesView(APIView):

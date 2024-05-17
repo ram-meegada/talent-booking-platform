@@ -526,6 +526,10 @@ class AdminService:
             user = TalentDetailsModel.objects.get(user_id=user_obj.id)
             serializer = adminSerializer.GetArtistDetailsByIdSerializer(user)
             return {"data":serializer.data,"messag":messages.USER_DETAILS_FETCHED,"status":200}
+        except TalentDetailsModel.DoesNotExist:    
+            user = TalentDetailsModel.objects.create(user_id=user_obj.id)
+            serializer = adminSerializer.GetArtistDetailsByIdSerializer(user)
+            return {"data":serializer.data,"messag":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
             print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}

@@ -337,14 +337,24 @@ class TalentService:
             print(e, 'eeeeee')
             return {"message":messages.WENT_WRONG,"status":400}
 
-    def cancel_client_booking_list(self,request):
+    def cancelled_bookings(self,request):
         try:
             canceled_bookings = BookingTalentModel.objects.filter(status=3)
-            serializer = talentSerializer.BookedClientDetailSerializers(canceled_bookings,many = True)
+            serializer = talentSerializer.BookedClientDetailSerializers(canceled_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
         
+    def counter_offer(self, request):
+        booking_id = request.data["booking_id"]
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        booking.counter_offer_price = request.data["counter_offer_price"]
+        booking.track_booking = 2
+        booking.save()
+        return {"data": None, "message": "Counter offer sent successfully", "status": 200}
     
     def all_categories(self, request):
         categories = TalentCategoryModel.objects.values()

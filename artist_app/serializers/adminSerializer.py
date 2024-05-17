@@ -297,7 +297,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
                 serializer = CreateUpdateUploadMediaSerializer(media)
                 return serializer.data
         except:
-            return obj.portfolio[0]
+            return obj.portfolio
 
 # class bookingClientArtistDetailsSerializer(serializers.ModelSerializer):
 #     profile_picture = CreateUpdateUploadMediaSerializer()

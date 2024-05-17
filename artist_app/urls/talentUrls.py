@@ -1,6 +1,6 @@
 from http import client
 from django.urls import path
-from artist_app.views import talentView
+from artist_app.views import talentView, clientView
 
 urlpatterns = [
     path("registration", talentView.TalentSignUpView.as_view()),
@@ -14,14 +14,17 @@ urlpatterns = [
     path("profile-details", talentView.TalentUserDetailsView.as_view()),
 
     ######### bookings ###########
+    path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),
     path("upcoming-bookings-listing", talentView.ClientUpcomingBookingListing.as_view()),
     path("recent-offers", talentView.RecentOffersView.as_view()),
+    path("counter-offer", talentView.CounterOfferByTalentView.as_view()),
     path("past-bookings", talentView.ClientPastBookingListing.as_view()),
-    path("cancel-booked-client-list", talentView.ClientdeclineParamenterListing.as_view()),
+    path("cancelled-bookings", talentView.CancelledBookingsView.as_view()),
 
     path("all-categories", talentView.AllCategoriesView.as_view()),
     path("sub-categories", talentView.SubCategoryListingView.as_view()),
 
+    ########### slots #############
     path("add-slots", talentView.GenerateSlotsView.as_view()),
     path("week-timings", talentView.FetchWeeklyTimingsView.as_view()),
     path("day-slots", talentView.GetSlotsByDateView.as_view()),
