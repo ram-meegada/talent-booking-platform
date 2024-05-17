@@ -491,7 +491,7 @@ class AdminService:
         try:
             user = TalentDetailsModel.objects.filter(user__in=users_id)
             pagination_obj = CustomPagination()
-            search_keys = ["first_name__icontains", "email__icontains"]
+            search_keys = ["user__name__icontains", "user__email__icontains"]
             result = pagination_obj.custom_pagination(request, search_keys, \
                                                       adminSerializer.GetArtistDetailsSerializers, user)
             return {

@@ -12,9 +12,12 @@ urlpatterns = [
 
     path("update-profile", talentView.ProfileSetUpAndUpdateView.as_view()),
     path("profile-details", talentView.TalentUserDetailsView.as_view()),
-    path("upcoming-bookings-listing",talentView.ClientUpcomingBookingListing.as_view()),
-    path("past-booked-client-list",talentView.ClientPastBookingListing.as_view()),
-    path("cancel-booked-client-list",talentView.ClientdeclineParamenterListing.as_view()),
+
+    ######### bookings ###########
+    path("upcoming-bookings-listing", talentView.ClientUpcomingBookingListing.as_view()),
+    path("recent-offers", talentView.RecentOffersView.as_view()),
+    path("past-bookings", talentView.ClientPastBookingListing.as_view()),
+    path("cancel-booked-client-list", talentView.ClientdeclineParamenterListing.as_view()),
 
     path("all-categories", talentView.AllCategoriesView.as_view()),
     path("sub-categories", talentView.SubCategoryListingView.as_view()),

@@ -63,6 +63,11 @@ class ClientUpcomingBookingListing(APIView):
         result = talent_service.upcoming_clients_booking_listing(request)
         return Response(result, status=result["status"])
 
+class RecentOffersView(APIView):
+    def get(self, request):
+        result = talent_service.recent_offers_of_talent(request)
+        return Response(result, status=result["status"])
+
 class ClientPastBookingListing(APIView):
     def get(self, request):
         result = talent_service.past_client_booking_listing(request)

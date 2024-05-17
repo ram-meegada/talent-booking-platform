@@ -303,16 +303,25 @@ class TalentService:
         try:
             startdate = datetime.today().date()
             time = datetime.now().time()
-            # upcoming_bookings = BookingTalentModel.objects.filter(
-            #     Q(date__range=[startdate, enddate]) & Q(time__gt=time)
-            # ).select_related('client')
-            upcoming_bookings = BookingTalentModel.objects.filter(date__gte = startdate).exclude(
-                                                                                date = startdate,time__lt = time)
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id)\
+                                                                .exclude(date = startdate,time__lt = time)
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             print(e)
             return {"message":messages.WENT_WRONG,"status":400}
+
+    def recent_offers_of_talent(self, request):
+        try:
+            startdate = datetime.today().date()
+            time = datetime.now().time()
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,\
+                                                                   status=1).exclude(date=startdate, time__lt=time)
+            serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e)
+            return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
 
     def past_client_booking_listing(self, request):
         try:

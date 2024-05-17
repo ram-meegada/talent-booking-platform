@@ -97,19 +97,28 @@ class TalentUserDetailsByTokenSerializer(serializers.ModelSerializer):
             return obj.sub_categories
 
 class UserSerializersForClientDetails(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
+    profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id","full_name"]
-
-    def get_full_name(self,obj):
-        return obj.first_name+" "+obj.last_name
+        fields = ["id", "name", "profile_picture"]
 
 class BookedClientDetailSerializers(serializers.ModelSerializer):
     client = UserSerializersForClientDetails()
+    status = serializers.SerializerMethodField()
+    track_booking = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
-        fields = ["id","client","offer_price","time","date","status","currency"]
+        fields = ["id", "client", "offer_price", "time", "date", "status", "track_booking", "currency", "services", "created_at"]
+    def get_status(self, obj):
+        try:
+            return obj.get_status_display()    
+        except:
+            obj.status    
+    def get_track_booking(self, obj):
+        try:
+            return obj.get_track_booking_display()    
+        except:
+            obj.track_booking    
     
 class SlotsSerializer(serializers.ModelSerializer):
     class Meta:
