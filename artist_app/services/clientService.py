@@ -424,12 +424,12 @@ class ClientService():
 
     def get_booking_details_by_id(self, request, id):
         try:
-            talent_details = BookingTalentModel.objects.get(id=id)
+            talent_details = BookingTalentModel.objects.select_related("talent").get(id=id)
             serializer = ShowBookingDetailsSerializer(talent_details)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             print(e)
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"message": str(e),"status":400}
 
     # def get_talent_based_on_filters(self, request):
     #     try:

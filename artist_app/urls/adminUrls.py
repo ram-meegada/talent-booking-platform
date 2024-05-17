@@ -43,9 +43,9 @@ urlpatterns = [
 
     # manage categories Urls
     path("category", adminView.AddTalentCategoryView.as_view()),
-    path("all-category",adminView.GetAllCategoriesView.as_view()),
-    path("get-categories-details-by-id/<int:id>",adminView.GetCategoriesDetailsByIdView.as_view()),
-    path("update-categories-detail-by-id/<int:id>",adminView.UpdateCategoriesByIdView.as_view()),
+    path("all-category", adminView.GetAllCategoriesView.as_view()),
+    path("get-categories-details-by-id/<int:id>", adminView.GetCategoriesDetailsByIdView.as_view()),
+    path("update-categories-detail-by-id/<int:id>", adminView.UpdateCategoriesByIdView.as_view()),
     path("delete-category-by-id/<int:id>",adminView.DeleteCategoriesByIdView.as_view()),
     path("sub-category-based-on-category",adminView.GetAllSubCategoryBasedOnCategoryView.as_view()),
     path("sub-category/", adminView.AddTalentSubCategoryView.as_view()),

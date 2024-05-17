@@ -371,12 +371,18 @@ class AdminService:
     def get_all_categories(self, request):
         try:
             categories = TalentCategoryModel.objects.all()
-            if request.data["name"]:
-                category = categories.filter(name__icontains=request.data["name"])
-                serializers = adminSerializer.GetAllCategoriesSerializers(category, many = True)
-            else:
-                serializers = adminSerializer.GetAllCategoriesSerializers(categories, many = True)
-            return {"data":serializers.data,"message":messages.CATEGORIES_LISTING,"status":200}
+            pagination_obj = CustomPagination()
+            search_keys = ["name__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                      adminSerializer.GetAllCategoriesSerializers, categories)
+            return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message": "Talent categories fetched successfully", 
+                        "status":200
+                    }
         except Exception as e:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
@@ -410,16 +416,21 @@ class AdminService:
 
     def get_all_subCategory(self, request):
         try:
-            subcategory = TalentSubCategoryModel.objects.all()
-            if request.data["name"]:
-                sub_category = subcategory.filter(name__icontains = request.data["name"],category = request.data["category"])
-                serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(sub_category,many = True)
-            else:
-                sub_category = subcategory.filter(category = request.data["category"])
-                serializer = adminSerializer.SubcategoryDetailsByCategoryIdSerializer(sub_category, many = True)
-            return {"data":serializer.data,"message":messages.SUB_CATEGORIES_LISTING,"status":200}
+            sub_category = TalentSubCategoryModel.objects.filter(category = request.data["category"])
+            pagination_obj = CustomPagination()
+            search_keys = ["name__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                      adminSerializer.SubcategoryDetailsByCategoryIdSerializer, sub_category)
+            return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message": "Sub Categories fetched successfully", 
+                        "status":200
+                    }
         except Exception as e:
-            return {"data": None, "message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message": str(e), "status": 400}
 
         
     def get_subcategory_by_id(self, request, id):

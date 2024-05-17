@@ -7,6 +7,8 @@ from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMedia
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.utils.sendOtp import generate_access_token
+from artist_app.models.ratingsModel import ReviewAndRatingsModel
+from django.db.models import Avg
 
 class CreateClientSerializers(serializers.ModelSerializer):
     class Meta:
@@ -126,10 +128,67 @@ class BookingDetailsSerializer(serializers.ModelSerializer):
 
 
 class ShowBookingDetailsSerializer(serializers.ModelSerializer):
-    # user = CreateClientSerializers()
+    talent_id = serializers.SerializerMethodField()
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
+    subcategories = serializers.SerializerMethodField()
+    address = AddAddressDetailsSerializer()
+    rating = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    track_booking = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
-        fields = ["id", "talent", "address", "client", "date", "time", "duration", "status", "track_booking"\
-                  "offer_price", "counter_offer_price", "comment", "services"]
-
-
+        fields = ["id", "talent_id", "first_name", "last_name", "name", "profile_picture", "subcategories", \
+                  "address", "rating", "date", "time", "duration", "status", "track_booking", "offer_price", \
+                  "counter_offer_price", "comment", "services"]
+    def get_talent_id(self, obj):
+        try:
+            return obj.talent_id
+        except:
+            return None
+    def get_first_name(self, obj):
+        try:
+            return obj.talent.first_name
+        except:
+            return None
+    def get_last_name(self, obj):
+        try:
+            return obj.talent.last_name
+        except:
+            return None
+    def get_name(self, obj):
+        try:
+            return obj.talent.name
+        except:
+            return None
+    def get_profile_picture(self, obj):
+        try:
+            serializer = CreateUpdateUploadMediaSerializer(obj.talent.profile_picture)
+        except:
+            return None
+    def get_subcategories(self, obj):
+        try:
+            user_sub_cat = TalentDetailsModel.objects.filter(user_id=obj.talent_id).first()
+            sub_cat = TalentSubCategoryModel.objects.filter(id__in=user_sub_cat.sub_categories).values_list("name")
+            result = ", ".join([i[0] for i in sub_cat])
+            return result    
+        except:
+            return None
+    def get_status(self, obj):
+        try:
+            return obj.get_status_display()
+        except:
+            return None
+    def get_track_booking(self, obj):
+        try:
+            return obj.get_track_booking_display()
+        except:
+            return None
+    def get_rating(self, obj):
+        try:
+            avg_ratings = ReviewAndRatingsModel.objects.filter(talent=obj.talent_id).aggregate(Avg("rating"))
+            return avg_ratings["rating__avg"]
+        except Exception as err:
+            return None
