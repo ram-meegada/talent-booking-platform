@@ -18,10 +18,12 @@ urlpatterns = [
     path("questions",adminView.AddQuestionsAndAnswersView.as_view()),
     path("update-question/<int:id>",adminView.UpdateQuestionsAnswersView.as_view()),
     path("delete-question/<int:id>",adminView.DeleteQuestionAnswerView.as_view()),
+    path("get-all-FAQ",adminView.GetAllQuestionsAnswers.as_view()),
 
     # terms and conditions urls
     path("terms-and-conditions",adminView.AddTermsAndConditions.as_view()),
     path("update-terms-and-conditions/<int:id>",adminView.UpdateTermsAndConditions.as_view()),
+    path("get-all-terms-and-conditions",adminView.GetTermsAndConditions.as_view()),
     path("add-privacy-policy",adminView.AddPrivacyPolicy.as_view()),
     path("get-policy",adminView.GetPrivacyPolicy.as_view()),
     path("add-contact-us",adminView.AddCustomerSupport.as_view()),
@@ -85,5 +87,9 @@ urlpatterns = [
     #notification
     path("add-notifications", adminView.AddNotificationsView.as_view()),
     path("all-notifications", adminView.GetNotificationsView.as_view()),
+
+    #revenue urls 
+    path("get-all-revenue-details",adminView.GetAllRevenueDetails.as_view()),
+    
 
 ]
