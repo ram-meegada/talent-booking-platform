@@ -22,6 +22,7 @@ class AddQuestionsAndAnswersView(APIView):
         result = admin_obj.add_questions_answers(request)
         return Response(result,status=result["status"])
 
+
 class UpdateQuestionsAnswersView(APIView):
     def put(self , request, id):
         result = admin_obj.update_questions_answers(request, id)
@@ -305,23 +306,31 @@ class GetNotificationsView(APIView):
 
 class AddPrivacyPolicy(APIView):
     def post(self, request):
-        result = admin_obj.add_privacy_poicy(self, request)
+        result = admin_obj.add_privacy_poicy(request)
         return Response(result, status=result["status"])
 
 class GetPrivacyPolicy(APIView):
     def get(self, request):
-        result = admin_obj.get_privacy_policy(self, request)
+        result = admin_obj.get_privacy_policy(request)
         return Response(result, status=result["status"])
 #customer support
 
 class AddCustomerSupport(APIView):
     def post(self, request):
-        result = admin_obj.add_customer_support(self, request)
+        result = admin_obj.add_customer_support(request)
         return Response(result, status=result["status"])
 
 class getCustomerSupport(APIView):
     def get(self, request):
-        result = admin_obj.get_customer_support(self, request)
+        result = admin_obj.get_customer_support(request)
+        return Response(result, status=result["status"])
+
+## revenue Model
+
+class GetAllRevenueDetails(APIView):
+    permission_classes =(AllowAny,)
+    def get(self, request):
+        result = admin_obj.get_all_revenue_details(request)
         return Response(result, status=result["status"])
 
         

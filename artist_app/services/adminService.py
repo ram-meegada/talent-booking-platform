@@ -22,6 +22,8 @@ from django.utils import timezone
 from artist_app.models import userModel, NotificationModel
 from pyfcm import FCMNotification
 from artist_app.models.contactUsModel import ContactUsModel
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
 
 
 class AdminService:
@@ -72,6 +74,7 @@ class AdminService:
             return {"data":serializers.data,"message":messages.ADD,"status":200}
         except Exception as e:
             return {"data": None, "message":str(e),"status":400}
+            
 
     def update_questions_answers(self, request, id):
         questions = FAQModel.objects.get(id=id)
@@ -1106,3 +1109,26 @@ class AdminService:
             return {"data":serializer.data,"message":messages.ADD,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
+
+######## Revenue Module ###############
+    def get_all_revenue_details(self, request):
+        try:
+            data = BookingTalentModel.objects.all()
+            serializer = adminSerializer.GetRevenueDetails(data, many=True)
+            total_offer_price = BookingTalentModel.objects.aggregate(total_offer_price=Coalesce(Sum('offer_price'), Value(0)))
+            total_count = BookingTalentModel.objects.count()
+            total_revenue = total_offer_price['total_offer_price'] + (total_count * 15)
+            
+            return {
+                "data": serializer.data,
+                "Total_revenue": total_revenue,
+                "message": messages.ADD,
+                "status": 200
+            }
+        except Exception as e:
+            print(e)
+            return {
+                "data": None,
+                "message": messages.WENT_WRONG,
+                "status": 400
+            }

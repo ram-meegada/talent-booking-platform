@@ -29,7 +29,7 @@ class SubCategorySerializer(serializers.ModelSerializer):
 class FAQSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQModel
-        fields = ["question","answer"]
+        fields = ["id","question","answer"]
 
 class TermAndConditionsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -490,11 +490,40 @@ class ArtistBookingsAdminSerializer(serializers.ModelSerializer):
         except:
             return None
 
+### Revenue Module serializers
+
+class clientTalentDetailsSerializer(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    class Meta:
+        model = UserModel
+        fields = ["id","profile_picture","first_name","last_name","phone_no","country_code","email"]
+
+
+class GetRevenueDetails(serializers.ModelSerializer):
+    client = clientTalentDetailsSerializer()
+    talent = clientTalentDetailsSerializer()
+    address = ManageAddressByAdminSerializer()
+    booking = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+    class Meta:
+        model = BookingTalentModel
+        fields = ["id","client","talent","address","services","price","booking"]
+
+    def get_booking(self, obj):
+        return obj.status
+    
+    def get_price(self, obj):
+        return obj.offer_price + 15
+
+
+##customerSupport serializers
 
 class CustomerSupportSerializer(serializers.ModelSerializer):
     class Meta:
         model= ContactUsModel
         fields = "__all__"
+
+###notification serializer
 
 class NotificationSerializer(serializers.ModelSerializer):
     notification_type = serializers.SerializerMethodField()
