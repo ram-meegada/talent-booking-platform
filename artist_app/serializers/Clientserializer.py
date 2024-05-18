@@ -110,7 +110,7 @@ class TalentBasicDetails(serializers.ModelSerializer):
     gender = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id", "first_name","last_name","profile_picture", "gender", "experience","phone_no",\
+        fields = ["id", "first_name","last_name","profile_picture", "email", "gender", "experience","phone_no",\
                   "country_code", "city","country", "name", "address",\
                   "state", "profile_status", "professional_details", "services"]
     def get_professional_details(self, obj):

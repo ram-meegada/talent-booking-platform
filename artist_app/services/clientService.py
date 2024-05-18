@@ -19,7 +19,7 @@ from datetime import datetime
 import pytz
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
-from artist_app.serializers import adminSerializer
+from artist_app.serializers import adminSerializer, talentSerializer
 
 class ClientService():
     def user_signup(self, request):
@@ -434,6 +434,9 @@ class ClientService():
                 return{"message": serializer.errors, "status": 400}
         except Exception as e:
             return {"data": str(e), "message":messages.WENT_WRONG,"status":400}
+        
+    def accept_reject_counter_offer(self, request, id):
+        pass    
 
     def get_booking_details_by_id(self, request, id):
         try:
@@ -469,3 +472,12 @@ class ClientService():
         except OperationalSlotsModel.DoesNotExist:
             return {"data": None, "message": "No slots found", "status": 400}
         return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}
+
+    def ongoing_bookings(self, request):
+        try:
+            ongoing_bookings = BookingTalentModel.objects.filter(client=request.user.id, status=1)
+            serializer = talentSerializer.BookedClientDetailSerializers(ongoing_bookings, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e)
+            return {"message":messages.WENT_WRONG,"status":400}

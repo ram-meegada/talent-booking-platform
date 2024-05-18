@@ -101,3 +101,8 @@ class FetchAllTalentServicesView(APIView):
     def get(self, request, id):
         result = userservice.talent_services(request, id)
         return Response(result,status=result["status"])
+
+class OngoingBookingsView(APIView):
+    def get(self, request):
+        result = userservice.ongoing_bookings(request)
+        return Response(result,status=result["status"])
