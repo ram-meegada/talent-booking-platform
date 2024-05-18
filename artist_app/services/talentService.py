@@ -236,11 +236,11 @@ class TalentService:
         """
             Update profile details like categories, model status, portfolio, booking method
         """
+        print(request.data, "----------- request.data --------------")
         try:
             #fetch details record and user record
             user = UserModel.objects.get(id=request.user.id)
             talent_details, created = TalentDetailsModel.objects.get_or_create(user_id=request.user.id)
-            print(talent_details, '------')
             #payload keys
             user_payload = request.data.get("user")
             categories_payload = request.data.get("category")
@@ -248,6 +248,7 @@ class TalentService:
             portfolio_payload = request.data.get("portfolio")
             booking_method_payload = request.data.get("booking_method")
             if user_payload:
+                print(user_payload, "11111111111111111111111")
                 user.profile_picture_id = user_payload["profile_picture"]
                 user.first_name = user_payload["first_name"]
                 user.last_name = user_payload["last_name"]
@@ -255,6 +256,7 @@ class TalentService:
                 user.name = user_payload["first_name"] + " " + user_payload["last_name"]
                 user.save()
             if categories_payload:
+                print(user_payload, "2222222222222222222222222")
                 categories = [i["category_id"] for i in request.data["category"]]
                 sub_categories = []
                 for i in request.data["category"]:
@@ -272,6 +274,7 @@ class TalentService:
                     user.profile_status = 2
                     user.save()
             if model_status_payload:
+                print(user_payload, "33333333333333333333333")
                 serializer = talentSerializer.CreateModelStatusSerializer(talent_details, data=model_status_payload)
                 if serializer.is_valid():
                     serializer.save()
@@ -281,6 +284,7 @@ class TalentService:
                 else:
                     return {"data": serializer.errors, "message": "something went wrong", "status": 400}
             if portfolio_payload:
+                print(user_payload, "44444444444444444444444")
                 talent_details.portfolio = portfolio_payload["portfolio"]
                 talent_details.cover_photo_id = portfolio_payload["cover_photo"]
                 talent_details.save()
@@ -288,6 +292,7 @@ class TalentService:
                     user.profile_status = 4
                     user.save()
             if booking_method_payload:
+                print(user_payload, "55555555555555555555555")
                 talent_details.booking_method = booking_method_payload["method"]
                 talent_details.services = request.data["services"]
                 talent_details.save()
