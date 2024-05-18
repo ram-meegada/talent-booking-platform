@@ -14,3 +14,4 @@ class OperationalSlotsModel(BaseModel):
     
     class Meta:
         db_table = "Operational slots"
+        ordering = ["-date"]

@@ -411,21 +411,20 @@ class TalentService:
         day_representations = {0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 
                                4: "Friday", 5: "Saturday", 6: "Sunday"}
         try:
-            required_date = date.today()
-            week_day_num = required_date.weekday()
-            for i in range(week_day_num):
-                required_date -= timedelta(days=1) 
+            # week_day_num = required_date.weekday()
+            # for i in range(week_day_num):
+            #     required_date -= timedelta(days=1) 
             for i in range(0, 7):
                 find_user_slot = OperationalSlotsModel.objects.filter(
                                                                         user=request.user.id, 
-                                                                        date=required_date
+                                                                        date=request.data[i]["date"]
                                                                      ).first()
                 payload_data = {
                     "user": request.user.id,
                     "day": day_representations[i],
                     "start" : request.data[i]["start"],
                     "end" : request.data[i]["end"],
-                    "date" : required_date,
+                    "date" : request.data[i]["date"],
                     "is_active": request.data[i]["is_active"]
                 }
                 slots = self.generate_day_slots(payload_data["start"], payload_data["end"])
@@ -438,18 +437,26 @@ class TalentService:
                 elif not find_user_slot:
                     serializer = talentSerializer.SlotsSerializer(data=payload_data)
                     if serializer.is_valid():
-                        serializer.save()
+                        serializer.save(slots=slots)
                     else:
                         return {"data": serializer.errors, "message": "Something went wrong", "status": 400}
-                required_date += timedelta(days=1)
             return {"data": request.data, "message": "Slots updated successfully for this week", "status": 200}
         except Exception as error:
             return {"data": str(error), "message": "Something went wrong", "status": 400}
 
     def fetch_weekly_timings(self, request):
-        all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id)
+        day_representations = {"Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, 
+                               "Friday": 4, "Saturday": 5, "Sunday": 6}
+        all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id)[:7]
         serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
-        return {"data": serializer.data, "message": "Weekly timings fetched successfully", "status": 200}
+        slots = list(serializer.data)
+        data = []
+        for i in day_representations.keys():
+            for j in slots:
+                if j["day"] == i:
+                    data.append(j)
+                    break
+        return {"data": data, "message": "Weekly timings fetched successfully", "status": 200}
     
     def generate_day_slots(self, start, end):
         data = {}
