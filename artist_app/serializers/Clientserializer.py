@@ -2,6 +2,7 @@ from rest_framework import serializers
 from artist_app.models.userModel import UserModel
 from artist_app.models.manageAddressModel import ManageAddressModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
+from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.models.uploadMediaModel import UploadMediaModel
@@ -40,18 +41,26 @@ class AddAddressDetailsSerializer(serializers.ModelSerializer):
 class SubCategories(serializers.ModelSerializer):
     class Meta:
         model = TalentSubCategoryModel
-        fields =["name"]
+        fields =["id", "name"]
+
 class TalentBasedOnSubcategories(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = TalentDetailsModel
         fields = fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color', 'eye_color', 'booking_method')
 
+class TalentCategoryListingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TalentCategoryModel
+        fields = ["id", "name"]
+
 class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
     hair_color = serializers.SerializerMethodField()
     eye_color = serializers.SerializerMethodField()
     booking_method = serializers.SerializerMethodField()
     portfolio = serializers.SerializerMethodField()
+    categories = serializers.SerializerMethodField()
+    sub_categories = serializers.SerializerMethodField()
     cover_photo = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = TalentDetailsModel
@@ -84,6 +93,15 @@ class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
             return data        
         except:
             return obj.portfolio
+    def get_categories(self, obj):
+        cat = TalentCategoryModel.objects.filter(id__in=obj.categories)
+        serializer = TalentCategoryListingSerializer(cat, many=True)
+        return serializer.data 
+    def get_sub_categories(self, obj):
+        sub_categories = TalentSubCategoryModel.objects.filter(id__in=obj.sub_categories)
+        serializer = SubCategories(sub_categories, many=True)
+        return serializer.data 
+
 
 class TalentBasicDetails(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
@@ -92,7 +110,8 @@ class TalentBasicDetails(serializers.ModelSerializer):
     gender = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id", "first_name","last_name","profile_picture", "gender", "experience","phone_no","city","country",\
+        fields = ["id", "first_name","last_name","profile_picture", "gender", "experience","phone_no",\
+                  "country_code", "city","country", "name", "address",\
                   "state", "profile_status", "professional_details", "services"]
     def get_professional_details(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()

@@ -388,7 +388,8 @@ class CreateModelStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
         fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color',\
-                   'eye_color', 'booking_method', 'portfolio', 'cover_photo', 'categories', 'sub_categories')        
+                   'eye_color', 'booking_method', 'portfolio', 'cover_photo', 'categories', 'sub_categories',\
+                    'services')        
         
 class CreateRolePermissionSubAdminSerializer(serializers.ModelSerializer):
     class Meta:

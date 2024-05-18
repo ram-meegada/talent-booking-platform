@@ -15,6 +15,7 @@ from datetime import datetime, date
 from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
+from django.db import IntegrityError
 
 class TalentService:    
     def user_signup(self, request):
@@ -196,7 +197,40 @@ class TalentService:
                 return {"data": serializer.data, "message": "Logged In successfully", "status": 200}
             return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}    
     
+    def edit_artist_details_by_token(self, request):
+        data = {"user_details": {}, "extra_details": {}}
+        data["user_details"]["first_name"] = request.data["first_name"]
+        data["user_details"]["last_name"] = request.data["last_name"]
+        data["user_details"]["email"] = request.data["email"]
+        data["user_details"]["phone_no"] = request.data["phone_no"]
+        data["user_details"]["country_code"] = request.data["country_code"]
+        data["user_details"]["address"] = request.data["address"]
+        data["user_details"]["profile_picture"] = request.data["profile_picture"]
 
+        data["extra_details"]["bust"] = request.data["bust"]
+        data["extra_details"]["waist"] = request.data["waist"]
+        data["extra_details"]["hips"] = request.data["hips"]
+        data["extra_details"]["height_feet"] = request.data["height_feet"]
+        data["extra_details"]["height_inches"] = request.data["height_inches"]
+        data["extra_details"]["weight"] = request.data["weight"]
+        data["extra_details"]["hair_color"] = request.data["hair_color"] 
+        data["extra_details"]["eye_color"] = request.data["eye_color"] 
+        data["extra_details"]["portfolio"] = request.data["portfolio"]
+        data["extra_details"]["cover_photo"] = request.data["cover_photo"]
+        data["extra_details"]["categories"] = request.data["categories"]
+        data["extra_details"]["sub_categories"] = request.data["sub_categories"]
+        data["extra_details"]["services"] = request.data["services"]
+        user_obj = UserModel.objects.get(id=request.user.id)
+        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
+        NAME = request.data["first_name"] + " " + request.data["last_name"]
+        if user.is_valid():
+            user_obj = user.save(name=NAME)
+
+        model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
+        model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=data["extra_details"])
+        if model_details.is_valid():
+            model_details.save(user_id=user_obj.id)
+        return {"data":None, "message":"Profile updated successfully" ,"status":200}
 
     def profile_setup_and_edit(self, request):
         """
@@ -232,6 +266,7 @@ class TalentService:
                 # return
                 talent_details.categories = categories
                 talent_details.sub_categories = sub_categories
+                # talent_details.services = request.data["services"]
                 talent_details.save()
                 if user.profile_status == 1:
                     user.profile_status = 2
@@ -254,12 +289,16 @@ class TalentService:
                     user.save()
             if booking_method_payload:
                 talent_details.booking_method = booking_method_payload["method"]
+                talent_details.services = request.data["services"]
                 talent_details.save()
                 if user.profile_status == 4:
                     user.profile_status = 5
                     user.save()
             return {"data": request.data, "message": messages.DETAILS_UPDATED, "status": 200}
+        except IntegrityError:
+            return {"data": None, "message": "Category or sub category not found", "status": 400}
         except Exception as error:
+            print(type(error), '----------------')
             return {"data": str(error), "message": messages.WENT_WRONG, "status": 400}
 
     def sub_category_listing(self, request):
@@ -424,3 +463,4 @@ class TalentService:
         except OperationalSlotsModel.DoesNotExist:
             return {"data": None, "message": "No slots found", "status": 400}
         return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}
+

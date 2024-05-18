@@ -3,7 +3,7 @@ from artist_app.models.baseModel import BaseModel
 from django.contrib.auth.models import AbstractUser
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.utils.choiceFields import GENDER_CHOICES, ROLE_CHOICE, PROFILE_STATUS_CHOICES,\
-                                          VERIFICATION_STATUS_CHOICES
+                                          VERIFICATION_STATUS_CHOICES, EXPERIENCE_CHOICES
 
 class UserModel(AbstractUser):
     #Email field
@@ -34,9 +34,10 @@ class UserModel(AbstractUser):
     gender = models.IntegerField(choices = GENDER_CHOICES, blank = True, null = True)
     profile_status = models.IntegerField(choices=PROFILE_STATUS_CHOICES, default=0)
     verification_status = models.IntegerField(choices=VERIFICATION_STATUS_CHOICES, default=0)
+    experience = models.IntegerField(choices=EXPERIENCE_CHOICES, blank=True, null=True)
 
     #foreign keys
-    profile_picture = models.ForeignKey(UploadMediaModel, on_delete = models.SET_NULL, null = True)
+    profile_picture = models.ForeignKey(UploadMediaModel, on_delete=models.SET_NULL, null=True)
 
     #DateTime fields
     created_at = models.DateTimeField(auto_now_add = True)
@@ -48,7 +49,7 @@ class UserModel(AbstractUser):
     date_of_birth = models.DateField(blank = True, null = True)
 
     #Text fields
-    experience = models.TextField(default = "")
+    # experience = models.TextField(default = "")
     address = models.TextField(default = "")
 
     USERNAME_FIELD = "email"

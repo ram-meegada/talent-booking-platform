@@ -1,11 +1,14 @@
 from django.urls import path
-from artist_app.views import clientView,adminView
+from artist_app.views import clientView, adminView, talentView
 
 urlpatterns = [
     path("signup", clientView.SignUpView.as_view()),
     path("verify-otp", clientView.VerifyOtpViaMailView.as_view()),
     path("log-in", clientView.LogInView.as_view()),
-    path("resend-otp",clientView.ResendOtpView.as_view()),
+    path("resend-otp", clientView.ResendOtpView.as_view()),
+    path("edit-profile", clientView.EditClientDetailsByTokenView.as_view()),
+    path("change-password", adminView.ChangePasswordByTokenView.as_view()),
+    path("profile-details", talentView.TalentUserDetailsView.as_view()),
 
     ################# ADDRESS-MANAGE #########################
     path("address",clientView.AddClientNewAddressDetailsView.as_view()),
@@ -22,10 +25,6 @@ urlpatterns = [
     path("talent-detials-by-id/<int:id>",clientView.TalentDetailsById.as_view()),
     path("book-talent",clientView.BookTalentView.as_view()),
     path("talent-slots-by-date", clientView.GetTalentSlotsView.as_view()),
-    path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),
+    path("fetch-booking-details/<int:id>", clientView.GetAllBookTalentDetails.as_view()),
     path("all-services/<int:id>", clientView.FetchAllTalentServicesView.as_view()),
-    
-    
-    
-
 ]

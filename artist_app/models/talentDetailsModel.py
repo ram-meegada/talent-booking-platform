@@ -16,7 +16,7 @@ class TalentDetailsModel(BaseModel):
     hips = models.IntegerField(help_text="in inches", blank=True, null=True)
     height_feet = models.IntegerField(help_text="in feet", blank=True, null=True)
     height_inches = models.IntegerField(help_text="in inches", blank=True, null=True)
-    weight = models.IntegerField(help_text="in kgs", blank=True, null=True)
+    weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     hair_color = models.IntegerField(choices=HAIR_COLOR_CHOICES, default=0, blank=True, null=True)
     eye_color = models.IntegerField(choices=EYE_COLOR_CHOICES, default=0, blank=True, null=True)

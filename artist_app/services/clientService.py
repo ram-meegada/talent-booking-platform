@@ -19,6 +19,7 @@ from datetime import datetime
 import pytz
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
+from artist_app.serializers import adminSerializer
 
 class ClientService():
     def user_signup(self, request):
@@ -191,9 +192,21 @@ class ClientService():
                 return {"data": serializer.data, "message": "Logged In successfully", "status": 200}
             return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
 
-
-
-
+    def edit_client_details_by_token(self, request):
+        data = {"user_details": {}, "extra_details": {}}
+        data["user_details"]["first_name"] = request.data["first_name"]
+        data["user_details"]["last_name"] = request.data["last_name"]
+        data["user_details"]["email"] = request.data["email"]
+        data["user_details"]["phone_no"] = request.data["phone_no"]
+        data["user_details"]["country_code"] = request.data["country_code"]
+        data["user_details"]["address"] = request.data["address"]
+        data["user_details"]["profile_picture"] = request.data["profile_picture"]
+        user_obj = UserModel.objects.get(id=request.user.id)
+        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
+        NAME = request.data["first_name"] + " " + request.data["last_name"]
+        if user.is_valid():
+            user_obj = user.save(name=NAME)
+        return {"data":None, "message":"Profile updated successfully" ,"status":200}
 
 
 ############################################################################################################

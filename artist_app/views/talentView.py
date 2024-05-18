@@ -45,6 +45,11 @@ class ProfileSetUpAndUpdateView(APIView):
         result = talent_service.profile_setup_and_edit(request)
         return Response(result, status=result["status"])
 
+class EditProfileByTokenView(APIView):
+    def put(self, request):
+        result = talent_service.edit_artist_details_by_token(request)
+        return Response(result, status=result["status"])
+
 class ResendOtpView(APIView):
     permission_classes = (AllowAny,)
     def post(self, request):

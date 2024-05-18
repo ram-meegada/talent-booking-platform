@@ -1,6 +1,6 @@
 from http import client
 from django.urls import path
-from artist_app.views import talentView, clientView
+from artist_app.views import talentView, clientView, adminView
 
 urlpatterns = [
     path("registration", talentView.TalentSignUpView.as_view()),
@@ -11,7 +11,9 @@ urlpatterns = [
     path("resend-otp", talentView.ResendOtpView.as_view()),
 
     path("update-profile", talentView.ProfileSetUpAndUpdateView.as_view()),
+    path("edit-profile", talentView.EditProfileByTokenView.as_view()),
     path("profile-details", talentView.TalentUserDetailsView.as_view()),
+    path("change-password",adminView.ChangePasswordByTokenView.as_view()),
 
     ######### bookings ###########
     path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),

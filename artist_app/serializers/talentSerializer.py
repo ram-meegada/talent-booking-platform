@@ -12,7 +12,7 @@ from artist_app.serializers.adminSerializer import CategorySerializer, SubCatego
 class TalentListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentCategoryModel
-        fields = ["name"]
+        fields = ["id", "name"]
 
 class CreateUpdateTalentUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
