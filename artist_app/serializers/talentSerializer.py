@@ -106,17 +106,18 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
     client = UserSerializersForClientDetails()
     talent = UserSerializersForClientDetails()
     status = serializers.SerializerMethodField()
-    track_booking = serializers.SerializerMethodField()
+    track_booking_label = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
         fields = ["id", "client", "talent", "offer_price", "time", "date", "status", "track_booking", \
+                  "track_booking_label",\
                   "currency", "services", "created_at"]
     def get_status(self, obj):
         try:
             return obj.get_status_display()    
         except:
             obj.status    
-    def get_track_booking(self, obj):
+    def get_track_booking_label(self, obj):
         try:
             return obj.get_track_booking_display()    
         except:

@@ -22,6 +22,9 @@ class BookingTalentModel(BaseModel):
     currency = models.CharField(max_length=10, null=True, blank=True)
     services = models.JSONField(default=list)
 
+    rating_by_client = models.BooleanField(default=False)
+    rating_by_talent = models.BooleanField(default=False)
+
 
     class Meta:
         db_table = "bookingDetails"

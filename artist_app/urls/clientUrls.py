@@ -28,6 +28,9 @@ urlpatterns = [
     path("fetch-booking-details/<int:id>", clientView.GetAllBookTalentDetails.as_view()),
 
     path("ongoing-bookings", clientView.OngoingBookingsView.as_view()),
+    path("completed-bookings", clientView.CompletedBookingsView.as_view()),
+    path("cancelled-bookings", clientView.CancelledBookingsView.as_view()),
+    path("mark-booking-completed/<int:booking_id>", clientView.MarkBookingCompletedView.as_view()),
 
     path("all-services/<int:id>", clientView.FetchAllTalentServicesView.as_view()),
 ]

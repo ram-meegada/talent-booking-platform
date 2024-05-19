@@ -106,3 +106,18 @@ class OngoingBookingsView(APIView):
     def get(self, request):
         result = userservice.ongoing_bookings(request)
         return Response(result,status=result["status"])
+
+class CompletedBookingsView(APIView):
+    def get(self, request):
+        result = userservice.completed_bookings(request)
+        return Response(result,status=result["status"])
+
+class CancelledBookingsView(APIView):
+    def get(self, request):
+        result = userservice.cancelled_bookings(request)
+        return Response(result,status=result["status"])
+
+class MarkBookingCompletedView(APIView):
+    def patch(self, request, booking_id):
+        result = userservice.mark_booking_completed(request, booking_id)
+        return Response(result,status=result["status"])

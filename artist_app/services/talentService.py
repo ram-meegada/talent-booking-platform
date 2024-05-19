@@ -373,7 +373,6 @@ class TalentService:
             print(enddate, '-------')
             startdate = enddate - timedelta(days=6)
             time = datetime.now().time()
-            print(datetime.now().time(),"1234567893456781234567812345678")
             past_bookings = BookingTalentModel.objects.filter(date__lte = enddate).exclude(date=enddate, time__gt = time)
             serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
             return {"data":serializer.data,"status":200}

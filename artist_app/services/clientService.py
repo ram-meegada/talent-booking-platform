@@ -479,5 +479,30 @@ class ClientService():
             serializer = talentSerializer.BookedClientDetailSerializers(ongoing_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
-            print(e)
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
+
+    def completed_bookings(self, request):
+        try:
+            completed_bookings = BookingTalentModel.objects.filter(client=request.user.id).\
+                                                            filter(Q(status=2) | Q(track_booking=4))
+            serializer = talentSerializer.BookedClientDetailSerializers(completed_bookings, many=True)
+            return {"data": serializer.data, "message": "Completed bookings fetched successfully", "status": 200}
+        except Exception as e:
+            return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
+        
+    def mark_booking_completed(self, request, booking_id):
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        booking.status = 2
+        booking.save()
+        return {"data": None, "message": "Booking marked as completed successfully", "status": 200}
+
+    def cancelled_bookings(self, request):
+        try:
+            cancelled_bookings = BookingTalentModel.objects.filter(client=request.user.id, status=3, track_booking=4)
+            serializer = talentSerializer.BookedClientDetailSerializers(cancelled_bookings, many=True)
+            return {"data": serializer.data, "message": "Cancelled bookings fetched successfully", "status": 200}
+        except Exception as e:
+            return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
