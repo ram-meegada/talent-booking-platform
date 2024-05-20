@@ -54,6 +54,11 @@ class ShowAllAddressesDetailsView(APIView):
         result = userservice.show_all_address_with_token(request)
         return Response(result, result["status"])
 
+class GetAddressDetialsByIdView(APIView):
+    def get(self, request, id):
+        result = userservice.get_addres_details_by_id(request, id)
+        return Response(result, result["status"])
+
 
 #-------------------------------booking talent -------------------------
 
