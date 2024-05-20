@@ -117,6 +117,11 @@ class CancelledBookingsView(APIView):
         result = userservice.cancelled_bookings(request)
         return Response(result,status=result["status"])
 
+class AcceptOrCancelBookingsView(APIView):
+    def patch(self, request, booking_id):
+        result = userservice.accept_or_reject_counter_offer(request, booking_id)
+        return Response(result,status=result["status"])
+
 class MarkBookingCompletedView(APIView):
     def patch(self, request, booking_id):
         result = userservice.mark_booking_completed(request, booking_id)

@@ -506,3 +506,19 @@ class ClientService():
             return {"data": serializer.data, "message": "Cancelled bookings fetched successfully", "status": 200}
         except Exception as e:
             return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
+        
+    def accept_or_reject_counter_offer(self, request, booking_id):
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        if request.data["accept"] is True:
+            booking.track_booking = 3
+            booking.save()
+            return {"data": "", "message": "Payment for booking successfully done.", "status": 200}
+        else:
+            booking.track_booking = 5
+            booking.cancellation_reason = request.data["cancellation_reason"]
+            booking.status = 3
+            booking.save()
+            return {"data": "", "message": "Booking declined successfully", "status": 200}

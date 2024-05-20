@@ -6,8 +6,8 @@ from artist_app.services.ratingsService import RatingService
 ratings_obj = RatingService()
 
 class AddRatingView(APIView):
-    def post(self, request, talent_id):
-        result = ratings_obj.add_rating(request, talent_id)
+    def post(self, request):
+        result = ratings_obj.add_rating(request)
         return Response(result, status=result["status"])
 
 class GetUserRatingView(APIView):

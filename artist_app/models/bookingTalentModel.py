@@ -25,6 +25,7 @@ class BookingTalentModel(BaseModel):
     rating_by_client = models.BooleanField(default=False)
     rating_by_talent = models.BooleanField(default=False)
 
+    cancellation_reason = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = "bookingDetails"

@@ -1,13 +1,32 @@
 from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from artist_app.serializers.ratingsSerializer import AddRatingSerializer, GetRatingSerializer
+from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.utils import messages
 
 class RatingService():
-    def add_rating(self, request, talent_id):
-        request.data["talent"] = talent_id
-        serializer = AddRatingSerializer(data=request.data, context={"request": request})
+    def add_rating(self, request):
+        TALENT, CLIENT = False, False
+        if request.user.role == 1:
+            TALENT = True
+            request.data["client"] = request.user.id
+            request.data["given_by"] = 1
+        elif request.user.role == 2:
+            CLIENT = True
+            request.data["talent"] = request.user.id
+            request.data["given_by"] = 2
+        booking_id = request.data["booking"]
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        serializer = AddRatingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            if TALENT:
+                booking.rating_by_client = True
+            elif CLIENT:
+                booking.rating_by_talent = True
+            booking.save()
             return {"data": serializer.data, "message": messages.ADDED_RATING, "status": 200}
         return {"data": serializer.errors, "message": messages.WENT_WRONG, "status": 400}
     

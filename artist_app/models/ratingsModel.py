@@ -1,11 +1,17 @@
 from django.db import models
 from artist_app.models.baseModel import BaseModel
 from artist_app.models.userModel import UserModel
+from artist_app.models.bookingTalentModel import BookingTalentModel
 
 BEST_LIKED_CHOICES = [
 	(1, "Punctuality"),
 	(2, "Clarity"),
 	(3, "Helpfulness")
+]
+
+GIVEN_CHOICES = [
+    (1, "client"),
+    (2, "talent"),
 ]
 
 class ReviewAndRatingsModel(BaseModel):
@@ -14,6 +20,10 @@ class ReviewAndRatingsModel(BaseModel):
     best_liked = models.IntegerField(choices=BEST_LIKED_CHOICES)
     review = models.TextField()
     rating = models.IntegerField()
+
+    booking = models.ForeignKey(BookingTalentModel, on_delete=models.CASCADE, blank=True, null=True)
+
+    given_by = models.IntegerField(choices=GIVEN_CHOICES, blank=True, null=True)
     
     def __str__(self):
         return f"{self.talent} - {self.client}"

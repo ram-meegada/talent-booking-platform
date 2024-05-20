@@ -11,7 +11,7 @@ urlpatterns = [
     path("conversation/<int:session>", chatView.ConversationView.as_view()),
 
     #### ratings ####
-    path("ratings/<int:talent_id>", ratingsView.AddRatingView.as_view()),
+    path("ratings", ratingsView.AddRatingView.as_view()),
     path("user-ratings/<int:talent_id>", ratingsView.GetUserRatingView.as_view()),
 
     ###change_password###
