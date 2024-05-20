@@ -398,7 +398,7 @@ class AdminService:
     def get_categories_detail_by_id(self, request,id):
         try:
             category = TalentCategoryModel.objects.get(id=id)
-            serializer  = adminSerializer.CategorySerializer(category)
+            serializer  = adminSerializer.GetCategorySerializer(category)
             return {"data":serializer.data,"message":messages.CATEGORIES_LISTING,"status":200}
         except Exception as e:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
