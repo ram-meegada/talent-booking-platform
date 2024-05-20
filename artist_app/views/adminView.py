@@ -150,6 +150,11 @@ class GetAllCategoriesView(APIView):
         result = admin_obj.get_all_categories(request)
         return Response(result, status=result["status"])
 
+class AllCategoryView(APIView):
+    def get(self, request):
+        result = admin_obj.all_category(request)
+        return Response(result, status=result["status"])
+
 class GetCategoriesDetailsByIdView(APIView):
     def get(self, request, id):
         result = admin_obj.get_categories_detail_by_id(request, id)
