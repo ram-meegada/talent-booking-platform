@@ -10,6 +10,9 @@ class ManageAddressModel(baseModel.BaseModel):
     street_no = models.CharField(max_length=255, blank=True, null=True)
     phone_no_manage_address = models.CharField(max_length=255, blank=True, null=True)
     address_type = models.IntegerField(choices=ADDRESS_CHOICE, blank=True, null=True)
+    city = models.CharField(max_length = 100, default = "")
+    state = models.CharField(max_length = 100, default = "")
+    country = models.CharField(max_length = 100, default = "")
     
     class Meta:
         db_table  = "ManageAddress"

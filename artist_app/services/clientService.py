@@ -1,6 +1,6 @@
 from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\
     TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer,ShowBookingDetailsSerializer,\
-    GetUserSerializer, TalentBasicDetails
+    GetUserSerializer, TalentBasicDetails, TalentListingDetailsSerializer
 from django.contrib.auth.hashers import check_password
 from artist_app.utils.sendOtp import send_otp_via_mail
 from rest_framework import status
@@ -397,7 +397,7 @@ class ClientService():
                 talent = TalentDetailsModel.objects.filter(sub_categories__contains=[pk]).values("user")
                 talent_details_ids += [i["user"] for i in talent]
             users = UserModel.objects.filter(id__in=talent_details_ids)
-            serializer = TalentBasicDetails(users, many = True)
+            serializer = TalentListingDetailsSerializer(users, many = True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             return {"data": str(e), "message": messages.WENT_WRONG,"status":400}
@@ -459,7 +459,6 @@ class ClientService():
     #         return {"messgae":messages.WENT_WRONG,"status":400}
             
     def filter_talent(self, request):
-        filters = Q()
         pass
 
     def talent_services(self, request, id):
