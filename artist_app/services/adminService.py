@@ -1,4 +1,5 @@
 from shutil import ExecError
+from unicodedata import category
 from artist_app.models.permissionModel import PermissionModel
 from artist_app.utils import messages
 from artist_app.models.talentCategoryModel import TalentCategoryModel
@@ -385,6 +386,14 @@ class AdminService:
                     }
         except Exception as e:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
+
+    def all_category(self, request):
+        try:
+            category = TalentCategoryModel.objects.all()
+            serializer = adminSerializer.GetAllCategoriesSerializers(category, many =True)
+            return {"data":serializer.data, "message":messages.FETCH,"status":200}
+        except Exception as e:
+            return {"data":None,"messges":messages.WENT_WRONG,"status":400}
     
     def get_categories_detail_by_id(self, request,id):
         try:
