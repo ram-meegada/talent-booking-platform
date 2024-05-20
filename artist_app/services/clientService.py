@@ -286,6 +286,7 @@ class ClientService():
                 all_obj = {"data": serializer.data}
                 all_obj["access_token"] = str(token.access_token)
                 all_obj["refresh_token"] = str(token)
+                print(all_obj,"akjhsdflkjahsdflkjh")
                 return {"data": all_obj, 'message': "LOGIN_SUCCESSFULLY", "status": status.HTTP_200_OK}
             else:
                 return {"message": "Invalid credentials", "status": status.HTTP_400_BAD_REQUEST}
@@ -325,9 +326,15 @@ class ClientService():
 
     def show_all_address_with_token(self, request):
         data = ManageAddressModel.objects.filter(user_id = request.user.id)
+        home_address = data.filter(address_type=1)
+        print("home_address",home_address)
+        home = AddAddressDetailsSerializer(home_address, many=True)
+        work_address = data.filter(address_type=2)
+        work=AddAddressDetailsSerializer(work_address, many=True)
+        other_address = data.filter(address_type=3)
+        other = AddAddressDetailsSerializer(other_address, many=True)
 
-        serializer = AddAddressDetailsSerializer(data, many=True)
-        return {"data":serializer.data, "status":status.HTTP_200_OK}
+        return {"home":home.data,"work":work.data,"other":other.data, "status":status.HTTP_200_OK}
 
     def add_address_using_token(self, request):
         try:
