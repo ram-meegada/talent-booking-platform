@@ -399,6 +399,16 @@ class TalentService:
         booking.save()
         return {"data": None, "message": "Counter offer sent successfully", "status": 200}
     
+    def accept_offer(self, request):
+        booking_id = request.data["booking_id"]
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        booking.track_booking = 3
+        booking.save()
+        return {"data": None, "message": "Offer accepted successfully", "status": 200}
+    
     def all_categories(self, request):
         categories = TalentCategoryModel.objects.values()
         return {"data": categories, "message": "Categories listing fetched successfully", "status": 200}

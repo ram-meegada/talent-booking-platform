@@ -20,8 +20,10 @@ urlpatterns = [
     path("upcoming-bookings-listing", talentView.ClientUpcomingBookingListing.as_view()),
     path("recent-offers", talentView.RecentOffersView.as_view()),
     path("counter-offer", talentView.CounterOfferByTalentView.as_view()),
+    path("accept-offer", talentView.AcceptOfferByTalentView.as_view()),
     path("past-bookings", talentView.ClientPastBookingListing.as_view()),
     path("cancelled-bookings", talentView.CancelledBookingsView.as_view()),
+
 
     path("all-categories", talentView.AllCategoriesView.as_view()),
     path("sub-categories", talentView.SubCategoryListingView.as_view()),

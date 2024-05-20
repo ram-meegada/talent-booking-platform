@@ -27,6 +27,8 @@ class BookingTalentModel(BaseModel):
 
     cancellation_reason = models.TextField(blank=True, null=True)
 
+    payment_completed = models.BooleanField(default=False)
+
     class Meta:
         db_table = "bookingDetails"
 
