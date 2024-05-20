@@ -643,7 +643,7 @@ class AdminService:
         NAME = request.data["first_name"] + " " + request.data["last_name"]
         if user.is_valid():
             user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True,\
-                                 profile_status=1, role=2, name=NAME)
+                                 profile_status=1, role=2, name=NAME,verification_status=1)
             password = generate_password()
             user_obj.set_password(password)
             Thread(target=send_password_via_mail, args=(data["user_details"]["email"], password)).start()
