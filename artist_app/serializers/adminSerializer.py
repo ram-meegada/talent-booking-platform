@@ -183,7 +183,7 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
         return obj.user.country_code
     def get_gender(self, obj):
         try:
-            obj.user.get_gender_display()
+            return obj.user.get_gender_display()
         except:    
             return obj.user.gender
     def get_categories(self, obj):
