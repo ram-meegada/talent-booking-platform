@@ -20,6 +20,8 @@ import pytz
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.serializers import adminSerializer, talentSerializer
+from artist_app.models.uploadMediaModel import UploadMediaModel
+from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 
 class ClientService():
     def user_signup(self, request):
@@ -52,7 +54,10 @@ class ClientService():
             if user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
                 user_obj.profile_status = 1
                 user_obj.save()
-                return {"data": serializer.data, "message": "Account created successfully", "status": 201}
+                media_url = UploadMediaModel.objects.filter(id=serializer.data["profile_picture"]).first()
+                data = {**serializer.data}
+                data["profile_picture"] = CreateUpdateUploadMediaSerializer(media_url).data
+                return {"data": data, "message": "Account created successfully", "status": 201}
             if not user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
                 user_obj.otp = otp
                 user_obj.otp_sent_time = datetime.now(tz=pytz.UTC)
