@@ -34,10 +34,12 @@ class GetUserSerializer(serializers.ModelSerializer):
 
 
 class AddAddressDetailsSerializer(serializers.ModelSerializer):
+    address_status = serializers.SerializerMethodField()
     class Meta:
         model = ManageAddressModel
-        fields = ["address_location", "house_flat_block_no", "landmark", "street_no", "phone_no_manage_address", "address_type"]
-
+        fields = ["address_location", "house_flat_block_no", "landmark", "street_no", "phone_no_manage_address", "address_type","city","state","country"]
+    def get_address_status(self, obj):
+        return obj.get_address_type_display()
 class SubCategories(serializers.ModelSerializer):
     class Meta:
         model = TalentSubCategoryModel
