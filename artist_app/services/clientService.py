@@ -329,12 +329,16 @@ class ClientService():
         home_address = data.filter(address_type=1)
         print("home_address",home_address)
         home = AddAddressDetailsSerializer(home_address, many=True)
+
         work_address = data.filter(address_type=2)
         work=AddAddressDetailsSerializer(work_address, many=True)
         other_address = data.filter(address_type=3)
         other = AddAddressDetailsSerializer(other_address, many=True)
-
-        return {"home":home.data,"work":work.data,"other":other.data, "status":status.HTTP_200_OK}
+        req_data={}
+        req_data["home"]=home.data
+        req_data["work"]=work.data
+        req_data["other"]=other.data
+        return {"data":req_data, "status":status.HTTP_200_OK}
 
     def add_address_using_token(self, request):
         try:
@@ -373,6 +377,14 @@ class ClientService():
             return {"message":messages.DELETE,"status":status.HTTP_200_OK}
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":status.HTTP_400_BAD_REQUEST}
+    def get_addres_details_by_id(self, request, id):
+        try:
+            address = ManageAddressModel.objects.get(id = id)
+            address_data = AddAddressDetailsSerializer(address)
+            return {"data":address_data.data,"message":messages.DELETE,"status":status.HTTP_200_OK}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":status.HTTP_400_BAD_REQUEST}
+
 
 
 #--------------------------booking talent -----------------------------------

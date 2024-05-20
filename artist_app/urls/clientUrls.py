@@ -14,6 +14,7 @@ urlpatterns = [
     path("address",clientView.AddClientNewAddressDetailsView.as_view()),
     path("address-details/<int:id>",clientView.EditClientAddressDetailsView.as_view()),
     path("all-address",clientView.ShowAllAddressesDetailsView.as_view()),
+    path("address-details-by-id",clientView.GetAddressDetialsByIdView.as_view()),
     path("delete-address/<int:id>",clientView.DeleteClientAddressDetailsBYIDView.as_view()),
 
     #################### category listing #####################
