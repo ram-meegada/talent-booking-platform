@@ -43,8 +43,8 @@ urlpatterns = [
 
     # manage categories Urls
     path("category", adminView.AddTalentCategoryView.as_view()),
-    path("all-category", adminView.GetAllCategoriesView.as_view()),
-    path("get-all-category",adminView.AllCategoryView.as_view()),
+    path("all-category", adminView.GetAllCategoriesView.as_view()),#this is with pagination 
+    path("get-all-category",adminView.AllCategoryView.as_view()), # this is with out pagination for add artist 
     path("get-categories-details-by-id/<int:id>", adminView.GetCategoriesDetailsByIdView.as_view()),
     path("update-categories-detail-by-id/<int:id>", adminView.UpdateCategoriesByIdView.as_view()),
     path("delete-category-by-id/<int:id>",adminView.DeleteCategoriesByIdView.as_view()),
