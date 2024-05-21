@@ -18,13 +18,7 @@ from artist_app.models.notificationModel import NotificationModel
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentCategoryModel
-        fields = ["id", "image", "name"]
-
-class GetCategorySerializer(serializers.ModelSerializer):
-    image = CreateUpdateUploadMediaSerializer()
-    class Meta:
-        model = TalentCategoryModel
-        fields = ["id", "image", "name"]
+        fields = ["id", "name"]
 
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -120,10 +114,9 @@ class updateAdminDetialsByTokenSerializer(serializers.ModelSerializer):
 class GetAllCategoriesSerializers(serializers.ModelSerializer):
     update_at = serializers.SerializerMethodField()
     key = serializers.SerializerMethodField()
-    image = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = TalentCategoryModel
-        fields = ["id", "image", "name", "update_at", "is_active", "key"]
+        fields = ["id", "name", "update_at", "is_active", "key"]
 
     def get_update_at(self, obj):
        return obj.updated_at.date()

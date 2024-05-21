@@ -1,3 +1,4 @@
+from time import timezone
 from rest_framework import serializers
 from artist_app.models.userModel import UserModel
 from artist_app.models.manageAddressModel import ManageAddressModel
@@ -10,6 +11,7 @@ from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.utils.sendOtp import generate_access_token
 from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.db.models import Avg
+from datetime import date
 
 class CreateClientSerializers(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
@@ -133,6 +135,114 @@ class TalentListingDetailsSerializer(serializers.ModelSerializer):
             return []    
     def get_rating(self, obj):
         pass    
+
+class TalentDetailsBasedOnIOSOtherDetailsSubcategories(serializers.ModelSerializer):
+    booking_method = serializers.SerializerMethodField()
+    portfolio = serializers.SerializerMethodField()
+    categories = serializers.SerializerMethodField()
+    sub_categories = serializers.SerializerMethodField()
+    cover_photo = CreateUpdateUploadMediaSerializer()
+    
+
+    class Meta:
+        model = TalentDetailsModel
+        fields = ["booking_method","portfolio","cover_photo", "categories", "sub_categories"]
+    def get_booking_method(self, obj):
+        try:
+            return obj.get_booking_method_display()
+        except:
+            return obj.booking_method
+    def get_portfolio(self, obj):
+        data = []
+        try:
+            for i in obj.portfolio:
+                media = UploadMediaModel.objects.filter(id=i).first()
+                if media:
+                    data.append(CreateUpdateUploadMediaSerializer(media).data)
+                else:
+                    pass
+            return data        
+        except:
+            return obj.portfolio
+    def get_categories(self, obj):
+        cat = TalentCategoryModel.objects.filter(id__in=obj.categories)
+        serializer = TalentCategoryListingSerializer(cat, many=True)
+        return serializer.data 
+    def get_sub_categories(self, obj):
+        sub_categories = TalentSubCategoryModel.objects.filter(id__in=obj.sub_categories)
+        serializer = SubCategories(sub_categories, many=True)
+        return serializer.data 
+
+   
+
+
+
+
+class TalentDetailsBasedOnIOSSubcategories(serializers.ModelSerializer):
+    gender = serializers.SerializerMethodField()
+    city = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
+    hair_color = serializers.SerializerMethodField()
+    eye_color = serializers.SerializerMethodField()
+    height = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = TalentDetailsModel
+        fields =["gender","age","city","hair_color","eye_color","height","weight","bust","waist","hips"]
+    def get_hair_color(self, obj):
+        try:
+            return obj.get_hair_color_display()
+        except:
+            return obj.hair_color
+
+    def get_height(self,obj):
+        return str(obj.height_feet)+" "+str(obj.height_inches)
+    def get_gender(self, obj):
+        try:
+            return obj.user.get_gender_display()
+        except:
+            return obj.user.gender
+    def get_age(self, obj):
+        current_date =  date.today()
+        user_date=obj.user.date_of_birth
+        print(current_date,user_date,"aksjdhfalkshjdfk")
+        age = (current_date-user_date).days
+        age = age/365.25
+        print(age,"sdjasjhdfaksh")
+        return int(age)
+
+    def get_city(self, obj):
+        return obj.user.city
+
+    def get_eye_color(self, obj):
+        try:
+            return obj.get_eye_color_display()
+        except:
+            return obj.eye_color
+    
+
+class TalentBasicDetailsIOS(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    professional_details = serializers.SerializerMethodField()
+    services = serializers.SerializerMethodField()
+    class Meta:
+        model = UserModel
+        fields = ["id", "first_name","last_name","profile_picture", "email", "experience","phone_no",\
+                  "country_code","country", "name", "address",\
+                  "state", "profile_status", "professional_details", "services", "average_rating"]
+    def get_professional_details(self, obj):
+        details = TalentDetailsModel.objects.filter(user=obj.id).first()
+        if details:
+            serializer = TalentDetailsBasedOnIOSOtherDetailsSubcategories(details)
+            return serializer.data
+        else:
+            return {}    
+    def get_services(self, obj):
+        details = TalentDetailsModel.objects.filter(user=obj.id).first()
+        if details:
+            return details.services
+        else:
+            return []
 
 
 class TalentBasicDetails(serializers.ModelSerializer):
