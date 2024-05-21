@@ -107,19 +107,28 @@ class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
 
 class TalentListingDetailsSerializer(serializers.ModelSerializer):
     sub_categories = serializers.SerializerMethodField()
+    categories = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
         fields = ["id", "first_name","last_name", "profile_picture", "email", \
                   "name", "address",\
-                  "rating", "profile_status", "sub_categories"]
+                  "rating", "profile_status", "sub_categories", "categories"]
     def get_sub_categories(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()
         if details:
             sub_categories = TalentSubCategoryModel.objects.filter(id__in=details.sub_categories)
             serializer = SubCategories(sub_categories, many=True)
             return ", ".join([i["name"] for i in serializer.data])
+        else:
+            return []    
+    def get_categories(self, obj):
+        details = TalentDetailsModel.objects.filter(user=obj.id).first()
+        if details:
+            categories = TalentSubCategoryModel.objects.filter(id__in=details.categories)
+            serializer = TalentCategoryListingSerializer(categories, many=True)
+            return serializer.data
         else:
             return []    
     def get_rating(self, obj):
