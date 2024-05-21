@@ -1,6 +1,6 @@
 from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\
     TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer,ShowBookingDetailsSerializer,\
-    GetUserSerializer, TalentBasicDetails, TalentListingDetailsSerializer
+    GetUserSerializer, TalentBasicDetails, TalentListingDetailsSerializer,TalentDetailsBasedOnIOSSubcategories
 from django.contrib.auth.hashers import check_password
 from artist_app.utils.sendOtp import send_otp_via_mail
 from rest_framework import status
@@ -23,6 +23,7 @@ from artist_app.serializers import adminSerializer, talentSerializer
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.utils.choiceFields import FILTER_KEYS
+from artist_app.serializers.Clientserializer import TalentBasicDetailsIOS
 
 class ClientService():
     def user_signup(self, request):
@@ -450,8 +451,18 @@ class ClientService():
     def view_talent_all_details_by_id(self, request,id):
         try:
             talent = UserModel.objects.get(id=id)
-            serializer = TalentBasicDetails(talent)
-            return {"data": serializer.data, "message": "Talent details fetched successfully", "status":200}
+            serializer = TalentBasicDetailsIOS(talent)
+            other_details= TalentDetailsModel.objects.get(user_id=id)
+            details = TalentDetailsBasedOnIOSSubcategories(other_details)
+            dict={}
+            l = []
+            for i in details.data.values():
+                l.append(i)
+
+            dict["detials"]=serializer.data
+            dict["other_detials"]=l
+
+            return {"data": dict, "message": "Talent details fetched successfully", "status":200}
         except Exception as e:
             print(e)
             return {"message": messages.WENT_WRONG, "status":400}
