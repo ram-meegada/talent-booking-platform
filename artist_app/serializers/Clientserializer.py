@@ -12,11 +12,14 @@ from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.db.models import Avg
 
 class CreateClientSerializers(serializers.ModelSerializer):
+    token = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
         fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
-                  "date_of_birth", "experience", "address", "city", "state", "country", "encoded_id")
-
+                  "date_of_birth", "experience", "address", "city", "state", "country", "encoded_id","token")
+    def get_token(self, obj):
+        token = generate_access_token(obj)
+        return token 
 class GetUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     profile_picture = CreateUpdateUploadMediaSerializer()

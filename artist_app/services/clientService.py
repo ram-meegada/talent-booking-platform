@@ -17,7 +17,7 @@ from django.db.models import Q
 from threading import Thread
 from datetime import datetime
 import pytz
-from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
+from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id,generate_access_token
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.serializers import adminSerializer, talentSerializer
 from artist_app.models.uploadMediaModel import UploadMediaModel
@@ -421,10 +421,6 @@ class ClientService():
         except Exception as e:
             return {"data": str(e), "message": messages.WENT_WRONG,"status":400}
 
-    def filter_talent(self, request):
-        # filter_keys_first_set = {"experience": "user__experience__in", "categories": }
-        pass
-
     def view_talent_all_details_by_id(self, request,id):
         try:
             talent = UserModel.objects.get(id=id)
@@ -481,6 +477,8 @@ class ClientService():
     #     except Exception as e:
     #         return {"messgae":messages.WENT_WRONG,"status":400}
             
+    def filter_talent(self, request):
+        pass
 
     def talent_services(self, request, id):
         try:
