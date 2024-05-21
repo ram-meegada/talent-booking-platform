@@ -421,6 +421,10 @@ class ClientService():
         except Exception as e:
             return {"data": str(e), "message": messages.WENT_WRONG,"status":400}
 
+    def filter_talent(self, request):
+        # filter_keys_first_set = {"experience": "user__experience__in", "categories": }
+        pass
+
     def view_talent_all_details_by_id(self, request,id):
         try:
             talent = UserModel.objects.get(id=id)
@@ -477,8 +481,6 @@ class ClientService():
     #     except Exception as e:
     #         return {"messgae":messages.WENT_WRONG,"status":400}
             
-    def filter_talent(self, request):
-        pass
 
     def talent_services(self, request, id):
         try:

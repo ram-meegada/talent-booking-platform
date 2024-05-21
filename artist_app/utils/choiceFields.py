@@ -94,3 +94,21 @@ NOTIFICATION_TYPE_CHOICES = [
     (4, "PAYMENT RECEIVED BY CLIENT"),
     (4, "OFFER CANCELLED BY TALENT"),
 ]
+
+FILTER_KEYS = {
+    "experience": "user__experience__in", 
+    "categories": "categories__overlap",
+    "sub_categories": "sub_categories__overlap",
+    "gender": "user__gender",
+    "hair_color": "hair_color",
+    "eye_color": "eye_color",
+    "weight": "weight__range",
+    "bust": "bust__range",
+    "waist": "waist__range",
+    "hips": "hips__range",
+    "nationality": "user__country",
+    "city": "user__city",
+    "state": "user__state",
+    "rating": "user__average_rating__in",
+    "booking_method": "booking_method"
+    }

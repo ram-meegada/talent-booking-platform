@@ -2,6 +2,9 @@ from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from artist_app.serializers.ratingsSerializer import AddRatingSerializer, GetRatingSerializer
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.utils import messages
+from artist_app.models.userModel import UserModel
+from artist_app.models.ratingsModel import ReviewAndRatingsModel
+from django.db.models import Avg
 
 class RatingService():
     def add_rating(self, request):
@@ -24,8 +27,24 @@ class RatingService():
             serializer.save()
             if TALENT:
                 booking.rating_by_client = True
+                try:
+                    talent = UserModel.objects.get(id=request.data["talent"])
+                    all_talent_ratings = ReviewAndRatingsModel.objects.filter(talent=request.data["talent"]).\
+                                                                        aggregate(avg_rating=Avg("rating"))
+                    talent.average_rating = all_talent_ratings["avg_rating"]
+                    talent.save()
+                except:
+                    pass    
             elif CLIENT:
                 booking.rating_by_talent = True
+                try:
+                    client = UserModel.objects.get(id=request.data["client"])
+                    all_client_ratings = ReviewAndRatingsModel.objects.filter(client=request.data["client"]).\
+                                                                        aggregate(avg_rating=Avg("rating"))
+                    client.average_rating = all_talent_ratings["avg_rating"]
+                    client.save()
+                except:
+                    pass
             booking.save()
             return {"data": serializer.data, "message": messages.ADDED_RATING, "status": 200}
         return {"data": serializer.errors, "message": messages.WENT_WRONG, "status": 400}
