@@ -77,6 +77,11 @@ class ListingAllTalent(APIView):
         result = userservice.talents_details(request)
         return Response(result, status=result["status"])
 
+class TalentDetailsForBookingView(APIView):
+    def get(self, request, talent_id):
+        result = userservice.talents_details_for_booking(request, talent_id)
+        return Response(result, status=result["status"])
+
 class TalentDetailsById(APIView):
     def get(self, request,id):
         result = userservice.view_talent_all_details_by_id(request,id)
@@ -95,6 +100,11 @@ class GetTalentSlotsView(APIView):
 class GetAllBookTalentDetails(APIView):
     def get(self, request, id):
         result = userservice.get_booking_details_by_id(request, id)
+        return Response(result,status=result["status"])
+
+class FilterAndSortView(APIView):
+    def post(self, request):
+        result = userservice.filter_talent(request)
         return Response(result,status=result["status"])
 
 class EditClientDetailsByTokenView(APIView):

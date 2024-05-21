@@ -23,6 +23,8 @@ urlpatterns = [
 
     ############### booking #####################
     path("talent-detials", clientView.ListingAllTalent.as_view()),
+    path("talent-detials-for-booking/<int:talent_id>", clientView.TalentDetailsForBookingView.as_view()),
+    path("filter-talent", clientView.FilterAndSortView.as_view()),
     path("talent-detials-by-id/<int:id>",clientView.TalentDetailsById.as_view()),
     path("book-talent",clientView.BookTalentView.as_view()),
     path("talent-slots-by-date", clientView.GetTalentSlotsView.as_view()),

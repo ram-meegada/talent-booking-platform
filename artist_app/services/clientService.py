@@ -22,6 +22,7 @@ from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.serializers import adminSerializer, talentSerializer
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
+from artist_app.utils.choiceFields import FILTER_KEYS
 
 class ClientService():
     def user_signup(self, request):
@@ -417,9 +418,34 @@ class ClientService():
                 talent_details_ids += [i["user"] for i in talent]
             users = UserModel.objects.filter(id__in=talent_details_ids)
             serializer = TalentListingDetailsSerializer(users, many = True)
-            return {"data":serializer.data,"status":200}
+            return {"data":serializer.data, "message": "Artists fetched successfully", "status":200}
         except Exception as e:
             return {"data": str(e), "message": messages.WENT_WRONG,"status":400}
+
+    def talents_details_for_booking(self , request, talent_id):
+        try:
+            user = UserModel.objects.get(id=talent_id)
+            serializer = TalentListingDetailsSerializer(user)
+            return {"data":serializer.data, "message": "Artist details fetched successfully", "status":200}
+        except UserModel.DoesNotExist:
+            return {"data": None, "message": "User not found","status": 200}
+        except Exception as e:
+            return {"data": str(e), "message": messages.WENT_WRONG,"status":400}
+
+    def filter_talent(self, request):
+        filters = Q()
+        talent_details_ids = []
+        if "search" in request.data:
+            filters = Q(user__name__icontains=request.data["search"]["search_value"])
+        if "filters" in request.data:
+            for key, value in request.data["filters"].items():
+                if key in FILTER_KEYS:
+                    filters &= Q(**{FILTER_KEYS[key]: value})
+        filtered_talent = TalentDetailsModel.objects.filter(filters)    
+        talent_details_ids += [i.user_id for i in filtered_talent]
+        users = UserModel.objects.filter(id__in=talent_details_ids)
+        serializer = TalentListingDetailsSerializer(users, many = True)
+        return {"data":serializer.data, "message": "Artists fetched based on filters", "status":200}
 
     def view_talent_all_details_by_id(self, request,id):
         try:
@@ -428,7 +454,7 @@ class ClientService():
             return {"data": serializer.data, "message": "Talent details fetched successfully", "status":200}
         except Exception as e:
             print(e)
-            return {"message":messages.WENT_WRONG,"status":400}
+            return {"message": messages.WENT_WRONG, "status":400}
 
 
 #----------------------------booking proposal -------------------------------
@@ -477,8 +503,6 @@ class ClientService():
     #     except Exception as e:
     #         return {"messgae":messages.WENT_WRONG,"status":400}
             
-    def filter_talent(self, request):
-        pass
 
     def talent_services(self, request, id):
         try:
