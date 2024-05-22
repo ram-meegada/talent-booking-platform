@@ -457,7 +457,7 @@ class ClientService():
             dict={}
             l = []
             for i in details.data.values():
-                l.append(i)
+                l.append(str(i))
 
             dict["detials"]=serializer.data
             dict["other_detials"]=l
