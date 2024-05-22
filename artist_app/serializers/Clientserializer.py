@@ -196,7 +196,7 @@ class TalentDetailsBasedOnIOSSubcategories(serializers.ModelSerializer):
             return obj.hair_color
 
     def get_height(self,obj):
-        return str(obj.height_feet)+" "+str(obj.height_inches)
+        return str(obj.height_feet)+"'"+str(obj.height_inches)
     def get_gender(self, obj):
         try:
             return obj.user.get_gender_display()

@@ -200,23 +200,24 @@ class ClientService():
             return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
 
     def edit_client_details_by_token(self, request):
-        data = {"user_details": {}, "extra_details": {}}
-        data["user_details"]["first_name"] = request.data["first_name"]
-        data["user_details"]["last_name"] = request.data["last_name"]
-        data["user_details"]["email"] = request.data["email"]
-        data["user_details"]["phone_no"] = request.data["phone_no"]
-        data["user_details"]["state"]=request.data["state"]
-        data["user_details"]["city"]=request.data["city"]
-        data["user_details"]["country"]= request.data["country"]
-        data["user_details"]["country_code"] = request.data["country_code"]
-        data["user_details"]["address"] = request.data["address"]
-        data["user_details"]["profile_picture"] = request.data["profile_picture"]
-        user_obj = UserModel.objects.get(id=request.user.id)
-        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
+        try:
+            user_obj = UserModel.objects.get(id=request.user.id)
+        except UserModel.DoesNotExist:
+            return {"data":None, "message":"User not found" ,"status": 400}
+        user_obj.first_name = request.data["first_name"]
+        user_obj.last_name = request.data["last_name"]
+        user_obj.profile_picture_id = request.data["profile_picture"]
+        user_obj.city = request.data["city"]
+        user_obj.address = request.data["address"]
+        user_obj.state = request.data["state"]
+        user_obj.country = request.data["country"]
+        # user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
         NAME = request.data["first_name"] + " " + request.data["last_name"]
-        if user.is_valid():
-            user_obj = user.save(name=NAME)
-        return {"data":user.data, "message":"Profile updated successfully" ,"status":200}
+        user_obj.name = NAME
+        user_obj.save()
+        # if user.is_valid():
+        #     user_obj = user.save(name=NAME)
+        return {"data":None, "message":"Profile updated successfully" ,"status":200}
 
 
 ############################################################################################################
