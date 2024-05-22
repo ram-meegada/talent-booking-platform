@@ -474,6 +474,8 @@ class ClientService():
             TIME_HOUR = request.data["time"].split(":")[0]
             user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
                                                               date=request.data["date"]).first()
+            if not user_slots:
+                return {"data": None, "message": "No slots found", "status": 400}
             if TIME_HOUR not in user_slots.slots:
                 return {"data": None, "message": "Desired slot not found", "status": 400}
             elif TIME_HOUR in user_slots.slots:    
