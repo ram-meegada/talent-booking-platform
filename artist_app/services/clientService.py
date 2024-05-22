@@ -1,6 +1,6 @@
 from artist_app.serializers.Clientserializer import CreateClientSerializers,AddAddressDetailsSerializer,SubCategories,\
     TalentBasedOnSubcategories,TalentDetailsBasedOnSubcategories,BookingDetailsSerializer,ShowBookingDetailsSerializer,\
-    GetUserSerializer, TalentBasicDetails, TalentListingDetailsSerializer,TalentDetailsBasedOnIOSSubcategories
+    GetUserSerializer, TalentBasicDetails, TalentListingDetailsSerializer,TalentDetailsBasedOnIOSSubcategories,GetClientDetails
 from django.contrib.auth.hashers import check_password
 from artist_app.utils.sendOtp import send_otp_via_mail
 from rest_framework import status
@@ -218,6 +218,14 @@ class ClientService():
         # if user.is_valid():
         #     user_obj = user.save(name=NAME)
         return {"data":None, "message":"Profile updated successfully" ,"status":200}
+
+
+    def client_details_by_token(self, request):
+        # user = TalentDetailsModel.objects.select_related("user").get(user_id=request.user.id)
+        # serializer = talentSerializer.TalentUserDetailsByTokenSerializer(user)
+        user = UserModel.objects.get(id=request.user.id)
+        serializer = GetClientDetails(user)
+        return {"data": serializer.data, "message": messages.USER_DETAILS_FETCHED, "status": 200}
 
 
 ############################################################################################################
