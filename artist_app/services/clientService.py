@@ -205,6 +205,9 @@ class ClientService():
         data["user_details"]["last_name"] = request.data["last_name"]
         data["user_details"]["email"] = request.data["email"]
         data["user_details"]["phone_no"] = request.data["phone_no"]
+        data["user_details"]["state"]=request.data["state"]
+        data["user_details"]["city"]=request.data["city"]
+        data["user_details"]["country"]= request.data["country"]
         data["user_details"]["country_code"] = request.data["country_code"]
         data["user_details"]["address"] = request.data["address"]
         data["user_details"]["profile_picture"] = request.data["profile_picture"]
@@ -213,7 +216,7 @@ class ClientService():
         NAME = request.data["first_name"] + " " + request.data["last_name"]
         if user.is_valid():
             user_obj = user.save(name=NAME)
-        return {"data":None, "message":"Profile updated successfully" ,"status":200}
+        return {"data":user.data, "message":"Profile updated successfully" ,"status":200}
 
 
 ############################################################################################################
