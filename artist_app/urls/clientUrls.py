@@ -8,7 +8,7 @@ urlpatterns = [
     path("resend-otp", clientView.ResendOtpView.as_view()),
     path("edit-profile", clientView.EditClientDetailsByTokenView.as_view()),
     path("change-password", adminView.ChangePasswordByTokenView.as_view()),
-    path("profile-details", talentView.TalentUserDetailsView.as_view()),
+    path("profile-details", clientView.clientDetailsbyTokenView.as_view()),
 
     ################# ADDRESS-MANAGE #########################
     path("address",clientView.AddClientNewAddressDetailsView.as_view()),

@@ -22,6 +22,12 @@ class CreateClientSerializers(serializers.ModelSerializer):
     def get_token(self, obj):
         token = generate_access_token(obj)
         return token 
+
+class GetClientDetails(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
+                  "date_of_birth", "experience", "address", "city", "state", "country", "encoded_id","otp_email_verification","otp_phone_no_verification")
 class GetUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     profile_picture = CreateUpdateUploadMediaSerializer()

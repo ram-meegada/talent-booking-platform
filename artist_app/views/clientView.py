@@ -82,6 +82,12 @@ class TalentDetailsForBookingView(APIView):
         result = userservice.talents_details_for_booking(request, talent_id)
         return Response(result, status=result["status"])
 
+
+class clientDetailsbyTokenView(APIView):
+    def get(self, request):
+        result = userservice.client_details_by_token(request)
+        return Response(result, status=result["status"])
+
 class TalentDetailsById(APIView):
     def get(self, request,id):
         result = userservice.view_talent_all_details_by_id(request,id)
