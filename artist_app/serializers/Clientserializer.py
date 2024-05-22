@@ -18,7 +18,7 @@ class CreateClientSerializers(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\
-                  "date_of_birth", "experience", "address", "city", "state", "country", "encoded_id","token")
+                  "date_of_birth", "experience", "address", "city", "state", "country", "encoded_id","token","otp_email_verification","otp_phone_no_verification")
     def get_token(self, obj):
         token = generate_access_token(obj)
         return token 
