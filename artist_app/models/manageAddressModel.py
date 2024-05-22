@@ -14,5 +14,6 @@ class ManageAddressModel(baseModel.BaseModel):
     state = models.CharField(max_length = 100, default = "")
     country = models.CharField(max_length = 100, default = "")
     
+    is_default = models.BooleanField(default=False)
     class Meta:
         db_table  = "ManageAddress"

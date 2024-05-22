@@ -6,6 +6,10 @@ class ContactUsModel(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
     country_code = models.CharField(max_length=10, blank=True, null=True)
     phone_no = models.CharField(max_length=20, blank=True, null=True)
+
+    #terms and conditions
+    data = models.TextField(default="")
+    privacy_policy = models.TextField(default="")
     
     class Meta:
         db_table = "ContactUsModel"
