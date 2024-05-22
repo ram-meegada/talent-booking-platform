@@ -357,8 +357,10 @@ class AdminService:
         search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
                                                     adminSerializer.ArtistBookingsAdminSerializer, bookings)
+        data={}
+        data["client"]= result["response_object"],
         return {
-                    "data":result["response_object"],
+                    "data":data,
                     "total_records": result["total_records"],
                     "start": result["start"],
                     "length": result["length"], 
@@ -600,8 +602,10 @@ class AdminService:
         search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
                                                     adminSerializer.ArtistBookingsAdminSerializer, bookings)
+        data ={}
+        data["Talent"]=result["response_objects"]
         return {
-                    "data":result["response_object"],
+                    "data":data,
                     "total_records": result["total_records"],
                     "start": result["start"],
                     "length": result["length"], 
