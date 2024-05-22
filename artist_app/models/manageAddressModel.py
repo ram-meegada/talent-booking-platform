@@ -4,7 +4,7 @@ from artist_app.utils.choiceFields import ADDRESS_CHOICE
 
 class ManageAddressModel(baseModel.BaseModel):
     user = models.ForeignKey(userModel.UserModel, on_delete=models.CASCADE)
-    address_location = models.TextField()
+    address_location = models.TextField(default="")
     house_flat_block_no = models.CharField(max_length=255, blank=True, null=True)
     landmark = models.CharField(max_length=255, blank=True, null=True)
     street_no = models.CharField(max_length=255, blank=True, null=True)
@@ -14,6 +14,6 @@ class ManageAddressModel(baseModel.BaseModel):
     state = models.CharField(max_length = 100, default = "")
     country = models.CharField(max_length = 100, default = "")
     
-    is_default = models.BooleanField(default=False)
+    # is_default = models.BooleanField(default=False)
     class Meta:
         db_table  = "ManageAddress"

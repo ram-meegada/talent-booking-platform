@@ -25,7 +25,7 @@ from pyfcm import FCMNotification
 from artist_app.models.contactUsModel import ContactUsModel
 from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
-
+from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer 
 
 class AdminService:
     def add_category(self, request):
@@ -356,7 +356,7 @@ class AdminService:
         pagination_obj = CustomPagination()
         search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
-                                                    adminSerializer.ArtistBookingsAdminSerializer, bookings)
+                                                    ShowBookingDetailsSerializer, bookings)
         data={}
         return {
                     "data":result["response_object"],
@@ -600,7 +600,7 @@ class AdminService:
         pagination_obj = CustomPagination()
         search_keys = ["talent__email__icontains", "client__email__icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
-                                                    adminSerializer.ArtistBookingsAdminSerializer, bookings)
+                                                    ShowBookingDetailsSerializer, bookings)
         data ={}
         # data["Talent"]=result["response_objects"]
         return {
