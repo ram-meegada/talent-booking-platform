@@ -24,6 +24,7 @@ class CreateClientSerializers(serializers.ModelSerializer):
         return token 
 
 class GetClientDetails(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
         fields = ("id", "profile_picture", "first_name", "email", "last_name", "gender", "country_code", "phone_no",\

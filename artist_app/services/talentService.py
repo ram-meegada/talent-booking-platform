@@ -468,12 +468,16 @@ class TalentService:
         return {"data": data, "message": "Weekly timings fetched successfully", "status": 200}
     
     def generate_day_slots(self, start, end):
-        data = {}
+        data = []
         start_time = datetime.strptime(start, "%H:%M")
         end_time = datetime.strptime(end, "%H:%M")
         while start_time <= end_time:
             stripped_start_time = start_time.strftime("%H")
-            data[stripped_start_time] = {}
+            obj = {
+                    "slot_time": stripped_start_time,
+                    "booking_details": {}
+                    }
+            data.append(obj)
             start_time += timedelta(hours=1)
         return data    
     
