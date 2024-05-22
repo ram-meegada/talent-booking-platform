@@ -358,9 +358,8 @@ class AdminService:
         result = pagination_obj.custom_pagination(request, search_keys, \
                                                     adminSerializer.ArtistBookingsAdminSerializer, bookings)
         data={}
-        data["client"]= result["response_object"],
         return {
-                    "data":data,
+                    "data":result["response_object"],
                     "total_records": result["total_records"],
                     "start": result["start"],
                     "length": result["length"], 
@@ -603,9 +602,9 @@ class AdminService:
         result = pagination_obj.custom_pagination(request, search_keys, \
                                                     adminSerializer.ArtistBookingsAdminSerializer, bookings)
         data ={}
-        data["Talent"]=result["response_objects"]
+        # data["Talent"]=result["response_objects"]
         return {
-                    "data":data,
+                    "data":result["response_object"],
                     "total_records": result["total_records"],
                     "start": result["start"],
                     "length": result["length"], 

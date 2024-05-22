@@ -488,20 +488,22 @@ class ClientService():
                                                               date=request.data["date"]).first()
             if not user_slots:
                 return {"data": None, "message": "No slots found", "status": 400}
-            if TIME_HOUR not in user_slots.slots:
+            check_slot_availability = self.find_time_in_slots(user_slots.slots, TIME_HOUR)
+            if check_slot_availability == {}:
                 return {"data": None, "message": "Desired slot not found", "status": 400}
-            elif TIME_HOUR in user_slots.slots:    
+            elif check_slot_availability != {}:    
                 slots = user_slots.slots
-                iteration = []
-                for i in range(request.data["duration"]):
-                    iteration += [TIME_HOUR]
-                    temp = int(TIME_HOUR) + 1
-                    TIME_HOUR = str(temp)
+                # iteration = []
+                # for i in range(request.data["duration"]):
+                #     iteration += [TIME_HOUR]
+                #     temp = int(TIME_HOUR) + 1
+                #     TIME_HOUR = str(temp)
             serializer = BookingDetailsSerializer(data = request.data, context={"request": request})
             if serializer.is_valid():
                 serializer.save(status=1, track_booking=1)
-                for i in iteration:
-                    slots[i] = serializer.data
+                for i in range(request.data["duration"]):
+                    slots[check_slot_availability]["booking_details"] = serializer.data
+                    check_slot_availability += 1
                 user_slots.slots = slots
                 user_slots.save()    
                 return {"data": serializer.data, "message": "Booking request sent to artist successfully", "status":200}
@@ -509,6 +511,12 @@ class ClientService():
                 return{"message": serializer.errors, "status": 400}
         except Exception as e:
             return {"data": str(e), "message":messages.WENT_WRONG,"status":400}
+        
+    def find_time_in_slots(self, data, TIME_HOUR):
+        for i in range(len(data)):
+            if data[i]["slot_time"] == TIME_HOUR:
+                return i
+        return {}    
         
     def accept_reject_counter_offer(self, request, id):
         pass    
