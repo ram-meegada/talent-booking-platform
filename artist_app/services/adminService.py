@@ -1232,9 +1232,16 @@ class AdminService:
     ########### review module
 
     def get_all_review_details(self, request):
-        try:
-            data = ReviewAndRatingsModel.objects.all()
-            serializer = adminSerializer.GetAllRatingDetails(data,many = True)
-            return {"data":serializer.data,"message":messages.FETCH,"status":200}
-        except Exception as e:
-            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+        data = ReviewAndRatingsModel.objects.all()
+        pagination_obj = CustomPagination()
+        search_keys = ["client__name__icontains","talent__name__icontains"]
+        result = pagination_obj.custom_pagination(request, search_keys, \
+                                                adminSerializer.GetAllRatingDetails, data)
+        return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message": "All notifications fetched successfully", 
+                        "status":200
+                    }
