@@ -297,7 +297,6 @@ class BookingDetailsSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     rating = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
         fields = ["id", "first_name", "last_name", "name", "profile_picture", "rating"]
@@ -309,11 +308,6 @@ class UserSerializer(serializers.ModelSerializer):
             return None    
         except Exception as err:
             return None
-    def get_name(self, obj):
-        try:
-            return obj.first_name+" "+obj.last_name
-        except:
-            return " "
 
 class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     talent = UserSerializer()
