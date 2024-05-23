@@ -19,6 +19,7 @@ urlpatterns = [
     path("update-question/<int:id>",adminView.UpdateQuestionsAnswersView.as_view()),
     path("delete-question/<int:id>",adminView.DeleteQuestionAnswerView.as_view()),
     path("get-all-FAQ",adminView.GetAllQuestionsAnswers.as_view()),
+    path("get-questions-by-id/<int:id>",adminView.GetQuestionById.as_view()),
 
     # terms and conditions urls
     path("terms-and-condition",adminView.AddTermsAndConditions.as_view()),
@@ -92,6 +93,9 @@ urlpatterns = [
 
     #revenue urls 
     path("get-all-revenue-details",adminView.GetAllRevenueDetails.as_view()),
+
+    ##rating and review urls 
+    path("all-rating",adminView.GetALLRatingDetials.as_view()),
 
 
 ]

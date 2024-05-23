@@ -38,6 +38,11 @@ class GetAllQuestionsAnswers(APIView):
         result = admin_obj.get_all_questions_answers(request)
         return Response(result, status=result["status"])
 
+class GetQuestionById(APIView):
+     def get(self, request, id):
+        result = admin_obj.get_question_by_id(request,id)
+        return Response(result, status=result["status"]) 
+
 #terms and conditions
 
 class AddTermsAndConditions(APIView):
@@ -342,6 +347,14 @@ class GetAllRevenueDetails(APIView):
     permission_classes =(AllowAny,)
     def get(self, request):
         result = admin_obj.get_all_revenue_details(request)
+        return Response(result, status=result["status"])
+
+
+#####rating and review module
+
+class GetALLRatingDetials(APIView):
+    def get(self, request):
+        result = admin_obj.get_all_review_details(request)
         return Response(result, status=result["status"])
 
         
