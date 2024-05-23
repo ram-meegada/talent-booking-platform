@@ -525,7 +525,7 @@ class GetRevenueDetails(serializers.ModelSerializer):
 class CustomerSupportSerializer(serializers.ModelSerializer):
     class Meta:
         model= ContactUsModel
-        fields = "__all__"
+        fields = ["id","name","country_code","phone_no","data","privacy_policy"]
 
 ###notification serializer
 
