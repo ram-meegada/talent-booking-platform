@@ -483,7 +483,7 @@ class ClientService():
 #----------------------------booking proposal -------------------------------
     def book_talent(self , request):
         try:
-            TIME_HOUR = request.data["time"].split(":")[0]
+            TIME_HOUR = request.data["time"]
             user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
                                                               date=request.data["date"]).first()
             if not user_slots:

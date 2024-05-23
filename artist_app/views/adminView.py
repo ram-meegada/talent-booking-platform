@@ -34,7 +34,7 @@ class DeleteQuestionAnswerView(APIView):
         return Response(result, status=result["status"])
 
 class GetAllQuestionsAnswers(APIView):
-    def get(self , request):
+    def post(self , request):
         result = admin_obj.get_all_questions_answers(request)
         return Response(result, status=result["status"])
 

@@ -100,8 +100,21 @@ class AdminService:
     def get_all_questions_answers(self , request):
         try:
             questions = FAQModel.objects.all()
-            serializers = adminSerializer.FAQSerializer(questions, many=True)
-            return {"data":serializers.data,"message":messages.QUESTION_FETCHED,"status":200}
+            pagination_obj = CustomPagination()
+            search_keys = ["question__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                      adminSerializer.FAQSerializer, questions)
+            # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
+            return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message":messages.USER_DETAILS_FETCHED, 
+                        "status":200
+                    }
+            # serializers = adminSerializer.FAQSerializer(questions, many=True)
+            # return {"data":serializers.data,"message":messages.QUESTION_FETCHED,"status":200}
         except Exception as e:
             return {"data":None, "message":str(e),"status":400}
 
