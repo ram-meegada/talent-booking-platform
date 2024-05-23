@@ -815,7 +815,7 @@ class AdminService:
         except BookingTalentModel.DoesNotExist:
             return {"data": None, "message": "Record not found", "status": 400}
         serializer = adminSerializer.BookingsSerializer(booking)
-        return {"data": serializer.data, "message": "Booking details fetched successfully", "status": 400}
+        return {"data": serializer.data, "message": "Booking details fetched successfully", "status": 200}
 
 ###### Dashboard Module
 
