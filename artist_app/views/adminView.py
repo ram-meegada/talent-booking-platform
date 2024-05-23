@@ -2,7 +2,6 @@ from sys import api_version
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-
 from artist_app.services.adminService import AdminService
 
 admin_obj = AdminService()
@@ -344,18 +343,25 @@ class getCustomerSupport(APIView):
 ## revenue Model
 
 class GetAllRevenueDetails(APIView):
-    permission_classes =(AllowAny,)
-    def get(self, request):
+    def post(self, request):
         result = admin_obj.get_all_revenue_details(request)
         return Response(result, status=result["status"])
 
-
+class ExportRevenueCSVView(APIView):
+    def get(self, request, *args, **kwargs):
+        result = admin_obj.export_revenue_csv(request, *args, **kwargs)
+        return Response(result)
 #####rating and review module
 
 class GetALLRatingDetials(APIView):
-    def get(self, request):
+    def post(self, request):
         result = admin_obj.get_all_review_details(request)
         return Response(result, status=result["status"])
+
+class ExportRatingCSVView(APIView):
+    def get(self, request, *args, **kwargs):
+        result = admin_obj.export_rating_csv(request, *args, **kwargs)
+        return Response(result)
 
         
 

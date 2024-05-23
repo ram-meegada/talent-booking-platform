@@ -27,6 +27,8 @@ from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
 from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer
 from artist_app.models.ratingsModel import ReviewAndRatingsModel 
+from django.http import HttpResponse
+import csv
 
 class AdminService:
     def add_category(self, request):
@@ -1142,6 +1144,8 @@ class AdminService:
                         "status":200
                     }
 
+    
+
 ## Manage CMs
 
     def add_privacy_poicy(self, request):
@@ -1207,26 +1211,43 @@ class AdminService:
 
 ######## Revenue Module ###############
     def get_all_revenue_details(self, request):
-        try:
             data = BookingTalentModel.objects.all()
-            serializer = adminSerializer.GetRevenueDetails(data, many=True)
+            pagination_obj = CustomPagination()
+            search_keys = ["client__name__icontains","talent__name__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                    adminSerializer.GetRevenueDetails, data)
             total_offer_price = BookingTalentModel.objects.aggregate(total_offer_price=Coalesce(Sum('offer_price'), Value(0)))
             total_count = BookingTalentModel.objects.count()
-            total_revenue = total_offer_price['total_offer_price'] + (total_count * 15)
+            total_revenue = total_offer_price['total_offer_price']
+            return {
+                            "data":result["response_object"],
+                            "Total_revenue": total_revenue,
+                            "total_records": result["total_records"],
+                            "start": result["start"],
+                            "length": result["length"], 
+                            "message": messages.FETCH, 
+                            "status":200
+                        }
+
+
+    def export_revenue_csv(self, request, *args, **kwargs):
+        courses = BookingTalentModel.objects.all()
+        serializer = adminSerializer.GetRevenueDetails(courses, many = True)
+        header = ["S.No"] + list(serializer.data[0].keys())
+        response = HttpResponse(
+                content_type="text/csv",
+                headers={"Content-Disposition": 'attachment; filename="course.csv"'},
+            )
+        s_no = 1
+        with open("course.csv", "w") as file:
+            writer = csv.writer(response)
+            writer.writerow(header)
+            for i in serializer.data:
+                row = [s_no] + list(i.values())
+                writer.writerow(row)
+                s_no += 1
+        return response
             
-            return {
-                "data": serializer.data,
-                "Total_revenue": total_revenue,
-                "message": messages.ADD,
-                "status": 200
-            }
-        except Exception as e:
-            print(e)
-            return {
-                "data": None,
-                "message": messages.WENT_WRONG,
-                "status": 400
-            }
 
 
     ########### review module
@@ -1242,6 +1263,24 @@ class AdminService:
                         "total_records": result["total_records"],
                         "start": result["start"],
                         "length": result["length"], 
-                        "message": "All notifications fetched successfully", 
+                        "message": messages.FETCH, 
                         "status":200
                     }
+
+    def export_rating_csv(self, request, *args, **kwargs):
+        courses = ReviewAndRatingsModel.objects.all()
+        serializer = adminSerializer.GetAllRatingDetails(courses, many = True)
+        header = ["S.No"] + list(serializer.data[0].keys())
+        response = HttpResponse(
+                content_type="text/csv",
+                headers={"Content-Disposition": 'attachment; filename="course.csv"'},
+            )
+        s_no = 1
+        with open("course.csv", "w") as file:
+            writer = csv.writer(response)
+            writer.writerow(header)
+            for i in serializer.data:
+                row = [s_no] + list(i.values())
+                writer.writerow(row)
+                s_no += 1
+        return response
