@@ -472,7 +472,7 @@ class TalentService:
         start_time = datetime.strptime(start, "%H:%M")
         end_time = datetime.strptime(end, "%H:%M")
         while start_time <= end_time:
-            stripped_start_time = start_time.strftime("%H")
+            stripped_start_time = start_time.strftime("%H:%M")
             obj = {
                     "slot_time": stripped_start_time,
                     "booking_details": {}
