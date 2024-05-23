@@ -483,16 +483,16 @@ class ClientService():
 #----------------------------booking proposal -------------------------------
     def book_talent(self , request):
         try:
-            TIME_HOUR = request.data["time"]
-            user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
-                                                              date=request.data["date"]).first()
-            if not user_slots:
-                return {"data": None, "message": "No slots found", "status": 400}
-            check_slot_availability = self.find_time_in_slots(user_slots.slots, TIME_HOUR)
-            if check_slot_availability == {}:
-                return {"data": None, "message": "Desired slot not found", "status": 400}
-            elif check_slot_availability != {}:    
-                slots = user_slots.slots
+            # TIME_HOUR = request.data["time"]
+            # user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
+            #                                                   date=request.data["date"]).first()
+            # if not user_slots:
+            #     return {"data": None, "message": "No slots found", "status": 400}
+            # check_slot_availability = self.find_time_in_slots(user_slots.slots, TIME_HOUR)
+            # if check_slot_availability == {}:
+            #     return {"data": None, "message": "Desired slot not found", "status": 400}
+            # elif check_slot_availability != {}:    
+            #     slots = user_slots.slots
                 # iteration = []
                 # for i in range(request.data["duration"]):
                 #     iteration += [TIME_HOUR]
@@ -501,11 +501,11 @@ class ClientService():
             serializer = BookingDetailsSerializer(data = request.data, context={"request": request})
             if serializer.is_valid():
                 serializer.save(status=1, track_booking=1)
-                for i in range(request.data["duration"]):
-                    slots[check_slot_availability]["booking_details"] = serializer.data
-                    check_slot_availability += 1
-                user_slots.slots = slots
-                user_slots.save()    
+                # for i in range(request.data["duration"]):
+                #     slots[check_slot_availability]["booking_details"] = serializer.data
+                #     check_slot_availability += 1
+                # user_slots.slots = slots
+                # user_slots.save()    
                 return {"data": serializer.data, "message": "Booking request sent to artist successfully", "status":200}
             else:
                 return{"message": serializer.errors, "status": 400}

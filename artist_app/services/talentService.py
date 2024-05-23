@@ -1,7 +1,7 @@
 import pytz
 from threading import Thread
 from artist_app.utils import messages
-from artist_app.serializers import talentSerializer, adminSerializer
+from artist_app.serializers import talentSerializer, adminSerializer, Clientserializer
 from artist_app.models.userModel import UserModel
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
@@ -407,7 +407,29 @@ class TalentService:
             return {"data": None, "message": "Record not found", "status": 400}
         booking.track_booking = 3
         booking.save()
+        self.add_details_in_slot(booking, request.user.id)
         return {"data": None, "message": "Offer accepted successfully", "status": 200}
+
+    def add_details_in_slot(self, booking, talent_id):
+        user_slots = OperationalSlotsModel.objects.filter(user=talent_id, 
+                                                              date=booking.date).first()
+        data = user_slots.slots
+        check_time = str(booking.time)[:-3]
+        check_slot_availability = self.find_time_in_slots(data, check_time)
+        serializer = Clientserializer.ShowBookingDetailsSerializer(booking)
+        for i in range(booking.duration):
+            data[check_slot_availability]["booking_details"] = serializer.data
+            check_slot_availability += 1
+        user_slots.slots = data    
+        user_slots.save()
+        return None
+
+    def find_time_in_slots(self, data, TIME_HOUR):
+        for i in range(len(data)):
+            if data[i]["slot_time"] == TIME_HOUR:
+                return i
+        return {}    
+
     
     def all_categories(self, request):
         categories = TalentCategoryModel.objects.values()
