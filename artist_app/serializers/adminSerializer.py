@@ -14,6 +14,7 @@ from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.serializers.Clientserializer import TalentBasicDetails
 from artist_app.models.contactUsModel import ContactUsModel
 from artist_app.models.notificationModel import NotificationModel
+from artist_app.models.ratingsModel import ReviewAndRatingsModel
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -542,3 +543,18 @@ class NotificationSerializer(serializers.ModelSerializer):
         return obj.get_notification_for_display()
     def get_date(self, obj):
         return str(obj.created_at.date())
+
+##### rating and review serializer
+
+class clientRatingSerializer(serializers.ModelSerializer):
+    profile_picture = CreateUpdateUploadMediaSerializer()
+    class Meta:
+        model = UserModel
+        fields = ["id","name","profile_picture","phone_no"]
+
+class GetAllRatingDetails(serializers.ModelSerializer):
+    client = clientRatingSerializer()
+    talent = clientRatingSerializer()
+    class Meta:
+        model = ReviewAndRatingsModel
+        fields = ["id","client","talent","rating","review","created_at"]

@@ -25,7 +25,8 @@ from pyfcm import FCMNotification
 from artist_app.models.contactUsModel import ContactUsModel
 from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
-from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer 
+from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer
+from artist_app.models.ratingsModel import ReviewAndRatingsModel 
 
 class AdminService:
     def add_category(self, request):
@@ -117,6 +118,17 @@ class AdminService:
             # return {"data":serializers.data,"message":messages.QUESTION_FETCHED,"status":200}
         except Exception as e:
             return {"data":None, "message":str(e),"status":400}
+
+
+    def get_question_by_id(self, request, id):
+        try:
+            data = FAQModel.objects.get(id=id)
+        except Exception as e:
+            return {"data":None,"messages":messages.NOT_FOUND,"status":400}
+        serializer = adminSerializer.FAQSerializer(data)
+        return {"data":serializer.data,"message":messages.FETCH,"status":200}
+
+
 
     #termsAndConditions
     def add_terms_and_conditions(self, request):
@@ -1215,3 +1227,14 @@ class AdminService:
                 "message": messages.WENT_WRONG,
                 "status": 400
             }
+
+
+    ########### review module
+
+    def get_all_review_details(self, request):
+        try:
+            data = ReviewAndRatingsModel.objects.all()
+            serializer = adminSerializer.GetAllRatingDetails(data,many = True)
+            return {"data":serializer.data,"message":messages.FETCH,"status":200}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
