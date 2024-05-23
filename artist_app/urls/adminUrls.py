@@ -93,9 +93,11 @@ urlpatterns = [
 
     #revenue urls 
     path("get-all-revenue-details",adminView.GetAllRevenueDetails.as_view()),
+    path("export-revenue-csv",adminView.ExportRevenueCSVView.as_view()),
 
     ##rating and review urls 
     path("all-rating",adminView.GetALLRatingDetials.as_view()),
+    path("export-rating-csv",adminView.ExportRatingCSVView.as_view()),
 
 
 ]

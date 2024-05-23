@@ -501,24 +501,26 @@ class clientTalentDetailsSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id","profile_picture","first_name","last_name","phone_no","country_code","email"]
+        fields = ["id","profile_picture","first_name","last_name","name","phone_no","country_code","email"]
 
 
 class GetRevenueDetails(serializers.ModelSerializer):
     client = clientTalentDetailsSerializer()
     talent = clientTalentDetailsSerializer()
-    address = ManageAddressByAdminSerializer()
     booking = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
-        fields = ["id","client","talent","address","services","price","booking"]
+        fields = ["id","client","talent","services","currency","price","booking"]
 
     def get_booking(self, obj):
-        return obj.status
+        try:
+            return obj.get_status_display()
+        except:
+            return obj.status
     
     def get_price(self, obj):
-        return obj.offer_price + 15
+        return obj.offer_price
 
 
 ##customerSupport serializers
@@ -550,7 +552,7 @@ class clientRatingSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id","name","profile_picture","phone_no"]
+        fields = ["id","name","profile_picture","phone_no","country_code"]
 
 class GetAllRatingDetails(serializers.ModelSerializer):
     client = clientRatingSerializer()
