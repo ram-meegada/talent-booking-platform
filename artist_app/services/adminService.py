@@ -29,6 +29,7 @@ from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer
 from artist_app.models.ratingsModel import ReviewAndRatingsModel 
 from django.http import HttpResponse
 import csv
+import calendar
 
 class AdminService:
     def add_category(self, request):
@@ -860,35 +861,24 @@ class AdminService:
         now = timezone.now()
 
         filtered_users = UserModel.objects.filter(role=1)
+        
+        def get_message(request, key):
+            # Dummy function to simulate message retrieval
+            return key
+
         if not interval:
-            current_year = now.year
-            start_date = timezone.datetime(current_year, 1, 1).date()
-            end_date = now.date()
-            date_counts = {}
-
-            current_date = start_date
-            while current_date <= end_date:
-                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
-                date_counts[current_date.strftime("%Y-%m")] = count
-                current_date = current_date.replace(month=current_date.month + 1)
-            
-            # Organize data into label and value arrays
-            labels = list(date_counts.keys())
-            values = list(date_counts.values())
-            
-            return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
-
+            interval = "monthly"
 
         if interval == "daily":
-            start_date = timezone.datetime(now.year, now.month, 1).date()
-            end_date = now.date()
+            start_date = now - timezone.timedelta(days=now.weekday())  # Get the last Monday
+            end_date = start_date + timezone.timedelta(days=6)  # Get the next Sunday
             delta = timezone.timedelta(days=1)
-            date_counts = {}
+            date_counts = {day: 0 for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
 
             current_date = start_date
             while current_date <= end_date:
                 count = filtered_users.filter(created_at__date=current_date).count()
-                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                date_counts[current_date.strftime("%A")] = count  # Day of the week
                 current_date += delta
             
             # Organize data into label and value arrays
@@ -896,17 +886,28 @@ class AdminService:
             values = list(date_counts.values())
 
         elif interval == "weekly":
-            last_4_weeks = now - timezone.timedelta(weeks=4)
-            start_date = last_4_weeks.date()
+            current_year = now.year
+            current_month = now.month
+            start_date = timezone.datetime(current_year, current_month, 1).date()
             end_date = now.date()
-            delta = timezone.timedelta(weeks=1)
             date_counts = {}
+            
+            # Calculate the number of weeks in the current month
+            num_days_in_month = calendar.monthrange(current_year, current_month)[1]
+            num_weeks = (num_days_in_month + start_date.weekday()) // 7 + 1
 
+            for week_num in range(1, num_weeks + 1):
+                date_counts[f"Week {week_num}"] = 0
+
+            week_num = 1
             current_date = start_date
             while current_date <= end_date:
-                count = filtered_users.filter(created_at__date__range=[current_date, current_date + delta]).count()
-                date_counts[current_date.strftime("%Y-%m-%d")] = count
-                current_date += delta
+                week_start = current_date
+                week_end = week_start + timezone.timedelta(days=6)
+                count = filtered_users.filter(created_at__date__range=[week_start, week_end]).count()
+                date_counts[f"Week {week_num}"] = count
+                current_date = week_end + timezone.timedelta(days=1)
+                week_num += 1
             
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
@@ -916,13 +917,13 @@ class AdminService:
             current_year = now.year
             start_date = timezone.datetime(current_year, 1, 1).date()
             end_date = now.date()
-            date_counts = {}
+            date_counts = {month: 0 for month in calendar.month_name[1:]}
 
             current_date = start_date
             while current_date <= end_date:
                 count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
-                date_counts[current_date.strftime("%Y-%m")] = count
-                current_date = current_date.replace(month=current_date.month + 1)
+                date_counts[current_date.strftime("%B")] = count  # Month name
+                current_date = (current_date.replace(day=28) + timezone.timedelta(days=4)).replace(day=1)
             
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
@@ -938,35 +939,24 @@ class AdminService:
         now = timezone.now()
 
         filtered_users = UserModel.objects.filter(role=2)
+        
+        def get_message(request, key):
+            # Dummy function to simulate message retrieval
+            return key
+
         if not interval:
-            current_year = now.year
-            start_date = timezone.datetime(current_year, 1, 1).date()
-            end_date = now.date()
-            date_counts = {}
-
-            current_date = start_date
-            while current_date <= end_date:
-                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
-                date_counts[current_date.strftime("%Y-%m")] = count
-                current_date = current_date.replace(month=current_date.month + 1)
-            
-            # Organize data into label and value arrays
-            labels = list(date_counts.keys())
-            values = list(date_counts.values())
-            
-            return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
-
+            interval = "monthly"
 
         if interval == "daily":
-            start_date = timezone.datetime(now.year, now.month, 1).date()
-            end_date = now.date()
+            start_date = now - timezone.timedelta(days=now.weekday())  # Get the last Monday
+            end_date = start_date + timezone.timedelta(days=6)  # Get the next Sunday
             delta = timezone.timedelta(days=1)
-            date_counts = {}
+            date_counts = {day: 0 for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
 
             current_date = start_date
             while current_date <= end_date:
                 count = filtered_users.filter(created_at__date=current_date).count()
-                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                date_counts[current_date.strftime("%A")] = count  # Day of the week
                 current_date += delta
             
             # Organize data into label and value arrays
@@ -974,17 +964,28 @@ class AdminService:
             values = list(date_counts.values())
 
         elif interval == "weekly":
-            last_4_weeks = now - timezone.timedelta(weeks=4)
-            start_date = last_4_weeks.date()
+            current_year = now.year
+            current_month = now.month
+            start_date = timezone.datetime(current_year, current_month, 1).date()
             end_date = now.date()
-            delta = timezone.timedelta(weeks=1)
             date_counts = {}
+            
+            # Calculate the number of weeks in the current month
+            num_days_in_month = calendar.monthrange(current_year, current_month)[1]
+            num_weeks = (num_days_in_month + start_date.weekday()) // 7 + 1
 
+            for week_num in range(1, num_weeks + 1):
+                date_counts[f"Week {week_num}"] = 0
+
+            week_num = 1
             current_date = start_date
             while current_date <= end_date:
-                count = filtered_users.filter(created_at__date__range=[current_date, current_date + delta]).count()
-                date_counts[current_date.strftime("%Y-%m-%d")] = count
-                current_date += delta
+                week_start = current_date
+                week_end = week_start + timezone.timedelta(days=6)
+                count = filtered_users.filter(created_at__date__range=[week_start, week_end]).count()
+                date_counts[f"Week {week_num}"] = count
+                current_date = week_end + timezone.timedelta(days=1)
+                week_num += 1
             
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
@@ -994,13 +995,13 @@ class AdminService:
             current_year = now.year
             start_date = timezone.datetime(current_year, 1, 1).date()
             end_date = now.date()
-            date_counts = {}
+            date_counts = {month: 0 for month in calendar.month_name[1:]}
 
             current_date = start_date
             while current_date <= end_date:
                 count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
-                date_counts[current_date.strftime("%Y-%m")] = count
-                current_date = current_date.replace(month=current_date.month + 1)
+                date_counts[current_date.strftime("%B")] = count  # Month name
+                current_date = (current_date.replace(day=28) + timezone.timedelta(days=4)).replace(day=1)
             
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
@@ -1019,35 +1020,24 @@ class AdminService:
         now = timezone.now()
 
         filtered_users = BookingTalentModel.objects.all()
+        
+        def get_message(request, key):
+            # Dummy function to simulate message retrieval
+            return key
+
         if not interval:
-            current_year = now.year
-            start_date = timezone.datetime(current_year, 1, 1).date()
-            end_date = now.date()
-            date_counts = {}
-
-            current_date = start_date
-            while current_date <= end_date:
-                count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
-                date_counts[current_date.strftime("%Y-%m")] = count
-                current_date = current_date.replace(month=current_date.month + 1)
-            
-            # Organize data into label and value arrays
-            labels = list(date_counts.keys())
-            values = list(date_counts.values())
-            
-            return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
-
+            interval = "monthly"
 
         if interval == "daily":
-            start_date = timezone.datetime(now.year, now.month, 1).date()
-            end_date = now.date()
+            start_date = now - timezone.timedelta(days=now.weekday())  # Get the last Monday
+            end_date = start_date + timezone.timedelta(days=6)  # Get the next Sunday
             delta = timezone.timedelta(days=1)
-            date_counts = {}
+            date_counts = {day: 0 for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
 
             current_date = start_date
             while current_date <= end_date:
                 count = filtered_users.filter(created_at__date=current_date).count()
-                date_counts[current_date.strftime("%Y-%m-%d")] = count
+                date_counts[current_date.strftime("%A")] = count  # Day of the week
                 current_date += delta
             
             # Organize data into label and value arrays
@@ -1055,17 +1045,28 @@ class AdminService:
             values = list(date_counts.values())
 
         elif interval == "weekly":
-            last_4_weeks = now - timezone.timedelta(weeks=4)
-            start_date = last_4_weeks.date()
+            current_year = now.year
+            current_month = now.month
+            start_date = timezone.datetime(current_year, current_month, 1).date()
             end_date = now.date()
-            delta = timezone.timedelta(weeks=1)
             date_counts = {}
+            
+            # Calculate the number of weeks in the current month
+            num_days_in_month = calendar.monthrange(current_year, current_month)[1]
+            num_weeks = (num_days_in_month + start_date.weekday()) // 7 + 1
 
+            for week_num in range(1, num_weeks + 1):
+                date_counts[f"Week {week_num}"] = 0
+
+            week_num = 1
             current_date = start_date
             while current_date <= end_date:
-                count = filtered_users.filter(created_at__date__range=[current_date, current_date + delta]).count()
-                date_counts[current_date.strftime("%Y-%m-%d")] = count
-                current_date += delta
+                week_start = current_date
+                week_end = week_start + timezone.timedelta(days=6)
+                count = filtered_users.filter(created_at__date__range=[week_start, week_end]).count()
+                date_counts[f"Week {week_num}"] = count
+                current_date = week_end + timezone.timedelta(days=1)
+                week_num += 1
             
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
@@ -1075,13 +1076,13 @@ class AdminService:
             current_year = now.year
             start_date = timezone.datetime(current_year, 1, 1).date()
             end_date = now.date()
-            date_counts = {}
+            date_counts = {month: 0 for month in calendar.month_name[1:]}
 
             current_date = start_date
             while current_date <= end_date:
                 count = filtered_users.filter(created_at__year=current_year, created_at__month=current_date.month).count()
-                date_counts[current_date.strftime("%Y-%m")] = count
-                current_date = current_date.replace(month=current_date.month + 1)
+                date_counts[current_date.strftime("%B")] = count  # Month name
+                current_date = (current_date.replace(day=28) + timezone.timedelta(days=4)).replace(day=1)
             
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
