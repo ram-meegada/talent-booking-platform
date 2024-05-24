@@ -550,7 +550,7 @@ class ClientService():
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=user, date=date)
         except OperationalSlotsModel.DoesNotExist:
-            return {"data": None, "message": "No slots found", "status": 400}
+            return {"data": [], "message": "No slots found", "status": 200}
         return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}
 
     def ongoing_bookings(self, request):
