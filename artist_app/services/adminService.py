@@ -850,9 +850,9 @@ class AdminService:
 
     def kpi(self, request):
         kpi_s ={}
-        kpi_s["Total_customers"]=UserModel.objects.filter(role=1, is_deleted=False).count()
-        kpi_s["Total_booking"]=0
-        kpi_s["Total_Artist"]=UserModel.objects.filter(role=2).count()
+        kpi_s["Total_customers"]=UserModel.objects.filter(role=1, is_active=True).count()
+        kpi_s["Total_booking"]=BookingTalentModel.objects.all().count()
+        kpi_s["Total_Artist"]=UserModel.objects.filter(role=2,is_active=True).count()
         return {"data":kpi_s,"message":messages.FETCH,"status":200}
 
 
