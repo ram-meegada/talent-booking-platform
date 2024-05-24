@@ -885,6 +885,11 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         elif interval == "weekly":
             current_year = now.year
             current_month = now.month
@@ -912,6 +917,13 @@ class AdminService:
             # Organize data into label and value arrays
             labels = list(date_counts.keys())
             values = list(date_counts.values())
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
+            print(data,"sdfhalksjhflakjshdflka")
+
 
         elif interval == "monthly":
             current_year = now.year
@@ -929,10 +941,15 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         else:
             return {"data":None,'message': messages.WENT_WRONG, "status":400}
         
-        return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+        return {"data":data, 'message': messages.FETCH,"status": 200}
 
     def artist_chart(self, request):
         interval = request.data.get("interval")
@@ -963,6 +980,11 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         elif interval == "weekly":
             current_year = now.year
             current_month = now.month
@@ -991,6 +1013,11 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         elif interval == "monthly":
             current_year = now.year
             start_date = timezone.datetime(current_year, 1, 1).date()
@@ -1007,10 +1034,15 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         else:
             return {"data":None,'message': messages.WENT_WRONG, "status":400}
         
-        return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+        return {"data":data, 'message': messages.FETCH,"status": 200}
 
     def revenue_chart(self, request):
         pass
@@ -1044,6 +1076,11 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         elif interval == "weekly":
             current_year = now.year
             current_month = now.month
@@ -1072,6 +1109,11 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         elif interval == "monthly":
             current_year = now.year
             start_date = timezone.datetime(current_year, 1, 1).date()
@@ -1088,10 +1130,15 @@ class AdminService:
             labels = list(date_counts.keys())
             values = list(date_counts.values())
 
+            data = []
+            for i in range(len(labels)):
+                dict ={"labels":labels[i],"values":values[i]}
+                data.append(dict)
+
         else:
             return {"data":None,'message': messages.WENT_WRONG, "status":400}
         
-        return {"labels": labels, "values": values, 'message': messages.FETCH,"status": 200}
+        return {"data":data, 'message': messages.FETCH,"status": 200}
 
 
 ################### Notifications module ################### 

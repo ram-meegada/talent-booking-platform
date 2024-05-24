@@ -286,6 +286,7 @@ class DashboardKPIView(APIView):
         return Response(result, status=result["status"])
 
 class CustomerChartView(APIView):
+    permission_classes=(AllowAny,)
     def post(self, request):
         result= admin_obj.client_chart(request)
         return Response(result, status= result["status"])
