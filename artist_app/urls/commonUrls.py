@@ -8,7 +8,7 @@ urlpatterns = [
 
     #### Chat ####
     path("all-chats", chatView.GetChatsView.as_view()),
-    path("conversation/<int:session>", chatView.ConversationView.as_view()),
+    path("conversation/<int:session_id>", chatView.ConversationView.as_view()),
 
     #### ratings ####
     path("ratings", ratingsView.AddRatingView.as_view()),

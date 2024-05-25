@@ -10,6 +10,6 @@ class GetChatsView(APIView):
         return Response(result, status=result["status"])
 
 class ConversationView(APIView):
-    def get(self, request, session):
-        result = chat_obj.conversation(request, session)
+    def get(self, request, session_id):
+        result = chat_obj.conversation(request, session_id)
         return Response(result, status=result["status"])

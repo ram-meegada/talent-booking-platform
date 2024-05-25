@@ -7,7 +7,15 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from artist_app.models.chatSessionModel import ChatSessionModel
 from artist_app.models.chatStorageModel import ChatStorageModel
 from artist_app.models.userModel import UserModel
-from django.db.models import Q 
+from django.db.models import Q
+from artist_app.utils.sendOtp import generate_encoded_id
+import string
+import random
+
+def generate_session_id():
+    chars = string.ascii_letters + string.digits
+    alpha_numeric = ''.join([random.choice(chars) for i in range(10)])
+    return alpha_numeric
 
 class ChattingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -18,6 +26,7 @@ class ChattingConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     def create_or_get_session(self, user1, user2):
+        new_session_id = generate_session_id()
         try:
             session = ChatSessionModel.objects.get(Q(client_id=user1, talent_id=user2) |
                                                    Q(client_id=user2, talent_id=user1))
@@ -25,9 +34,11 @@ class ChattingConsumer(AsyncWebsocketConsumer):
             get_user1 = UserModel.objects.get(id=user1)
             get_user2 = UserModel.objects.get(id=user2)
             if get_user1.role == 1:
-                session = ChatSessionModel.objects.create(client_id=get_user1.id, talent_id=get_user2.id)
+                session = ChatSessionModel.objects.create(session_id=new_session_id, client_id=get_user1.id, \
+                                                          talent_id=get_user2.id)
             elif get_user1.role == 2:
-                session = ChatSessionModel.objects.create(client_id=get_user2.id, talent_id=get_user1.id)
+                session = ChatSessionModel.objects.create(session_id=new_session_id, client_id=get_user2.id, \
+                                                          talent_id=get_user1.id)
         return session
         
     async def receive(self, text_data):
@@ -35,13 +46,15 @@ class ChattingConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(self.session.session_id,
                     {
                         'type': 'chat_message',
-                        'msg': json.dumps(newMessage)
+                        'msg': json.dumps(newMessage["message"])
                     }
                 )
         save_chat = await database_sync_to_async(ChatStorageModel.objects.create)\
-                                                (session_id=self.session.id, user_id=self.user1, message=newMessage["message"])
+                                                (session_id=self.session.id, user_id=self.user1, \
+                                                 message=newMessage["message"])
 
     async def chat_message(self, event):
+        print('-----------event["msg"]------------')
         await self.send(text_data=event["msg"])
 
     async def disconnect(self, close_code):
