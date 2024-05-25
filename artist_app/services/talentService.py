@@ -410,6 +410,17 @@ class TalentService:
         self.add_details_in_slot(booking, request.user.id)
         return {"data": None, "message": "Offer accepted successfully", "status": 200}
 
+    def decline_offer(self, request):
+        booking_id = request.data["booking_id"]
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        booking.track_booking = 4
+        booking.status = 3
+        booking.save()
+        return {"data": None, "message": "Offer declined successfully", "status": 200}
+
     def add_details_in_slot(self, booking, talent_id):
         user_slots = OperationalSlotsModel.objects.filter(user=talent_id, 
                                                               date=booking.date).first()

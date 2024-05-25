@@ -83,6 +83,11 @@ class AcceptOfferByTalentView(APIView):
         result = talent_service.accept_offer(request)
         return Response(result, status=result["status"])
 
+class DeclineOfferByTalentView(APIView):
+    def post(self, request):
+        result = talent_service.decline_offer(request)
+        return Response(result, status=result["status"])
+
 class ClientPastBookingListing(APIView):
     def get(self, request):
         result = talent_service.past_client_booking_listing(request)

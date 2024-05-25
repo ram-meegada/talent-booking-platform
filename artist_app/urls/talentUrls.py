@@ -21,6 +21,7 @@ urlpatterns = [
     path("recent-offers", talentView.RecentOffersView.as_view()),
     path("counter-offer", talentView.CounterOfferByTalentView.as_view()),
     path("accept-offer", talentView.AcceptOfferByTalentView.as_view()),
+    path("decline-offer", talentView.DeclineOfferByTalentView.as_view()),
     path("past-bookings", talentView.ClientPastBookingListing.as_view()),
     path("cancelled-bookings", talentView.CancelledBookingsView.as_view()),
 
