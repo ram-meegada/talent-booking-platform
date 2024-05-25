@@ -50,7 +50,8 @@ class ClientService():
             serializer = CreateClientSerializers(data=request.data)
         if serializer.is_valid():
             otp = make_otp()
-            user_obj = serializer.save(role = 1)
+            name = request.data["first_name"] + " " + request.data["last_name"]
+            user_obj = serializer.save(role = 1, name=name)
             user_obj.set_password(request.data["password"])
             user_obj.save()
             if user_obj.otp_email_verification and user_obj.otp_phone_no_verification:
