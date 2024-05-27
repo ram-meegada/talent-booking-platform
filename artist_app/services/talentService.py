@@ -361,8 +361,7 @@ class TalentService:
             time = datetime.now().time()
             print(time, startdate, '---------------')
             upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id, 
-                                                                  status=1).exclude(track_booking__in=[3,4,5,6], 
-                                                                                    date=startdate, time__lt=time)
+                                                                  status=1).exclude(track_booking__in=[3,4,5,6]).exclude(date=startdate, time__lt=time)
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
