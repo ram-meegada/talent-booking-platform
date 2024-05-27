@@ -29,6 +29,8 @@ urlpatterns = [
     path("get-policy",adminView.GetPrivacyPolicy.as_view()),
     path("add-contact-us",adminView.AddCustomerSupport.as_view()),
     path("get-contact-us",adminView.getCustomerSupport.as_view()),
+    path("add-service-fees",adminView.AddServiceFeesView.as_view()),
+    path("get-service-fees",adminView.getServiceFeesView.as_view()),
 
 
     # manage customer urls

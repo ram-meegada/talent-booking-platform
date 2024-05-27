@@ -1,3 +1,4 @@
+from os import stat
 from sys import api_version
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -340,6 +341,18 @@ class getCustomerSupport(APIView):
     def get(self, request):
         result = admin_obj.get_customer_support(request)
         return Response(result, status=result["status"])
+
+class AddServiceFeesView(APIView):
+    permission_classes = [AllowAny]
+    def put(self, request):
+        result = admin_obj.add_service_fees(request)
+        return Response(result, status=result["status"])
+
+class getServiceFeesView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        result = admin_obj.get_service_fees(request)
+        return  Response(result, status = result["status"])
 
 ## revenue Model
 

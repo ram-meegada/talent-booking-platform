@@ -530,6 +530,12 @@ class CustomerSupportSerializer(serializers.ModelSerializer):
         model= ContactUsModel
         fields = ["id","name","country_code","phone_no","data","privacy_policy"]
 
+class SetServiceFeesSserializer(serializers.ModelSerializer):
+    class Meta:
+        model =ContactUsModel
+        fields = ["service_price"]
+
+
 ###notification serializer
 
 class NotificationSerializer(serializers.ModelSerializer):
