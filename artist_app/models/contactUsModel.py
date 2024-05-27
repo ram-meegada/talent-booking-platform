@@ -10,6 +10,8 @@ class ContactUsModel(BaseModel):
     #terms and conditions
     data = models.TextField(default="")
     privacy_policy = models.TextField(default="")
+
+    service_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     
     class Meta:
         db_table = "ContactUsModel"

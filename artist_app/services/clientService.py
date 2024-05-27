@@ -484,11 +484,11 @@ class ClientService():
 #----------------------------booking proposal -------------------------------
     def book_talent(self , request):
         try:
-            # TIME_HOUR = request.data["time"]
-            # user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
-            #                                                   date=request.data["date"]).first()
-            # if not user_slots:
-            #     return {"data": None, "message": "No slots found", "status": 400}
+            TIME_HOUR = request.data["time"]
+            user_slots = OperationalSlotsModel.objects.filter(user=request.data["talent"], 
+                                                              date=request.data["date"]).first()
+            if not user_slots:
+                return {"data": None, "message": "No slots found", "status": 400}
             # check_slot_availability = self.find_time_in_slots(user_slots.slots, TIME_HOUR)
             # if check_slot_availability == {}:
             #     return {"data": None, "message": "Desired slot not found", "status": 400}
