@@ -552,7 +552,13 @@ class ClientService():
             all_user_slot = OperationalSlotsModel.objects.get(user=user, date=date)
         except OperationalSlotsModel.DoesNotExist:
             return {"data": [], "message": "No slots found", "status": 200}
-        return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}
+        all_slots = all_user_slot.slots    
+        for i in all_slots:
+            if i["booking_details"] == {}:
+                i["booking_details"]["is_available"] = True
+            else:
+                i["booking_details"]["is_available"] = False
+        return {"data": all_slots, "message": "Day slots fetched successfully", "status": 200}
 
     def ongoing_bookings(self, request):
         try:
