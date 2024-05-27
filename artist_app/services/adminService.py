@@ -1249,10 +1249,42 @@ class AdminService:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
 
+    def add_service_fees(self, request):
+        try:
+            support_data = ContactUsModel.objects.filter(id=1)
+            if not support_data:
+                serializer = adminSerializer.SetServiceFeesSserializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
+            else:
+                support_data = ContactUsModel.objects.get(id=1)
+                serializer = adminSerializer.SetServiceFeesSserializer(support_data, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return {"data":serializer.data,"message":messages.ADD,"status":200}
+                else:
+                    return {"data":None,"message":messages.WENT_WRONG,"status":400}
+        except Exception as e:
+            print(e)
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+
+    
+    def get_service_fees(self, request):
+        try:
+            data = ContactUsModel.objects.get(id=1)
+            serializer = adminSerializer.SetServiceFeesSserializer(data)
+            return {"data":serializer.data,"message":messages.ADD,"status":200}
+        except Exception as e:
+            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+
+
     def get_customer_support(self, request):
         try:
-            data = ContactUsModel.objects.all()
-            serializer = adminSerializer.CustomerSupportSerializer(data, many = True)
+            data = ContactUsModel.objects.get(id=1)
+            serializer = adminSerializer.CustomerSupportSerializer(data)
             return {"data":serializer.data,"message":messages.ADD,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
