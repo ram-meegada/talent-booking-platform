@@ -73,6 +73,11 @@ class RecentOffersView(APIView):
         result = talent_service.recent_offers_of_talent(request)
         return Response(result, status=result["status"])
 
+class AcceptedOffersView(APIView):
+    def get(self, request):
+        result = talent_service.accepted_offers_of_talent(request)
+        return Response(result, status=result["status"])
+
 class CounterOfferByTalentView(APIView):
     def post(self, request):
         result = talent_service.counter_offer(request)

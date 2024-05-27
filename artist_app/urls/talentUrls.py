@@ -19,6 +19,7 @@ urlpatterns = [
     path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),
     path("upcoming-bookings-listing", talentView.ClientUpcomingBookingListing.as_view()),
     path("recent-offers", talentView.RecentOffersView.as_view()),
+    path("accepted-offers", talentView.AcceptedOffersView.as_view()),
     path("counter-offer", talentView.CounterOfferByTalentView.as_view()),
     path("accept-offer", talentView.AcceptOfferByTalentView.as_view()),
     path("decline-offer", talentView.DeclineOfferByTalentView.as_view()),

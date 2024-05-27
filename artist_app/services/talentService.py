@@ -359,10 +359,20 @@ class TalentService:
         try:
             startdate = datetime.today().date()
             time = datetime.now().time()
-            print(time, startdate, '---------------')
             upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id, 
                                                                   status=1).exclude(track_booking__in=[3,4,5,6]).exclude(date=startdate, time__lt=time)
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
+            return {"data":serializer.data,"status":200}
+        except Exception as e:
+            print(e)
+            return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
+
+    def accepted_offers_of_talent(self, request):
+        startdate = datetime.today().date()
+        try:
+            accepted_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id, 
+                                                                  track_booking=3,  status=1)
+            serializer = talentSerializer.BookedClientDetailSerializers(accepted_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
             print(e)
