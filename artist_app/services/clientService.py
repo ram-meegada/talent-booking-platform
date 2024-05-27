@@ -601,6 +601,7 @@ class ClientService():
             return {"data": None, "message": "Record not found", "status": 400}
         if request.data["accept"] is True:
             booking.track_booking = 3
+            booking.final_price = booking.counter_offer_price
             booking.save()
             return {"data": "", "message": "Payment for booking successfully done.", "status": 200}
         else:

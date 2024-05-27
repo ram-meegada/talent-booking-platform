@@ -109,7 +109,7 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
     track_booking_label = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
-        fields = ["id", "client", "talent", "offer_price", "time", "duration", "date", "status", "track_booking", \
+        fields = ["id", "client", "talent", "offer_price", "final_price", "time", "duration", "date", "status", "track_booking", \
                   "track_booking_label",\
                   "currency", "services", "created_at"]
     def get_status(self, obj):

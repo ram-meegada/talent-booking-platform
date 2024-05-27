@@ -417,6 +417,7 @@ class TalentService:
         except BookingTalentModel.DoesNotExist:
             return {"data": None, "message": "Record not found", "status": 400}
         booking.track_booking = 3
+        booking.final_price = booking.offer_price
         booking.save()
         self.add_details_in_slot(booking, request.user.id)
         return {"data": None, "message": "Offer accepted successfully", "status": 200}

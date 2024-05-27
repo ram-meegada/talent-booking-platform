@@ -18,6 +18,8 @@ class BookingTalentModel(BaseModel):
 
     offer_price = models.IntegerField(default=0)
     counter_offer_price = models.IntegerField(blank=True, null=True)
+    final_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
     comment = models.TextField(default="")
     currency = models.CharField(max_length=10, null=True, blank=True)
     services = models.JSONField(default=list)
