@@ -73,7 +73,7 @@ from artist_app.models.chatSessionModel import ChatSessionModel
 from artist_app.models.chatStorageModel import ChatStorageModel
 from artist_app.models.userModel import UserModel
 from django.db.models import Q
-from artist_app.serializers.chatSerializer import ChatSerializer  # Import the user serializer
+from artist_app.serializers.chatSerializer import ChatSerializer,UserDetailsSerializer  # Import the user serializer
 import string
 import random
 def generate_session_id():
@@ -111,7 +111,7 @@ class ChattingConsumer(AsyncWebsocketConsumer):
         timestamp = datetime.now().isoformat()
 
         user = await database_sync_to_async(UserModel.objects.get)(id=self.user1)
-        user_data = ChatSerializer(user).data  # Serialize the user data
+        user_data = UserDetailsSerializer(user).data  # Serialize the user data
 
         # Save the message to the database
         saved_message = await database_sync_to_async(ChatStorageModel.objects.create)(
