@@ -441,8 +441,10 @@ class TalentService:
         check_time = str(booking.time)[:-3]
         check_slot_availability = self.find_time_in_slots(data, check_time)
         serializer = Clientserializer.ShowBookingDetailsSerializer(booking)
+        serialized_data = serializer.data
+        serialized_data["final_price"] = str(serialized_data)
         for i in range(booking.duration):
-            data[check_slot_availability]["booking_details"] = serializer.data
+            data[check_slot_availability]["booking_details"] = serialized_data
             check_slot_availability += 1
         user_slots.slots = data    
         user_slots.save()
