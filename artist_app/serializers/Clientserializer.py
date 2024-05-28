@@ -12,6 +12,7 @@ from artist_app.utils.sendOtp import generate_access_token
 from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.db.models import Avg
 from datetime import date
+from artist_app.models.contactUsModel import ContactUsModel
 
 class CreateClientSerializers(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
@@ -316,11 +317,12 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     address = AddAddressDetailsSerializer()
     status = serializers.SerializerMethodField()
     track_booking = serializers.SerializerMethodField()
+    service_price = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
         fields = ["id", "talent", "client", "subcategories", "address", "date", "time", "duration", \
                   "status", "track_booking", "offer_price", "counter_offer_price", "final_price", "comment", \
-                  "services"]
+                  "services", "service_price"]
     def get_subcategories(self, obj):
         try:
             user_sub_cat = TalentDetailsModel.objects.filter(user_id=obj.talent_id).first()
@@ -337,5 +339,11 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     def get_track_booking(self, obj):
         try:
             return obj.get_track_booking_display()
+        except:
+            return None
+    def get_service_price(self, obj):
+        try:
+            obj = ContactUsModel.objects.first()
+            return obj.service_price
         except:
             return None
