@@ -46,7 +46,7 @@ class ChattingConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(self.session.session_id,
                     {
                         'type': 'chat_message',
-                        'msg': json.dumps(newMessage["message"])
+                        'msg': json.dumps(newMessage)
                     }
                 )
         save_chat = await database_sync_to_async(ChatStorageModel.objects.create)\
@@ -59,3 +59,4 @@ class ChattingConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         print('websocket disconnected.....', close_code)
+
