@@ -72,10 +72,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from artist_app.models.chatSessionModel import ChatSessionModel
 from artist_app.models.chatStorageModel import ChatStorageModel
 from artist_app.models.userModel import UserModel
+from artist_app.serializers.chatSerializer import UserDetailsSerializer  # Import the user serializer
 from django.db.models import Q
-from artist_app.serializers.chatSerializer import ChatSerializer,UserDetailsSerializer  # Import the user serializer
 import string
 import random
+
 def generate_session_id():
     chars = string.ascii_letters + string.digits
     alpha_numeric = ''.join([random.choice(chars) for _ in range(10)])
@@ -111,7 +112,7 @@ class ChattingConsumer(AsyncWebsocketConsumer):
         timestamp = datetime.now().isoformat()
 
         user = await database_sync_to_async(UserModel.objects.get)(id=self.user1)
-        user_data = UserDetailsSerializer(user).data  # Serialize the user data
+        user_data = await database_sync_to_async(self.serialize_user)(user)  # Serialize the user data asynchronously
 
         # Save the message to the database
         saved_message = await database_sync_to_async(ChatStorageModel.objects.create)(
@@ -142,5 +143,9 @@ class ChattingConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         print('websocket disconnected.....', close_code)
+
+    def serialize_user(self, user):
+        return UserDetailsSerializer(user).data
+
 
 
