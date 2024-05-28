@@ -321,6 +321,7 @@ class TalentService:
                 all_sub_categories = TalentSubCategoryModel.objects.filter(category=cat_obj.id)
                 serializer = adminSerializer.SubCategorySerializer(all_sub_categories, many=True)
                 response_dict["Categoryname"] = cat_obj.name
+                response_dict["CategoryId"] = cat_obj.id
                 response_dict["CategoryData"] = serializer.data
                 response.append(response_dict)
             else:
