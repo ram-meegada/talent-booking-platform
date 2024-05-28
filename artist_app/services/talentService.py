@@ -446,6 +446,7 @@ class TalentService:
         for i in range(booking.duration):
             data[check_slot_availability]["booking_details"] = serialized_data
             check_slot_availability += 1
+        print(data, '-------------------')    
         user_slots.slots = data    
         user_slots.save()
         return None
