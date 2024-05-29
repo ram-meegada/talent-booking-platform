@@ -70,7 +70,6 @@ class TalentService:
                 user_obj.save()
                 return {"data": None, "message": "Please verify your phone number and email", "status": 200}
         else:
-            print(serializer.error_messages, '=----=======-=-=-=-')
             keys = list(serializer.errors.keys())
             return {"data": None, "message": f"{keys[0]}: {serializer.errors[keys[0]][0]}", "status": 400}
         
@@ -98,7 +97,6 @@ class TalentService:
             except UserModel.DoesNotExist:
                 return {"data": None, "message": messages.MOBILE_NOT_FOUND, "status": 400}
             var = "Phone number"
-            print(int((now - user.otp_sent_time).total_seconds()), '--------------')
             if int((now - user.otp_sent_time).total_seconds()) > 60:
                 return {"data": None, "message": "Otp expired", "status": 400}
             if user.otp == request.data["otp"]:
@@ -237,7 +235,6 @@ class TalentService:
         """
             Update profile details like categories, model status, portfolio, booking method
         """
-        print(request.data, "----------- request.data --------------")
         try:
             #fetch details record and user record
             user = UserModel.objects.get(id=request.user.id)
@@ -249,7 +246,6 @@ class TalentService:
             portfolio_payload = request.data.get("portfolio")
             booking_method_payload = request.data.get("booking_method")
             if user_payload:
-                print(user_payload, "11111111111111111111111")
                 user.profile_picture_id = user_payload["profile_picture"]
                 user.first_name = user_payload["first_name"]
                 user.last_name = user_payload["last_name"]
@@ -257,7 +253,6 @@ class TalentService:
                 user.name = user_payload["first_name"] + " " + user_payload["last_name"]
                 user.save()
             if categories_payload:
-                print(user_payload, "2222222222222222222222222")
                 categories = [i["category_id"] for i in request.data["category"]]
                 sub_categories = []
                 for i in request.data["category"]:
@@ -275,7 +270,6 @@ class TalentService:
                     user.profile_status = 2
                     user.save()
             if model_status_payload:
-                print(user_payload, "33333333333333333333333")
                 serializer = talentSerializer.CreateModelStatusSerializer(talent_details, data=model_status_payload)
                 if serializer.is_valid():
                     serializer.save()
@@ -285,7 +279,6 @@ class TalentService:
                 else:
                     return {"data": serializer.errors, "message": "something went wrong", "status": 400}
             if portfolio_payload:
-                print(user_payload, "44444444444444444444444")
                 talent_details.portfolio = portfolio_payload["portfolio"]
                 talent_details.cover_photo_id = portfolio_payload["cover_photo"]
                 talent_details.save()
@@ -293,7 +286,6 @@ class TalentService:
                     user.profile_status = 4
                     user.save()
             if booking_method_payload:
-                print(user_payload, "55555555555555555555555")
                 talent_details.booking_method = booking_method_payload["method"]
                 talent_details.services = request.data["services"]
                 talent_details.save()
@@ -304,7 +296,6 @@ class TalentService:
         except IntegrityError:
             return {"data": None, "message": "Category or sub category not found", "status": 400}
         except Exception as error:
-            print(type(error), '----------------')
             return {"data": str(error), "message": messages.WENT_WRONG, "status": 400}
 
     def sub_category_listing(self, request):
@@ -354,7 +345,6 @@ class TalentService:
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
-            print(e)
             return {"message":messages.WENT_WRONG,"status":400}
 
     def recent_offers_of_talent(self, request):
@@ -366,7 +356,6 @@ class TalentService:
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
-            print(e)
             return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
 
     def accepted_offers_of_talent(self, request):
@@ -377,20 +366,17 @@ class TalentService:
             serializer = talentSerializer.BookedClientDetailSerializers(accepted_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
-            print(e)
             return {"data": str(e), "message": messages.WENT_WRONG, "status": 400}
 
     def past_client_booking_listing(self, request):
         try:
             enddate = datetime.today().date()  
-            print(enddate, '-------')
             startdate = enddate - timedelta(days=6)
             time = datetime.now().time()
             past_bookings = BookingTalentModel.objects.filter(date__lte = enddate).exclude(date=enddate, time__gt = time)
             serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
-            print(e, 'eeeeee')
             return {"message":messages.WENT_WRONG,"status":400}
 
     def cancelled_bookings(self,request):

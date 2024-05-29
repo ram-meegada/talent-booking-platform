@@ -21,7 +21,6 @@ def send_otp_via_mail(email, first_name="There"):
     msg = EmailMultiAlternatives("", temp, EMAIL_HOST_USER, [email])
     msg.content_subtype = 'html'
     msg.send()
-    print('mail sent opt')
     return message
 
 def send_password_via_mail(email, message, first_name = "User"):
@@ -68,7 +67,6 @@ class Email(threading.Thread):
         msg = EmailMultiAlternatives(f"{self.title}", temp, DEFAULT_FROM_EMAIL, self.recipient_list)
         msg.content_subtype = 'html'
         msg.send()
-        print('sent')
         return None
 def send_notification_to_mail(recipient_list, title, message):
     Email(recipient_list, title, message).start()  

@@ -80,7 +80,6 @@ class ClientService():
                 user_obj.save()
                 return {"data": None, "message": "Please verify your phone number and email", "status": 200}
         else:
-            print(serializer.error_messages, '=----=======-=-=-=-')
             keys = list(serializer.errors.keys())
             return {"data": None, "message": f"{keys[0]}: {serializer.errors[keys[0]][0]}", "status": 400}
         
@@ -304,7 +303,6 @@ class ClientService():
                 all_obj = {"data": serializer.data}
                 all_obj["access_token"] = str(token.access_token)
                 all_obj["refresh_token"] = str(token)
-                print(all_obj,"akjhsdflkjahsdflkjh")
                 return {"data": all_obj, 'message': "LOGIN_SUCCESSFULLY", "status": status.HTTP_200_OK}
             else:
                 return {"message": "Invalid credentials", "status": status.HTTP_400_BAD_REQUEST}
@@ -345,7 +343,6 @@ class ClientService():
     def show_all_address_with_token(self, request):
         data = ManageAddressModel.objects.filter(user_id = request.user.id)
         home_address = data.filter(address_type=1)
-        print("home_address",home_address)
         home = AddAddressDetailsSerializer(home_address, many=True)
 
         work_address = data.filter(address_type=2)
@@ -480,7 +477,6 @@ class ClientService():
 
             return {"data": dict, "message": "Talent details fetched successfully", "status":200}
         except Exception as e:
-            print(e)
             return {"message": messages.WENT_WRONG, "status":400}
 
 
@@ -531,7 +527,6 @@ class ClientService():
             serializer = ShowBookingDetailsSerializer(talent_details)
             return {"data":serializer.data,"status":200}
         except Exception as e:
-            print(e)
             return {"message": str(e),"status":400}
 
     # def get_talent_based_on_filters(self, request):
