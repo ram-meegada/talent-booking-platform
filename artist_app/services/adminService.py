@@ -1,3 +1,4 @@
+from email import message
 from shutil import ExecError
 from unicodedata import category
 from artist_app.models.permissionModel import PermissionModel
@@ -269,6 +270,9 @@ class AdminService:
             user = UserModel.objects.get(id = request.user.id)
             old_password = request.data["old_password"]
             new_password = request.data["new_password"]
+            check_new_password = check_password(new_password,user.password)
+            if check_new_password:
+                return{"data":None,"messages":messages.PASSWORD_NOT_SAME,"status":400}
             verify_password = check_password(old_password,user.password)
             if verify_password:
                 user.set_password(new_password)
