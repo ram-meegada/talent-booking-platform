@@ -344,6 +344,6 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     def get_service_price(self, obj):
         try:
             obj = ContactUsModel.objects.first()
-            return str(obj.service_price)
+            return round(float(obj.service_price), 2)
         except:
             return None
