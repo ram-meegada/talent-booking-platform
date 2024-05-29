@@ -534,5 +534,10 @@ class TalentService:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
         except OperationalSlotsModel.DoesNotExist:
             return {"data": None, "message": "No slots found", "status": 400}
+        slots = self.format_slots(slots)    
         return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}
 
+    def format_slots(self, slots):
+        for i in slots:
+            if i["booking_details"] != {}:
+                pass
