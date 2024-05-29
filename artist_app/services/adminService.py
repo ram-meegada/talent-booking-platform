@@ -44,21 +44,17 @@ class AdminService:
             else:
                 return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            print(e)
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
     
     def add_sub_category(self, request):
         try:
             serializers = adminSerializer.SubCategorySerializer(data=request.data)
-            print(serializers.is_valid())
-            print(serializers.errors)
             if serializers.is_valid():
                 serializers.save()
                 return {"data": serializers.data, "message": messages.SUB_CATEGORY_ADDED, "status": 201}
             else:
                 return {"data": None, "message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            print(e)
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
         # name = request.data["name"]
         # category_id = request.data["category"]
@@ -258,10 +254,8 @@ class AdminService:
                 serializer.save(profile_picture_id = request.data.get("profile_picture"))
                 return {"data":serializer.data,"message":messages.UPDATE, "status":200}
             else:
-                print(serializer.errors)
                 return{"data":None,"message":messages.WENT_WRONG, "status":400}
         except Exception as e:
-            print(e)
             return {"data":None,"message":messages.WENT_WRONG, "status":400}
 
     
@@ -272,7 +266,7 @@ class AdminService:
             new_password = request.data["new_password"]
             check_new_password = check_password(new_password,user.password)
             if check_new_password:
-                return{"data":None,"messages":messages.PASSWORD_NOT_SAME,"status":400}
+                return{"data":None,"message":messages.PASSWORD_NOT_SAME,"status":400}
             verify_password = check_password(old_password,user.password)
             if verify_password:
                 user.set_password(new_password)
@@ -300,6 +294,17 @@ class AdminService:
     
 # manage customer module
     def add_new_customer(self, request):
+        try:
+            email = request.data["email"]
+            data = UserModel.objects.get(email=email)
+            phone_no = request.data["phone_no"]
+            phone_check = UserModel.objects.get(phone_no=phone_no)
+            if data:
+                return {"data":None,"message":messages.EMAIL_EXISTS,"status":400}
+            if phone_no:
+                return {"data":None,"message":messages.PHONE_EXISTS,"status":400}
+        except Exception as e:
+            pass
         try:
             serializer = adminSerializer.AddNewClientByAdminSeriaizer(data = request.data)
             if serializer.is_valid():
@@ -371,7 +376,6 @@ class AdminService:
                         "status":200
                     }
         except Exception as e:
-            print(e, 'eeeeeeeeeeeeeeee')
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
         
     def bookings_of_customer(self, request, id):
@@ -547,7 +551,6 @@ class AdminService:
             # serializer = adminSerializer.GetArtistDetailsSerializers(user,many = True)
             # return {"data":serializer.data,"messages":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
-            print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
     
 
@@ -573,7 +576,6 @@ class AdminService:
             serializer = adminSerializer.GetArtistDetailsByIdSerializer(user)
             return {"data":serializer.data,"messag":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
-            print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def Update_artist_details_by_id(self, request, id):
@@ -645,6 +647,18 @@ class AdminService:
                 }
 
     def add_artist_through_admin(self, request):
+        try:
+            email = request.data["email"]
+            data = UserModel.objects.get(email=email)
+            phone_no = request.data["phone_no"]
+            phone_check = UserModel.objects.get(phone_no=phone_no)
+            if data:
+                return {"data":None,"message":messages.EMAIL_EXISTS,"status":400}
+            if phone_no:
+                return {"data":None,"message":messages.PHONE_EXISTS,"status":400}
+        except Exception as e:
+            pass
+
         data = {"user_details": {}, "extra_details": {}}
         data["user_details"]["first_name"] = request.data["first_name"]
         data["user_details"]["last_name"] = request.data["last_name"]
@@ -854,9 +868,9 @@ class AdminService:
 
     def kpi(self, request):
         kpi_s ={}
-        kpi_s["Total_customers"]=UserModel.objects.filter(role=1, is_active=True).count()
+        kpi_s["Total_customers"]=UserModel.objects.filter(role=1).count()
         kpi_s["Total_booking"]=BookingTalentModel.objects.all().count()
-        kpi_s["Total_Artist"]=UserModel.objects.filter(role=2,is_active=True).count()
+        kpi_s["Total_Artist"]=UserModel.objects.filter(role=2).count()
         return {"data":kpi_s,"message":messages.FETCH,"status":200}
 
 
@@ -926,7 +940,6 @@ class AdminService:
                 dict ={"labels":labels[i],"values":values[i]}
                 data.append(dict)
 
-            print(data,"sdfhalksjhflakjshdflka")
 
 
         elif interval == "monthly":
@@ -1225,7 +1238,6 @@ class AdminService:
         try:
             pp = TermAndConditionModel.objects.all()
             serializer = adminSerializer.TermAndConditionsPPSerializer(pp,many= True)
-            print(serializer.data,"jhasgdfjahgsfd")
             return {"data":serializer.data,"message":messages.FETCH,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
@@ -1249,7 +1261,6 @@ class AdminService:
                 else:
                     return {"data":None,"message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
 
@@ -1272,7 +1283,6 @@ class AdminService:
                 else:
                     return {"data":None,"message":messages.WENT_WRONG,"status":400}
         except Exception as e:
-            print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     

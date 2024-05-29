@@ -158,7 +158,7 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
         fields = ["id","name","email","profile_picture","gender","country_code","phone_no","date_of_birth",\
-                  "experience",'booking_method',"address","categories","sub_categories", "is_active", "verification_status"]
+                  "experience","address","categories","sub_categories", "is_active", "verification_status"]
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
@@ -389,7 +389,7 @@ class CreateModelStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
         fields = ('id', 'bust', 'waist', 'hips', 'height_feet', 'height_inches', 'weight', 'hair_color',\
-                   'eye_color', 'booking_method', 'portfolio', 'cover_photo', 'categories', 'sub_categories',\
+                   'eye_color',"booking_method" ,'portfolio', 'cover_photo', 'categories', 'sub_categories',\
                     'services')        
         
 class CreateRolePermissionSubAdminSerializer(serializers.ModelSerializer):
@@ -471,7 +471,6 @@ class ArtistBookingsAdminSerializer(serializers.ModelSerializer):
             cat_names = ", ".join([i[0] for i in TalentCategoryModel.objects.filter(id__in=cat).values_list("name")])
             return cat_names
         except Exception as err:
-            print(err, '-----------erriiiiiiiiiiiii')
             return ""
     def get_status(self, obj):
         try:

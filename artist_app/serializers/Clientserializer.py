@@ -213,10 +213,8 @@ class TalentDetailsBasedOnIOSSubcategories(serializers.ModelSerializer):
     def get_age(self, obj):
         current_date =  date.today()
         user_date=obj.user.date_of_birth
-        print(current_date,user_date,"aksjdhfalkshjdfk")
         age = (current_date-user_date).days
         age = age/365.25
-        print(age,"sdjasjhdfaksh")
         return int(age)
 
     def get_city(self, obj):
