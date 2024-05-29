@@ -29,6 +29,8 @@ PORTFOLIO_ADDED = "Portfolio added successfully"
 DETAILS_UPDATED = "Details updated successfully"
 BOOKING_METHOD_UPDATED = "Booking method updated successfully"
 
+PASSWORD_NOT_SAME = "Old Password and New Password should not be same."
+
 ### common
 WENT_WRONG = "Something went wrong. Please try after some time"
 
