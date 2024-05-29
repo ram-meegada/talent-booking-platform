@@ -16,6 +16,7 @@ from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from django.db import IntegrityError
+from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer
 
 class TalentService:    
     def user_signup(self, request):
@@ -534,10 +535,16 @@ class TalentService:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
         except OperationalSlotsModel.DoesNotExist:
             return {"data": None, "message": "No slots found", "status": 400}
-        slots = self.format_slots(slots)    
-        return {"data": all_user_slot.slots, "message": "Day slots fetched successfully", "status": 200}
+        slots = self.format_slots(all_user_slot.slots)    
+        return {"data": slots, "message": "Day slots fetched successfully", "status": 200}
 
     def format_slots(self, slots):
         for i in slots:
-            if i["booking_details"] != {}:
-                pass
+            if i["booking_details"].get("id"):
+                try:
+                    booking = BookingTalentModel.objects.get(id=i["booking_details"].get("id"))
+                    i["booking_details"] = ShowBookingDetailsSerializer(booking).data
+                except:
+                    i["booking_details"] = {}
+        return slots
+                

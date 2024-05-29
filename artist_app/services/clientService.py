@@ -24,6 +24,9 @@ from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.utils.choiceFields import FILTER_KEYS
 from artist_app.serializers.Clientserializer import TalentBasicDetailsIOS
+from artist_app.services.talentService import TalentService
+
+talent_obj = TalentService()
 
 class ClientService():
     def user_signup(self, request):
@@ -552,7 +555,7 @@ class ClientService():
             all_user_slot = OperationalSlotsModel.objects.get(user=user, date=date)
         except OperationalSlotsModel.DoesNotExist:
             return {"data": [], "message": "No slots found", "status": 200}
-        all_slots = all_user_slot.slots    
+        all_slots = talent_obj.format_slots(all_user_slot.slots)    
         for i in all_slots:
             if i["booking_details"] == {}:
                 i["booking_details"]["is_available"] = True
