@@ -356,7 +356,7 @@ class AdminService:
 
     def get_all_customers(self, request):
         try:
-            clients = UserModel.objects.filter(role=1)
+            clients = UserModel.objects.filter(role=1).order_by('-id')
             pagination_obj = CustomPagination()
             search_keys = ["first_name__icontains", "email__icontains"]
             result = pagination_obj.custom_pagination(request, search_keys, \
@@ -531,7 +531,7 @@ class AdminService:
             users = UserModel.objects.filter(role=2, verification_status=2)
         users_id = [i.id for i in users]
         try:
-            user = TalentDetailsModel.objects.filter(user__in=users_id)
+            user = TalentDetailsModel.objects.filter(user__in=users_id).order_by('-id')
             pagination_obj = CustomPagination()
             search_keys = ["user__name__icontains", "user__email__icontains"]
             result = pagination_obj.custom_pagination(request, search_keys, \
