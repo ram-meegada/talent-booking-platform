@@ -19,7 +19,7 @@ from artist_app.models.ratingsModel import ReviewAndRatingsModel
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TalentCategoryModel
-        fields = ["id", "name"]
+        fields = ["id", "name","image"]
 
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -119,6 +119,21 @@ class GetAllCategoriesSerializers(serializers.ModelSerializer):
     class Meta:
         model = TalentCategoryModel
         fields = ["id", "name", "update_at", "is_active", "key","image"]
+
+    def get_update_at(self, obj):
+       return obj.updated_at.date()
+    def get_key(self, obj):
+        if (obj.name).lower() in ["actor", "model"]:
+            return (obj.name).lower()
+        else:
+            return None
+
+class AllCategoriesSerializers(serializers.ModelSerializer):
+    update_at = serializers.SerializerMethodField()
+    key = serializers.SerializerMethodField()
+    class Meta:
+        model = TalentCategoryModel
+        fields = ["id", "name", "update_at", "is_active", "key"]
 
     def get_update_at(self, obj):
        return obj.updated_at.date()

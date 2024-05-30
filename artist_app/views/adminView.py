@@ -220,7 +220,6 @@ class CategoryCSVView(APIView):
         # Return JSON response
         return JsonResponse(response_data)
 class GetAllCategoriesView(APIView):
-    permission_classes = [AllowAny]
     def post(self, request):
         result = admin_obj.get_all_categories(request)
         return Response(result, status=result["status"])
