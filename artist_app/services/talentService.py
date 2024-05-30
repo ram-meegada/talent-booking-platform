@@ -344,7 +344,7 @@ class TalentService:
         try:
             startdate = datetime.today().date()
             time = datetime.now().time()
-            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id)\
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,status=1)\
                                                                 .exclude(date = startdate,time__lt = time)
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
