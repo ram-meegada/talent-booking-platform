@@ -246,9 +246,17 @@ class TalentBasicDetailsIOS(serializers.ModelSerializer):
     def get_services(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()
         if details:
+            for service in details.services:
+                service['price'] = float(f"{float(service['price']):.2f}")
             return details.services
         else:
             return []
+    # def get_services(self, obj):
+    #     details = TalentDetailsModel.objects.filter(user=obj.id).first()
+    #     if details:
+    #         return details.services
+    #     else:
+    #         return []
 
 
 class TalentBasicDetails(serializers.ModelSerializer):
