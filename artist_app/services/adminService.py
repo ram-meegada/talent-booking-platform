@@ -176,17 +176,14 @@ class AdminService:
 # admin onboarding
     def admin_login(self, request):
         try:
+                user = UserModel.objects.get(email=request.data["email"])
+                if not check_password(request.data["password"], user.password):
+                    return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
+        except UserModel.DoesNotExist:
+                return {"data": None, "message": messages.EMAIL_NOT_FOUND, "status": 400}
+        try:
             email = request.data["email"]
             password = request.data["password"]
-            
-            try:
-                user = UserModel.objects.get(email=email)
-            except UserModel.DoesNotExist:
-                return {"data": None, "message": messages.EMAIL_NOT_FOUND, "status": 400}
-            
-            if not check_password(password, user.password):
-                return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
-            
             serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user)
             token = RefreshToken.for_user(user)
             
@@ -432,7 +429,7 @@ class AdminService:
     def all_category(self, request):
         try:
             category = TalentCategoryModel.objects.all()
-            serializer = adminSerializer.GetAllCategoriesSerializers(category, many =True)
+            serializer = adminSerializer.AllCategoriesSerializers(category, many =True)
             return {"data":serializer.data, "message":messages.FETCH,"status":200}
         except Exception as e:
             return {"data":None,"messges":messages.WENT_WRONG,"status":400}
@@ -440,7 +437,7 @@ class AdminService:
     def get_categories_detail_by_id(self, request,id):
         try:
             category = TalentCategoryModel.objects.get(id=id)
-            serializer  = adminSerializer.GetCategorySerializer(category)
+            serializer  = adminSerializer.GetAllCategoriesSerializers(category)
             return {"data":serializer.data,"message":messages.CATEGORIES_LISTING,"status":200}
         except Exception as e:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
