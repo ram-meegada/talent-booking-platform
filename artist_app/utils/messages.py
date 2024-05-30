@@ -14,6 +14,8 @@ FORGOT_PASSWORD = "Password Update successfully."
 CHANGE_PASSWORD = "Password change successfully."
 USER_LOGGED_OUT = "logout successfully"
 
+BLOCK = "Blocked by admin"
+
 
 
 OTP_SENT_TO_MAIL = "Otp sent to your mail successfully"
