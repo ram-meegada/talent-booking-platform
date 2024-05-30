@@ -154,6 +154,7 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
     verification_status = serializers.SerializerMethodField()
+    is_active = serializers.SerializerMethodField()
 
     class Meta:
         model = TalentDetailsModel
@@ -162,7 +163,8 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
-    
+    def get_is_active(self, obj):
+        return obj.user.is_active
     def get_id(self, obj):
         return obj.user.id
 

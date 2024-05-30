@@ -659,7 +659,7 @@ class AdminService:
             phone_check = UserModel.objects.filter(phone_no=phone_no)
             if data:
                 return {"data":None,"message":messages.EMAIL_EXISTS,"status":400}
-            if phone_no:
+            if phone_check:
                 return {"data":None,"message":messages.PHONE_EXISTS,"status":400}
         except Exception as e:
             pass
@@ -1328,24 +1328,6 @@ class AdminService:
                             "status":200
                         }
 
-
-    def export_revenue_csv(self, request, *args, **kwargs):
-        courses = BookingTalentModel.objects.all()
-        serializer = adminSerializer.GetRevenueDetails(courses, many = True)
-        header = ["S.No"] + list(serializer.data[0].keys())
-        response = HttpResponse(
-                content_type="text/csv",
-                headers={"Content-Disposition": 'attachment; filename="course.csv"'},
-            )
-        s_no = 1
-        with open("course.csv", "w") as file:
-            writer = csv.writer(response)
-            writer.writerow(header)
-            for i in serializer.data:
-                row = [s_no] + list(i.values())
-                writer.writerow(row)
-                s_no += 1
-        return response
             
 
 
