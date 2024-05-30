@@ -113,11 +113,12 @@ class updateAdminDetialsByTokenSerializer(serializers.ModelSerializer):
             return obj.profile_picture_id
 
 class GetAllCategoriesSerializers(serializers.ModelSerializer):
+    image = CreateUpdateUploadMediaSerializer()
     update_at = serializers.SerializerMethodField()
     key = serializers.SerializerMethodField()
     class Meta:
         model = TalentCategoryModel
-        fields = ["id", "name", "update_at", "is_active", "key"]
+        fields = ["id", "name", "update_at", "is_active", "key","image"]
 
     def get_update_at(self, obj):
        return obj.updated_at.date()

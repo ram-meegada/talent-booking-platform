@@ -413,7 +413,7 @@ class AdminService:
 
     def get_all_categories(self, request):
         try:
-            categories = TalentCategoryModel.objects.all()
+            categories = TalentCategoryModel.objects.all().order_by("-id")
             pagination_obj = CustomPagination()
             search_keys = ["name__icontains"]
             result = pagination_obj.custom_pagination(request, search_keys, \
