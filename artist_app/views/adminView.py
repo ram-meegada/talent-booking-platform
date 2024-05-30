@@ -264,6 +264,11 @@ class UpdateSubcategoryByIdView(APIView):
         result = admin_obj.update_subcategory_details(request,id)
         return Response(result, status=result["status"])
 
+class DeleteSubcategoryByidView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_subcategory_by_id(request , id)
+        return Response(result, status=result["status"])
+
 
 
 

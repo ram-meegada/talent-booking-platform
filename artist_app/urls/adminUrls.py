@@ -58,7 +58,7 @@ urlpatterns = [
     path("update-subcategory-by-id/<int:id>",adminView.UpdateSubcategoryByIdView.as_view()),
     path("get-subcategory-by-id/<int:id>",adminView.GetSubCategoryByIdView.as_view()),
     path("update-status-of-category/<int:id>", adminView.UpdateStatusOfCategoryView.as_view()),
-
+    path("delete-subcategory-by-id/<int:id>",adminView.DeleteSubcategoryByidView.as_view()),
     path("sub-categories", talentView.SubCategoryListingAngularView.as_view()),
 
     #manage artist urls
