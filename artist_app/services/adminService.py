@@ -1,5 +1,6 @@
 from email import message
 from shutil import ExecError
+from tabnanny import check
 from unicodedata import category
 from artist_app.models.permissionModel import PermissionModel
 from artist_app.utils import messages
@@ -176,6 +177,9 @@ class AdminService:
     def admin_login(self, request):
         try:
             user = UserModel.objects.get(email = request.data["email"])
+            che_password = check_password(request.data["password"],user.password)
+            if not che_password:
+                return {"data":None,"message":messages.WRONG_PASSWORD,"status":400}
         except UserModel.DoesNotExist:
             return {"data":None ,"message": messages.EMAIL_NOT_FOUND,"status":400}
         try:
@@ -358,25 +362,6 @@ class AdminService:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
         user.delete()
         return {"data": None, "message":messages.CUSTOMER_DELETE,"status":200}
-
-    def get_all_customer(self, request):
-        try:
-            clients = UserModel.objects.filter(role=1).order_by('-id')
-            pagination_obj = CustomPagination()
-            search_keys = ["first_name__icontains", "email__icontains"]
-            result = pagination_obj.custom_pagination(request, search_keys, \
-                                                      adminSerializer.GetAllClientsDetailsSerializer, clients)
-            # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
-            return {
-                        "data":result["response_object"],
-                        "total_records": result["total_records"],
-                        "start": result["start"],
-                        "length": result["length"], 
-                        "message":messages.USER_DETAILS_FETCHED, 
-                        "status":200
-                    }
-        except Exception as e:
-            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
     def get_all_customers(self, request):
         try:
