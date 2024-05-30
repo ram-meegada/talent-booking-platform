@@ -1301,9 +1301,9 @@ class AdminService:
 
     def get_customer_support(self, request):
         try:
-            data = ContactUsModel.objects.get(id=1)
+            data = ContactUsModel.objects.all()
             serializer = adminSerializer.CustomerSupportSerializer(data)
-            return {"data":serializer.data,"message":messages.ADD,"status":200}
+            return {"data":serializer.data,"message":messages.FETCH,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
