@@ -158,7 +158,7 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
     class Meta:
         model = TalentDetailsModel
         fields = ["id","name","email","profile_picture","gender","country_code","phone_no","date_of_birth",\
-                  "experience","address","categories","sub_categories", "is_active", "verification_status"]
+                  "experience","booking_method","address","categories","sub_categories", "is_active", "verification_status"]
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
