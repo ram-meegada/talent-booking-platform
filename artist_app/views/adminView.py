@@ -4,6 +4,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from artist_app.services.adminService import AdminService
+import csv
+import pandas as pd
+from django.http import JsonResponse
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from artist_app.services.uploadMediaService import UploadMediaService
+from artist_app.models.userModel import UserModel
+from artist_app.serializers.adminSerializer import *
+
 
 admin_obj = AdminService()
 
@@ -107,6 +116,36 @@ class LogOutView(APIView):
         return Response(result, status= result["status"])
 
 #manage customers(clients)
+class CustomerCSV(APIView):
+    def get(self, request, * args , **kwargs):
+        users = UserModel.objects.filter(role=1)
+        serializer = GetAllClientsDetailsSerializer(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
+
+        # Return JSON response
+        return JsonResponse(response_data)
 
 class GetAllCustomerView(APIView):
     def post(self, request):
@@ -150,7 +189,36 @@ class UpdateStatusOfCustomerView(APIView):
         return Response(result, status=result["status"])
 
 #manage categories
+class CategoryCSVView(APIView):
+    def get(self, request, * args , **kwargs):
+        users = TalentCategoryModel.objects.filter(role=1)
+        serializer = GetAllCategoriesSerializers(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
 
+        # Return JSON response
+        return JsonResponse(response_data)
 class GetAllCategoriesView(APIView):
     def post(self, request):
         result = admin_obj.get_all_categories(request)
@@ -200,6 +268,37 @@ class UpdateSubcategoryByIdView(APIView):
 
 
 # manage artist 
+
+class ArtistCSVView(APIView):
+    def get(self, request, * args , **kwargs):
+        users = UserModel.objects.filter(role=2)
+        serializer = GetArtistDetailsSerializers(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
+
+        # Return JSON response
+        return JsonResponse(response_data)
 
 class GetAllArtistDetialsView(APIView):
     def post(self, request):
@@ -271,6 +370,37 @@ class GetAllSubAdminView(APIView):
 
 ####### booking module
 
+class BookingCSVView(APIView):
+    def get(self, request, * args , **kwargs):
+        users = BookingTalentModel.objects.all()
+        serializer = BookingsSerializer(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
+
+        # Return JSON response
+        return JsonResponse(response_data)
+
 class AllBookingsView(APIView):
     def post(self, request):
         result = admin_obj.all_bookings(request)
@@ -309,6 +439,36 @@ class BookingChartView(APIView):
         return Response(result, status=result["status"])
 
 #### Notification Module
+class NotificationCSVView(APIView):
+    def get(self, request, * args , **kwargs):
+        users = NotificationModel.objects.all()
+        serializer = NotificationSerializer(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
+
+        # Return JSON response
+        return JsonResponse(response_data)
 
 class AddNotificationsView(APIView):
     def post(self, request):
@@ -363,9 +523,35 @@ class GetAllRevenueDetails(APIView):
         return Response(result, status=result["status"])
 
 class ExportRevenueCSVView(APIView):
-    def get(self, request, *args, **kwargs):
-        result = admin_obj.export_revenue_csv(request, *args, **kwargs)
-        return Response(result)
+    def get(self, request, * args , **kwargs):
+        users = BookingTalentModel.objects.all()
+        serializer = GetRevenueDetails(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
+
+        # Return JSON response
+        return JsonResponse(response_data)
 #####rating and review module
 
 class GetALLRatingDetials(APIView):
@@ -374,9 +560,35 @@ class GetALLRatingDetials(APIView):
         return Response(result, status=result["status"])
 
 class ExportRatingCSVView(APIView):
-    def get(self, request, *args, **kwargs):
-        result = admin_obj.export_rating_csv(request, *args, **kwargs)
-        return Response(result)
+    def get(self, request, * args , **kwargs):
+        users = ReviewAndRatingsModel.objects.all()
+        serializer = GetAllRatingDetails(users, many=True)
+        df = pd.DataFrame(serializer.data)
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Users')
+        excel_buffer.seek(0)
+        excel_file = InMemoryUploadedFile(
+            excel_buffer, 
+            'media', 
+            'users.xlsx', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            excel_buffer.getbuffer().nbytes, 
+            None
+        )
+        upload_media_service = UploadMediaService()
+        excel_upload_result = upload_media_service.create_upload_media_xl(request, excel_file)
+        url = excel_upload_result['file_url']
+        
+        # Construct your response data
+        response_data = {
+            "file_urls": url,
+            "messages": "Excel file uploaded successfully.",
+            "status": 200
+        }
+
+        # Return JSON response
+        return JsonResponse(response_data)
 
         
 

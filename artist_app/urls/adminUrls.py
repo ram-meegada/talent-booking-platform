@@ -34,6 +34,7 @@ urlpatterns = [
 
 
     # manage customer urls
+    path("customer-csv",adminView.CustomerCSV.as_view()),
     path("all-customers",adminView.GetAllCustomerView.as_view()),
     path("add-customer",adminView.AddCustomerByAdminView.as_view()),
     path("customers-details-by-id/<int:id>",adminView.GetAllCustomerDetailsByidView.as_view()),
@@ -45,6 +46,7 @@ urlpatterns = [
     path("update-status-of-user/<int:id>",adminView.UpdateStatusOfCustomerView.as_view()),
 
     # manage categories Urls
+    path("category-csv",adminView.CategoryCSVView.as_view()),
     path("category", adminView.AddTalentCategoryView.as_view()),
     path("all-category", adminView.GetAllCategoriesView.as_view()),#this is with pagination 
     path("get-all-category",adminView.AllCategoryView.as_view()), # this is with out pagination for add artist 
@@ -60,6 +62,7 @@ urlpatterns = [
     path("sub-categories", talentView.SubCategoryListingAngularView.as_view()),
 
     #manage artist urls
+    path("artist-csv",adminView.ArtistCSVView.as_view()),
     path("get-all-artist-details", adminView.GetAllArtistDetialsView.as_view()),
     path("get-artist-details-by-id/<int:id>", adminView.GetArtistDetailsByIdView.as_view()),
     path("update-artist-details-by-id/<int:id>", adminView.UpdateArtistDetailsByIdView.as_view()),
@@ -77,6 +80,7 @@ urlpatterns = [
 
     
     # booking module Urls
+    path("booking-csv",adminView.BookingCSVView.as_view()),
     path("bookings", adminView.AllBookingsView.as_view()),
     path("booking/<int:id>", adminView.BookingdetaisByIdView.as_view()),
 
@@ -90,6 +94,7 @@ urlpatterns = [
     path("booking_chart",adminView.BookingChartView.as_view()),
 
     #notification
+    path("notification-csv",adminView.NotificationCSVView.as_view()),
     path("add-notifications", adminView.AddNotificationsView.as_view()),
     path("all-notifications", adminView.GetNotificationsView.as_view()),
 

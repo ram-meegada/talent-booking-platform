@@ -176,27 +176,28 @@ class AdminService:
 # admin onboarding
     def admin_login(self, request):
         try:
-            user = UserModel.objects.get(email = request.data["email"])
-            che_password = check_password(request.data["password"],user.password)
-            if not che_password:
-                return {"data":None,"message":messages.WRONG_PASSWORD,"status":400}
-        except UserModel.DoesNotExist:
-            return {"data":None ,"message": messages.EMAIL_NOT_FOUND,"status":400}
-        try:
             email = request.data["email"]
             password = request.data["password"]
+            
+            try:
+                user = UserModel.objects.get(email=email)
+            except UserModel.DoesNotExist:
+                return {"data": None, "message": messages.EMAIL_NOT_FOUND, "status": 400}
+            
+            if not check_password(password, user.password):
+                return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
+            
             serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user)
-            verify_password = check_password(password,user.password)
-            if verify_password:
-                token = RefreshToken.for_user(user)
-                all_obj = dict(serializer.data).copy()
-                all_obj["access_token"] = str(token.access_token)
-                all_obj["refresh_token"] = str(token)
-                return {"data": all_obj, 'message': messages.LOGGED_IN, "status": 200}
-            else:
-                return {"data":None,"message":"Incorrect password", "status":400}
+            token = RefreshToken.for_user(user)
+            
+            all_obj = dict(serializer.data).copy()
+            all_obj["access_token"] = str(token.access_token)
+            all_obj["refresh_token"] = str(token)
+            
+            return {"data": all_obj, 'message': messages.LOGGED_IN, "status": 200}
+        
         except Exception as e:
-            return {"data":None,"message":messages.WENT_WRONG,"status":400}
+            return {"data": None, "message": str(e), "status": 400}
     
 
     def verify_otp(self, request):
@@ -1302,7 +1303,7 @@ class AdminService:
     def get_customer_support(self, request):
         try:
             data = ContactUsModel.objects.all()
-            serializer = adminSerializer.CustomerSupportSerializer(data)
+            serializer = adminSerializer.CustomerSupportSerializer(data, many=True)
             return {"data":serializer.data,"message":messages.FETCH,"status":200}
         except Exception as e:
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
@@ -1364,21 +1365,3 @@ class AdminService:
                         "message": messages.FETCH, 
                         "status":200
                     }
-
-    def export_rating_csv(self, request, *args, **kwargs):
-        courses = ReviewAndRatingsModel.objects.all()
-        serializer = adminSerializer.GetAllRatingDetails(courses, many = True)
-        header = ["S.No"] + list(serializer.data[0].keys())
-        response = HttpResponse(
-                content_type="text/csv",
-                headers={"Content-Disposition": 'attachment; filename="course.csv"'},
-            )
-        s_no = 1
-        with open("course.csv", "w") as file:
-            writer = csv.writer(response)
-            writer.writerow(header)
-            for i in serializer.data:
-                row = [s_no] + list(i.values())
-                writer.writerow(row)
-                s_no += 1
-        return response
