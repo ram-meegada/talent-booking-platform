@@ -124,6 +124,7 @@ class GetAllCustomerDetailsByidView(APIView):
         return Response(result, status=result["status"])
 
 class AddCustomerByAdminView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         result = admin_obj.add_new_customer(request)
         return Response(result, status=result["status"])

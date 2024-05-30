@@ -175,12 +175,12 @@ class AdminService:
 # admin onboarding
     def admin_login(self, request):
         try:
+            user = UserModel.objects.get(email = request.data["email"])
+        except UserModel.DoesNotExist:
+            return {"data":None ,"message": messages.EMAIL_NOT_FOUND,"status":400}
+        try:
             email = request.data["email"]
             password = request.data["password"]
-            try:
-                user = UserModel.objects.get(email = email)
-            except UserModel.DoesNotExist:
-                return {"data":None ,"message": "User with this email doesnot exists","status":400}
             serializer = adminSerializer.ShowAdminDetialsByTokenSerializer(user)
             verify_password = check_password(password,user.password)
             if verify_password:
@@ -296,9 +296,9 @@ class AdminService:
     def add_new_customer(self, request):
         try:
             email = request.data["email"]
-            data = UserModel.objects.get(email=email)
+            data = UserModel.objects.filter(email=email)
             phone_no = request.data["phone_no"]
-            phone_check = UserModel.objects.get(phone_no=phone_no)
+            phone_check = UserModel.objects.filter(phone_no=phone_no)
             if data:
                 return {"data":None,"message":messages.EMAIL_EXISTS,"status":400}
             if phone_no:
@@ -358,6 +358,25 @@ class AdminService:
             return {"data": None, "message":messages.WENT_WRONG,"status":400}
         user.delete()
         return {"data": None, "message":messages.CUSTOMER_DELETE,"status":200}
+
+    def get_all_customer(self, request):
+        try:
+            clients = UserModel.objects.filter(role=1).order_by('-id')
+            pagination_obj = CustomPagination()
+            search_keys = ["first_name__icontains", "email__icontains"]
+            result = pagination_obj.custom_pagination(request, search_keys, \
+                                                      adminSerializer.GetAllClientsDetailsSerializer, clients)
+            # serializer = adminSerializer.GetAllClientsDetailsSerializer(clients, many=True)
+            return {
+                        "data":result["response_object"],
+                        "total_records": result["total_records"],
+                        "start": result["start"],
+                        "length": result["length"], 
+                        "message":messages.USER_DETAILS_FETCHED, 
+                        "status":200
+                    }
+        except Exception as e:
+            return {"data": None, "message":messages.WENT_WRONG,"status":400}
 
     def get_all_customers(self, request):
         try:
@@ -649,9 +668,9 @@ class AdminService:
     def add_artist_through_admin(self, request):
         try:
             email = request.data["email"]
-            data = UserModel.objects.get(email=email)
+            data = UserModel.objects.filter(email=email)
             phone_no = request.data["phone_no"]
-            phone_check = UserModel.objects.get(phone_no=phone_no)
+            phone_check = UserModel.objects.filter(phone_no=phone_no)
             if data:
                 return {"data":None,"message":messages.EMAIL_EXISTS,"status":400}
             if phone_no:

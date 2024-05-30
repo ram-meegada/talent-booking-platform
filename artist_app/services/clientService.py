@@ -183,6 +183,8 @@ class ClientService():
             otp = make_otp()
             try:
                 user = UserModel.objects.get(phone_no=request.data["phone_no"])
+                if not user.is_active:
+                    return {"data":None,"message":messages.BLOCK,"status":400}    
                 user.otp_sent_time = datetime.now(tz=pytz.UTC)
                 user.otp = otp
                 user.save()
@@ -192,6 +194,8 @@ class ClientService():
         elif "email" in request.data:
             try:
                 user = UserModel.objects.get(email = request.data["email"])
+                if not user.is_active:
+                    return {"data":None,"message":messages.BLOCK,"status":400}  
             except UserModel.DoesNotExist:
                 return {"data": None, "message": messages.EMAIL_NOT_FOUND, "status": 400}
             verify_password = check_password(request.data["password"], user.password)
