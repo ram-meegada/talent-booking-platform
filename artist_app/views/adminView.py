@@ -266,7 +266,7 @@ class UpdateSubcategoryByIdView(APIView):
 
 class DeleteSubcategoryByidView(APIView):
     def delete(self, request, id):
-        result = admin_obj.delete_subcategory_by_id(request , id)
+        result = admin_obj.delete_subcategory_by_id(request, id)
         return Response(result, status=result["status"])
 
 
