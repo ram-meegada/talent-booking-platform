@@ -324,6 +324,7 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
     track_booking = serializers.SerializerMethodField()
     service_price = serializers.SerializerMethodField()
+    final_price = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
         fields = ["id", "talent", "client", "subcategories", "address", "date", "time", "duration", \
@@ -337,6 +338,9 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
             return result    
         except:
             return None
+    def get_final_price(self, obj):
+        val = round(float(obj.final_price), 2)
+        return val
     def get_status(self, obj):
         try:
             return obj.get_status_display()
@@ -350,6 +354,9 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     def get_service_price(self, obj):
         try:
             obj = ContactUsModel.objects.first()
-            return round(float(obj.service_price), 2)
+            final_cost = obj.final_price
+            service_fees =  round(float(obj.service_price), 2)
+            cost = (final_cost*service_fees)/100
+            return cost
         except:
             return None

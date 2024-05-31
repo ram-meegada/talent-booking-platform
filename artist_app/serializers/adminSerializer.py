@@ -312,12 +312,24 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
             return sub_cat_serializer.data
         except:
             return obj.sub_categories
+    # def get_portfolio(self, obj):
+    #     try:
+    #         media = UploadMediaModel.objects.filter(id=obj.portfolio[0]).first()
+    #         if media:
+    #             serializer = CreateUpdateUploadMediaSerializer(media)
+    #             return serializer.data
+    #     except:
+    #         return obj.portfolio
+
     def get_portfolio(self, obj):
         try:
-            media = UploadMediaModel.objects.filter(id=obj.portfolio[0]).first()
-            if media:
-                serializer = CreateUpdateUploadMediaSerializer(media)
-                return serializer.data
+            l = []
+            for i in obj.portfolio:
+                media = UploadMediaModel.objects.get(id=i)
+                if media:
+                    serializer = CreateUpdateUploadMediaSerializer(media)
+                    l.append(serializer.data)
+            return l 
         except:
             return obj.portfolio
 
