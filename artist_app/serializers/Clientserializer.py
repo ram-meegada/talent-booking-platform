@@ -339,8 +339,11 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
         except:
             return None
     def get_final_price(self, obj):
-        val = round(float(obj.final_price), 2)
-        return val
+        if obj.final_price is None:
+            return None
+        else:
+            val = round((obj.final_price), 2)
+            return val
     def get_status(self, obj):
         try:
             return obj.get_status_display()
@@ -353,10 +356,10 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
             return None
     def get_service_price(self, obj):
         try:
-            obj = ContactUsModel.objects.first()
-            final_cost = obj.final_price
-            service_fees =  round(float(obj.service_price), 2)
-            cost = (final_cost*service_fees)/100
-            return cost
+            val = ContactUsModel.objects.first()
+            if obj.final_price is None:
+                return round((val.service_price), 2)
+            else:
+                return round(((obj.final_price*val.service_price)/100),2)
         except:
-            return round(float(obj.service_price), 2)
+            return None

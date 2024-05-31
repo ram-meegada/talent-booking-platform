@@ -615,7 +615,6 @@ class AdminService:
         if user.is_valid():
             user_obj = user.save(otp_email_verification=True, otp_phone_no_verification=True, \
                                  profile_status=1, role=2, name=NAME)
-
         model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
         model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=data["extra_details"])
         if model_details.is_valid():
