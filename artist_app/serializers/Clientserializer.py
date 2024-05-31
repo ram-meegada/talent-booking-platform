@@ -359,4 +359,4 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
             cost = (final_cost*service_fees)/100
             return cost
         except:
-            return None
+            return round(float(obj.service_price), 2)
