@@ -459,15 +459,15 @@ class BookingsSerializer(serializers.ModelSerializer):
     client = TalentBasicDetails()
     address = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
-    booking_id = serializers.SerializerMethodField()
+    # booking_id = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
-        fields = ["id","booking_id" "talent", "client", "address", "date", "time", "duration", "offer_price", "comment",\
+        fields = ["id", "talent", "client", "address", "date", "time", "duration", "offer_price", "comment",\
                    "currency", "status"]
 
-    def get_booking_id(self, obj):
-        return str(uuid.uuid4())
-        
+    # def get_booking_id(self, obj):
+    #     return str(uuid.uuid4())
+
     def get_address(self, obj):
         try:
             return obj.client.address
