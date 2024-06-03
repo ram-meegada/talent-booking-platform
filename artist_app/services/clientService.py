@@ -411,7 +411,10 @@ class ClientService():
 # listing all talent categories
     def All_categories(self, request):
         try:
-            category = TalentCategoryModel.objects.all()
+            if "search" in request.data:
+                category = TalentCategoryModel.objects.filter(name__icontains = request.data["search"])
+            else:
+                category = TalentCategoryModel.objects.all()
             serializer = TalentListingSerializer(category, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:

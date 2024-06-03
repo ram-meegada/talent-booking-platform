@@ -63,7 +63,7 @@ class GetAddressDetialsByIdView(APIView):
 #-------------------------------booking talent -------------------------
 
 class ListingAllCategories(APIView):
-    def get(self, request):
+    def post(self, request):
         result = userservice.All_categories(request)
         return Response(result, status=result["status"])
 
