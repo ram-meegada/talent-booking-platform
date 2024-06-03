@@ -183,6 +183,7 @@ class GetArtistDetailsSerializers(serializers.ModelSerializer):
     def get_is_active(self, obj):
         return obj.user.is_active
     def get_id(self, obj):
+        # print(obj)
         return obj.user.id
 
     def get_experience(self, obj):
@@ -256,14 +257,13 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
                   "bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","portfolio",\
                   "cover_photo"]
 
-    def get_date_of_birth(self, obj):
-        return obj.user.date_of_birth
+   
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
     def get_hair_color(self, obj):
-        return obj.get_hair_color
+        return obj.hair_color
     def get_eye_color(self, obj):
-        return obj.get_eye_color
+        return obj.eye_color
 
     def get_experience(self, obj):
         return obj.user.experience
@@ -274,7 +274,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_country(self, obj):
         return obj.user.country
     def get_booking_method(self, obj):
-        return obj.get_booking_method
+        return obj.booking_method
     def get_city(self, obj):
         return obj.user.city
     def get_state(self, obj):
@@ -298,7 +298,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_country_code(self, obj):
         return obj.user.country_code
     def get_gender(self, obj):
-        return obj.user.get_gender
+        return obj.user.gender
     def get_categories(self, obj):
         try:
             categories = TalentCategoryModel.objects.filter(id__in=obj.categories)

@@ -578,6 +578,7 @@ class AdminService:
             serializer = adminSerializer.GetArtistDetailsByIdSerializer(user)
             return {"data":serializer.data,"messag":messages.USER_DETAILS_FETCHED,"status":200}
         except Exception as e:
+            print(e)
             return {"data":None,"message":messages.WENT_WRONG,"status":400}
 
     def Update_artist_details_by_id(self, request, id):
