@@ -25,8 +25,8 @@ urlpatterns = [
     path("admin/", include("artist_app.urls.adminUrls")),
 ]
 
-if DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ]
+# if DEBUG:
+#     import debug_toolbar
+#     urlpatterns += [
+#         path('__debug__/', include(debug_toolbar.urls)),
+#     ]
