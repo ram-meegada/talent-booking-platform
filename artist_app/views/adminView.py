@@ -12,6 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from artist_app.services.uploadMediaService import UploadMediaService
 from artist_app.models.userModel import UserModel
 from artist_app.serializers.adminSerializer import *
+# from artist_python_backend.artist_app.models import talentDetailsModel
 
 
 admin_obj = AdminService()
@@ -191,7 +192,7 @@ class UpdateStatusOfCustomerView(APIView):
 #manage categories
 class CategoryCSVView(APIView):
     def get(self, request, * args , **kwargs):
-        users = TalentCategoryModel.objects.filter(role=1)
+        users = TalentCategoryModel.objects.all()
         serializer = GetAllCategoriesSerializers(users, many=True)
         df = pd.DataFrame(serializer.data)
         excel_buffer = BytesIO()
@@ -276,8 +277,10 @@ class DeleteSubcategoryByidView(APIView):
 
 class ArtistCSVView(APIView):
     def get(self, request, * args , **kwargs):
-        users = UserModel.objects.filter(role=2)
+        # users = UserModel.objects.filter(role=2)
+        users = TalentDetailsModel.objects.filter(user__role=2)
         serializer = GetArtistDetailsSerializers(users, many=True)
+        print(serializer.data, '-----')
         df = pd.DataFrame(serializer.data)
         excel_buffer = BytesIO()
         with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
