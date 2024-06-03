@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.staticfiles",
 
-    "debug_toolbar",
+    # "debug_toolbar",
 
     "artist_app",
 
@@ -82,10 +82,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-if DEBUG:
-    MIDDLEWARE += [
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    ]
+# if DEBUG:
+#     MIDDLEWARE += [
+#         'debug_toolbar.middleware.DebugToolbarMiddleware',
+#     ]
 
 ROOT_URLCONF = "artist_project.urls"
 

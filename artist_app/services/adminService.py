@@ -844,7 +844,7 @@ class AdminService:
         elif request.data["key"] == 5:
             bookings = BookingTalentModel.objects.filter(status=3)
         pagination_obj = CustomPagination()
-        search_keys = ["talent__email__icontains", "client__email__icontains"]
+        search_keys = ["talent__email__icontains", "client__email__icontains","Client_first_name__icontains","Client_last_name_icontains","talent_first_name_icontains","talent_first_name_icontains","talent_phone_no_icontains","client_phone_no_icontains"]
         result = pagination_obj.custom_pagination(request, search_keys, \
                                                     adminSerializer.BookingsSerializer, bookings)
         return {

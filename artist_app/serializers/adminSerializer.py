@@ -15,6 +15,7 @@ from artist_app.serializers.Clientserializer import TalentBasicDetails
 from artist_app.models.contactUsModel import ContactUsModel
 from artist_app.models.notificationModel import NotificationModel
 from artist_app.models.ratingsModel import ReviewAndRatingsModel
+import uuid
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -260,9 +261,9 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
     def get_hair_color(self, obj):
-        return obj.get_hair_color_display()
+        return obj.get_hair_color
     def get_eye_color(self, obj):
-        return obj.get_eye_color_display()
+        return obj.get_eye_color
 
     def get_experience(self, obj):
         return obj.user.experience
@@ -273,7 +274,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_country(self, obj):
         return obj.user.country
     def get_booking_method(self, obj):
-        return obj.get_booking_method_display()
+        return obj.get_booking_method
     def get_city(self, obj):
         return obj.user.city
     def get_state(self, obj):
@@ -297,7 +298,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_country_code(self, obj):
         return obj.user.country_code
     def get_gender(self, obj):
-        return obj.user.get_gender_display()
+        return obj.user.get_gender
     def get_categories(self, obj):
         try:
             categories = TalentCategoryModel.objects.filter(id__in=obj.categories)
@@ -458,10 +459,15 @@ class BookingsSerializer(serializers.ModelSerializer):
     client = TalentBasicDetails()
     address = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    booking_id = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
-        fields = ["id", "talent", "client", "address", "date", "time", "duration", "offer_price", "comment",\
+        fields = ["id","booking_id" "talent", "client", "address", "date", "time", "duration", "offer_price", "comment",\
                    "currency", "status"]
+
+    def get_booking_id(self, obj):
+        return str(uuid.uuid4())
+        
     def get_address(self, obj):
         try:
             return obj.client.address
