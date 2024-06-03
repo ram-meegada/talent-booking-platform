@@ -38,6 +38,9 @@ class AdminService:
         # name = request.data["name"]
         # talent_obj = TalentCategoryModel.objects.create(name=name)
         try:
+            data = TalentCategoryModel.objects.filter(name =request.data["name"])
+            if data:
+                return {"data":None,"message":"Category already exist","status":400}
             serializer =adminSerializer.CategorySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -49,6 +52,9 @@ class AdminService:
     
     def add_sub_category(self, request):
         try:
+            data = TalentSubCategoryModel.objects.filter(name =request.data["name"])
+            if data:
+                return {"data":None,"message":"Sub-category already exist","status":400}
             serializers = adminSerializer.SubCategorySerializer(data=request.data)
             if serializers.is_valid():
                 serializers.save()
@@ -428,7 +434,7 @@ class AdminService:
 
     def all_category(self, request):
         try:
-            category = TalentCategoryModel.objects.all()
+            category = TalentCategoryModel.objects.filter(is_active=True)
             serializer = adminSerializer.AllCategoriesSerializers(category, many =True)
             return {"data":serializer.data, "message":messages.FETCH,"status":200}
         except Exception as e:

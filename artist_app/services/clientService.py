@@ -414,7 +414,7 @@ class ClientService():
             if "search" in request.data:
                 category = TalentCategoryModel.objects.filter(name__icontains = request.data["search"])
             else:
-                category = TalentCategoryModel.objects.all()
+                category = TalentCategoryModel.objects.all().order_by("-created_at")
             serializer = TalentListingSerializer(category, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
