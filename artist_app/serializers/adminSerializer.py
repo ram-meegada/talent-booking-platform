@@ -249,6 +249,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     booking_method = serializers.SerializerMethodField()
     hair_color = serializers.SerializerMethodField()
     eye_color = serializers.SerializerMethodField()
+    weight =serializers.SerializerMethodField()
 
     class Meta:
         model = TalentDetailsModel
@@ -257,7 +258,12 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
                   "bust","waist","hips","height_feet","height_inches","weight","hair_color","eye_color","portfolio",\
                   "cover_photo"]
 
-   
+    def get_weight(self, obj):
+        if obj.weight is not None:
+            return round(float(obj.weight),2)
+        else:
+            return obj.weight
+
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
     def get_hair_color(self, obj):
@@ -302,7 +308,7 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
     def get_categories(self, obj):
         try:
             categories = TalentCategoryModel.objects.filter(id__in=obj.categories)
-            cat_serializer = CategorySerializer(categories, many=True)
+            cat_serializer = AllCategoriesSerializers(categories, many=True)
             return cat_serializer.data
         except:
             return obj.categories

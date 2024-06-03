@@ -280,7 +280,6 @@ class ArtistCSVView(APIView):
         # users = UserModel.objects.filter(role=2)
         users = TalentDetailsModel.objects.filter(user__role=2)
         serializer = GetArtistDetailsSerializers(users, many=True)
-        print(serializer.data, '-----')
         df = pd.DataFrame(serializer.data)
         excel_buffer = BytesIO()
         with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
