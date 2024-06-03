@@ -5,6 +5,8 @@ from artist_app.models import TalentDetailsModel,ManageAddressModel, UserModel
 from artist_app.utils.choiceFields import BOOKING_STATUS, TRACK_BOOKING
 
 class BookingTalentModel(BaseModel):
+    booking_id = models.IntegerField(blank=True, null=True)
+
     talent = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="talent_booking_user")
     address = models.ForeignKey(ManageAddressModel, on_delete=models.CASCADE)
     client = models.ForeignKey(UserModel, on_delete=models.CASCADE)
@@ -33,7 +35,3 @@ class BookingTalentModel(BaseModel):
 
     class Meta:
         db_table = "bookingDetails"
-
-    @property
-    def test(self):
-        return str(self.date) + str(self.time)    

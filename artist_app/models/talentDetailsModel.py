@@ -5,8 +5,7 @@ from artist_app.models.uploadMediaModel import UploadMediaModel
 from django.contrib.postgres.fields import ArrayField
 from artist_app.utils.choiceFields import HAIR_COLOR_CHOICES, EYE_COLOR_CHOICES, BOOKING_METHOD_CHOICES
 
-class TalentDetailsModel(BaseModel):
-    
+class TalentDetailsModel(BaseModel):    
     #foreign keys
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -30,6 +29,7 @@ class TalentDetailsModel(BaseModel):
     categories = ArrayField(models.IntegerField(), default=list)
     sub_categories = ArrayField(models.IntegerField(), default=list)
     services = models.JSONField(default=list)
+    tags = models.JSONField(default=list)
 
     class Meta:
         db_table = "Talent details"
