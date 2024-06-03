@@ -13,7 +13,7 @@ from artist_app.serializers.talentSerializer import TalentListingSerializer
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.models import TalentDetailsModel,BookingTalentModel
-from django.db.models import Q
+from django.db.models import Q, Max
 from threading import Thread
 from datetime import datetime
 import pytz
@@ -495,29 +495,24 @@ class ClientService():
                                                               date=request.data["date"]).first()
             if not user_slots:
                 return {"data": None, "message": "No slots found", "status": 400}
-            # check_slot_availability = self.find_time_in_slots(user_slots.slots, TIME_HOUR)
-            # if check_slot_availability == {}:
-            #     return {"data": None, "message": "Desired slot not found", "status": 400}
-            # elif check_slot_availability != {}:    
-            #     slots = user_slots.slots
-                # iteration = []
-                # for i in range(request.data["duration"]):
-                #     iteration += [TIME_HOUR]
-                #     temp = int(TIME_HOUR) + 1
-                #     TIME_HOUR = str(temp)
             serializer = BookingDetailsSerializer(data = request.data, context={"request": request})
             if serializer.is_valid():
-                serializer.save(status=1, track_booking=1)
-                # for i in range(request.data["duration"]):
-                #     slots[check_slot_availability]["booking_details"] = serializer.data
-                #     check_slot_availability += 1
-                # user_slots.slots = slots
-                # user_slots.save()    
+                booking_obj = serializer.save(status=1, track_booking=1)
+                self.generate_and_save_booking_id(booking_obj)
                 return {"data": serializer.data, "message": "Booking request sent to artist successfully", "status":200}
             else:
                 return{"message": serializer.errors, "status": 400}
         except Exception as e:
             return {"data": str(e), "message":messages.WENT_WRONG,"status":400}
+
+    def generate_and_save_booking_id(self, booking_obj):
+        all_bookings = BookingTalentModel.objects.aggregate(booking_id=Max("booking_id"))
+        if all_bookings["booking_id"] is None:
+            booking_obj.booking_id = 1000
+        else:
+            booking_obj.booking_id = all_bookings["booking_id"] + 1
+        booking_obj.save()
+        return None    
         
     def find_time_in_slots(self, data, TIME_HOUR):
         for i in range(len(data)):
