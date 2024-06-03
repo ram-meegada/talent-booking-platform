@@ -15,7 +15,7 @@ from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.models import TalentDetailsModel,BookingTalentModel
 from django.db.models import Q, Max
 from threading import Thread
-from datetime import datetime
+from datetime import datetime, date
 import pytz
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id,generate_access_token
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
@@ -25,6 +25,7 @@ from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMedia
 from artist_app.utils.choiceFields import FILTER_KEYS
 from artist_app.serializers.Clientserializer import TalentBasicDetailsIOS
 from artist_app.services.talentService import TalentService
+from dateutil.relativedelta import relativedelta
 
 talent_obj = TalentService()
 
@@ -135,7 +136,7 @@ class ClientService():
                 return {"data": None, "message": messages.WRONG_OTP, "status": 400}
         user.save()
         if user.profile_status == 0 and user.otp_email_verification and user.otp_phone_no_verification:
-            user.profile_status = 1
+            # user.profile_status = 1
             user.save()
         serializer = GetUserSerializer(user, context = {"give_token": give_token})
         return {"data": serializer.data, "message": f"{var} verified successfully", "status": 200}    
@@ -462,6 +463,11 @@ class ClientService():
             for key, value in request.data["filters"].items():
                 if key in FILTER_KEYS:
                     filters &= Q(**{FILTER_KEYS[key]: value})
+                elif key == "age":
+                    today_date = date.today()
+                    born_year = today_date - relativedelta(years=request.data["filters"]["age"])
+                    filters &= Q(user__date_of_birth=born_year)
+
         filtered_talent = TalentDetailsModel.objects.filter(filters)    
         talent_details_ids += [i.user_id for i in filtered_talent]
         users = UserModel.objects.filter(id__in=talent_details_ids)

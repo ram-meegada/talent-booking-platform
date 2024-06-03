@@ -35,6 +35,7 @@ class UserModel(AbstractUser):
     profile_status = models.IntegerField(choices=PROFILE_STATUS_CHOICES, default=0)
     verification_status = models.IntegerField(choices=VERIFICATION_STATUS_CHOICES, default=0)
     experience = models.IntegerField(choices=EXPERIENCE_CHOICES, blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
 
     #decimal field
     average_rating = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)

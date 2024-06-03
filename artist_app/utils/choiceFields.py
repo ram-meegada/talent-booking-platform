@@ -107,8 +107,9 @@ FILTER_KEYS = {
     "waist": "waist__range",
     "hips": "hips__range",
     "nationality": "user__country",
+    "tags": "tags__overlap",
     "city": "user__city__icontains",
     "state": "user__state__icontains",
-    # "rating": "user__average_rating__in",
+    "rating": "user__average_rating__gte",
     "booking_method": "booking_method"
     }
