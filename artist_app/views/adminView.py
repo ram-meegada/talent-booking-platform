@@ -260,6 +260,11 @@ class UpdateStatusOfCategoryView(APIView):
         result = admin_obj.update_status_of_category(request, id)
         return Response(result, status=result["status"])
 
+class UpdateStatusOfSubCategoryView(APIView):
+    def patch(self, request, id):
+        result = admin_obj.update_status_of_sub_category(request, id)
+        return Response(result, status=result["status"])
+
 class UpdateSubcategoryByIdView(APIView):
     def put(self, request, id):
         result = admin_obj.update_subcategory_details(request,id)

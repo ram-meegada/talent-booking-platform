@@ -510,6 +510,17 @@ class AdminService:
         except Exception as err:    
             return {"data": None, "message": str(err), "status": 400}
 
+    def update_status_of_sub_category(self, request, id):
+        try:
+            sub= TalentSubCategoryModel.objects.get(id=id)
+            sub.is_active = request.data["is_active"]
+            sub.save()
+            return {"data": None, "message": "Status updated successfully", "status": 200}
+        except TalentSubCategoryModel.DoesNotExist:    
+            return {"data": None, "message": "Record not found", "status": 400}
+        except Exception as err:    
+            return {"data": None, "message": str(err), "status": 400}
+
     def update_subcategory_details(self, request, id):
         try:
             subcategory = TalentSubCategoryModel.objects.get(id=id)

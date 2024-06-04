@@ -242,6 +242,17 @@ class ClientService():
         return {"data": serializer.data, "message": messages.USER_DETAILS_FETCHED, "status": 200}
 
 
+    def User_reset_password(self, request):
+        try:
+            user = UserModel.objects.get(email = request.data["email"])
+        except UserModel.DoesNotExist:
+            return {"data":None,"message":messages.EMAIL_NOT_FOUND,"status":400}
+        user.set_password(request.data["password"])
+        user.save()
+        return {"data":None,"message":"Reset Password","status":200}
+
+
+
 ############################################################################################################
 
     def create_username(self , email):
