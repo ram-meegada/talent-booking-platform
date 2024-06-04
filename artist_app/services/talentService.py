@@ -169,7 +169,7 @@ class TalentService:
             user.otp = otp
         user.otp_sent_time = datetime.now(tz=pytz.UTC)
         user.save()
-        return {"data": {"encoded_id": user.encoded_id}, "message": "Otp resent successfully", "status": 200}
+        return {"data": "", "message": "Otp resent successfully", "status": 200}
     
     def login(self, request):
         give_token = False
