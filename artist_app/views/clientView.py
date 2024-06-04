@@ -88,6 +88,11 @@ class clientDetailsbyTokenView(APIView):
         result = userservice.client_details_by_token(request)
         return Response(result, status=result["status"])
 
+class ResetPassword(APIView):
+    def post(self, request):
+        result = userservice.User_reset_password(request)
+        return Response(result,status=result["status"])
+
 class TalentDetailsById(APIView):
     def get(self, request,id):
         result = userservice.view_talent_all_details_by_id(request,id)

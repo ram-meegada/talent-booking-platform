@@ -14,6 +14,8 @@ urlpatterns = [
     path("edit-profile", talentView.EditProfileByTokenView.as_view()),
     path("profile-details", talentView.TalentUserDetailsView.as_view()),
     path("change-password",adminView.ChangePasswordByTokenView.as_view()),
+    path("user-forgot-password",adminView.resendOTPView.as_view()),
+    path("user-reset-password",clientView.ResetPassword.as_view()),
 
     ######### bookings ###########
     path("fetch-booking-details/<int:id>",clientView.GetAllBookTalentDetails.as_view()),

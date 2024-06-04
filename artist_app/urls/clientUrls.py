@@ -10,6 +10,7 @@ urlpatterns = [
     path("change-password", adminView.ChangePasswordByTokenView.as_view()),
     path("profile-details", clientView.clientDetailsbyTokenView.as_view()),
     path("user-forgot-password",adminView.resendOTPView.as_view()),
+    path("user-reset-password",clientView.ResetPassword.as_view()),
 
     ################# ADDRESS-MANAGE #########################
     path("address",clientView.AddClientNewAddressDetailsView.as_view()),
