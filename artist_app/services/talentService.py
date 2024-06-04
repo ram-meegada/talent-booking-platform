@@ -240,6 +240,7 @@ class TalentService:
             Update profile details like categories, model status, portfolio, booking method
         """
         try:
+            print(request.data, '------payload-----')
             #fetch details record and user record
             user = UserModel.objects.get(id=request.user.id)
             talent_details, created = TalentDetailsModel.objects.get_or_create(user_id=request.user.id)
