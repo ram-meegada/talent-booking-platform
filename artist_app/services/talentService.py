@@ -140,9 +140,9 @@ class TalentService:
         if "encoded_id" in request.data and "email" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
             check_user_email = UserModel.objects.filter(email=request.data["email"]).first()
-            if check_user_email.profile_status >= 1:
+            if check_user_email and check_user_email.profile_status >= 1:
                 return {"data": None, "message": "User with this email already exists", "status": 400}
-            else:
+            elif check_user_email and check_user_email.profile_status < 1:
                 check_user_email.delete()
             user.email = request.data["email"]
             user.otp = otp
@@ -150,10 +150,10 @@ class TalentService:
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
             check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"], country_code= request.data["country_code"]).first()
-            if check_user_mobile.profile_status >= 1:
+            if check_user_mobile and  check_user_mobile.profile_status >= 1:
                 return {"data": None, "message": "User with this phone number already exists", "status": 400}
-            else:
-                check_user_mobile.delete()
+            elif check_user_mobile and check_user_mobile.profile_status < 1:
+                check_user_mobile.delete()    
             user.phone_no = request.data["phone_no"]
             user.country_code = request.data["country_code"]
             user.otp = otp
