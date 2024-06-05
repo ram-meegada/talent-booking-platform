@@ -27,6 +27,7 @@ urlpatterns = [
     path("talent-detials", clientView.ListingAllTalent.as_view()),
     path("talent-detials-for-booking/<int:talent_id>", clientView.TalentDetailsForBookingView.as_view()),
     path("filter-talent", clientView.FilterAndSortView.as_view()),
+
     path("talent-detials-by-id/<int:id>",clientView.TalentDetailsById.as_view()),
     path("book-talent",clientView.BookTalentView.as_view()),
     path("talent-slots-by-date", clientView.GetTalentSlotsView.as_view()),
@@ -39,4 +40,6 @@ urlpatterns = [
     path("accept-decline-booking/<int:booking_id>", clientView.AcceptOrCancelBookingsView.as_view()),
 
     path("all-services/<int:id>", clientView.FetchAllTalentServicesView.as_view()),
+
+    path("tags", clientView.TagsListingView.as_view()),
 ]

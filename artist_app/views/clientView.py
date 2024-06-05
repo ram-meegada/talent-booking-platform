@@ -152,3 +152,8 @@ class MarkBookingCompletedView(APIView):
     def post(self, request, booking_id):
         result = userservice.mark_booking_completed(request, booking_id)
         return Response(result,status=result["status"])
+
+class TagsListingView(APIView):
+    def get(self, request):
+        result = userservice.tags_listing(request)
+        return Response(result,status=result["status"])

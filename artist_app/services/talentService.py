@@ -139,15 +139,21 @@ class TalentService:
         otp = make_otp()
         if "encoded_id" in request.data and "email" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
-            if UserModel.objects.filter(email=request.data["email"]).first():
+            check_user_email = UserModel.objects.filter(email=request.data["email"]).first()
+            if check_user_email.profile_status >= 1:
                 return {"data": None, "message": "User with this email already exists", "status": 400}
+            else:
+                check_user_email.delete()
             user.email = request.data["email"]
             user.otp = otp
             Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
-            if UserModel.objects.filter(phone_no=request.data["phone_no"]).first():
+            check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"]).first()
+            if check_user_mobile.profile_status >= 1:
                 return {"data": None, "message": "User with this phone number already exists", "status": 400}
+            else:
+                check_user_mobile.delete()
             user.phone_no = request.data["phone_no"]
             user.otp = otp
         elif "email" in request.data:
@@ -260,16 +266,14 @@ class TalentService:
             if categories_payload:
                 categories = [i["category_id"] for i in request.data["category"]]
                 sub_categories = []
+                tags = ""
                 for i in request.data["category"]:
-                    if i["subcategory_id"]:
-                        sub_categories += i["subcategory_id"]
-                    else:
-                        crt = TalentSubCategoryModel.objects.create(name=i["subcategory_text"], 
-                                                                    category_id=i["category_id"])    
-                # return
+                    sub_categories += i["subcategory_id"]
+                    tags += i["subcategory_text"]    
+                tags_list = ["#"+i for i in tags.split(",")]
                 talent_details.categories = categories
                 talent_details.sub_categories = sub_categories
-                # talent_details.services = request.data["services"]
+                talent_details.tags = tags_list
                 talent_details.save()
                 if user.profile_status == 1:
                     user.profile_status = 2
@@ -291,7 +295,8 @@ class TalentService:
                     user.profile_status = 4
                     user.save()
             if booking_method_payload:
-                talent_details.booking_method = booking_method_payload["method"]
+                user_booking_methods = [i["method"] for i in booking_method_payload]
+                talent_details.booking_method = user_booking_methods
                 talent_details.services = request.data["services"]
                 talent_details.save()
                 if user.profile_status == 4:
