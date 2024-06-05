@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from artist_app.models.baseModel import BaseModel
 from artist_app.models.userModel import UserModel
@@ -19,7 +20,7 @@ class TalentDetailsModel(BaseModel):
 
     hair_color = models.IntegerField(choices=HAIR_COLOR_CHOICES, default=0, blank=True, null=True)
     eye_color = models.IntegerField(choices=EYE_COLOR_CHOICES, default=0, blank=True, null=True)
-    booking_method = models.IntegerField(choices=BOOKING_METHOD_CHOICES, default=0)
+    booking_method = ArrayField(models.IntegerField(), default=list)
 
     #media
     portfolio = ArrayField(models.IntegerField(), default=list)
@@ -29,7 +30,7 @@ class TalentDetailsModel(BaseModel):
     categories = ArrayField(models.IntegerField(), default=list)
     sub_categories = ArrayField(models.IntegerField(), default=list)
     services = models.JSONField(default=list)
-    tags = models.JSONField(default=list)
+    tags = ArrayField(models.CharField(max_length=100), default=list)
 
     class Meta:
         db_table = "Talent details"

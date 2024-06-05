@@ -90,7 +90,13 @@ class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
             return obj.eye_color
     def get_booking_method(self, obj):
         try:
-            return obj.get_booking_method_display()
+            data = []
+            for i in obj.booking_method:
+                if i == 1:
+                    data.append("PRE BOOK")
+                elif i == 2:
+                    data.append("PAY LATER")
+            return data            
         except:
             return obj.booking_method
     def get_portfolio(self, obj):
@@ -264,10 +270,11 @@ class TalentBasicDetails(serializers.ModelSerializer):
     professional_details = serializers.SerializerMethodField()
     services = serializers.SerializerMethodField()
     gender = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
         fields = ["id", "first_name","last_name","profile_picture", "email", "gender", "experience","phone_no",\
-                  "country_code", "city","country", "name", "address",\
+                  "country_code", "city","country", "name", "address", "tags",\
                   "state", "profile_status", "professional_details", "services", "average_rating"]
     def get_professional_details(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()
@@ -276,6 +283,12 @@ class TalentBasicDetails(serializers.ModelSerializer):
             return serializer.data
         else:
             return {}    
+    def get_tags(self, obj):
+        user_obj = TalentDetailsModel.objects.filter(user=obj.id).first()
+        if user_obj:
+            return user_obj.tags
+        else:
+            return None    
     def get_gender(self, obj):
         try:
             return obj.get_gender_display()

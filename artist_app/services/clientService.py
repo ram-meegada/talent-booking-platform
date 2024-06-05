@@ -33,6 +33,20 @@ class ClientService():
     def user_signup(self, request):
         if "encoded_id" in request.data:
             user = UserModel.objects.get(encoded_id=request.data["encoded_id"])
+            try:
+                user = UserModel.objects.get(email=request.data["email"], profile_status__gte=1)
+                return {"data": None, "message": "Email already taken", "status": 400}
+            except:
+                pass
+            try:
+                user = UserModel.objects.get(phone_no=request.data["phone_no"], profile_status__gte=1)
+                return {"data": None, "message": "Phone number already taken", "status": 400}
+            except:
+                pass
+            check_user = UserModel.objects.filter(Q(email=request.data["email"], profile_status__lt=1) | \
+                                     Q(phone_no=request.data["phone_no"], profile_status__lt=1))
+            if check_user:
+                check_user.delete()
             serializer = CreateClientSerializers(user, data=request.data)
         else:
             try:
@@ -147,9 +161,9 @@ class ClientService():
         if "encoded_id" in request.data and "email" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
             check_user_email = UserModel.objects.filter(email=request.data["email"]).first()
-            if check_user_email.profile_status >= 1:
+            if check_user_email and check_user_email.profile_status >= 1:
                 return {"data": None, "message": "User with this email already exists", "status": 400}
-            else:
+            elif check_user_email and check_user_email.profile_status < 1:
                 check_user_email.delete()    
             user.email = request.data["email"]
             user.otp = otp
@@ -157,9 +171,9 @@ class ClientService():
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
             check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"]).first()
-            if check_user_mobile.profile_status >= 1:
+            if check_user_mobile and check_user_mobile.profile_status >= 1:
                 return {"data": None, "message": "User with this phone number already exists", "status": 400}
-            else:
+            elif check_user_mobile and check_user_mobile.profile_status < 1:
                 check_user_mobile.delete()
             user.phone_no = request.data["phone_no"]
             user.otp = otp
@@ -182,7 +196,7 @@ class ClientService():
             user.otp = otp
         user.otp_sent_time = datetime.now(tz=pytz.UTC)
         user.save()
-        return {"data": {"encoded_id": user.encoded_id}, "message": "Otp resent successfully", "status": 200}
+        return {"data": "", "message": "Otp resent successfully", "status": 200}
     
     def login(self, request):
         give_token = False
@@ -190,6 +204,8 @@ class ClientService():
             otp = make_otp()
             try:
                 user = UserModel.objects.get(phone_no=request.data["phone_no"])
+                if user.profile_status == 0:
+                    return {"data": None, "message": "User with this phone number not found", "status": 400}
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}    
                 user.otp_sent_time = datetime.now(tz=pytz.UTC)
@@ -201,6 +217,9 @@ class ClientService():
         elif "email" in request.data:
             try:
                 user = UserModel.objects.get(email = request.data["email"])
+                # print(user.profile_status, '----------')
+                if user.profile_status == 0:
+                    return {"data": None, "message": "User with this email not found", "status": 400}
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}  
             except UserModel.DoesNotExist:
@@ -474,7 +493,7 @@ class ClientService():
     def filter_talent(self, request):
         filters = Q()
         talent_details_ids = []
-        if "search" in request.data:
+        if "search" in request.data and request.data["search"]["search_value"]:
             filters = Q(user__name__icontains=request.data["search"]["search_value"])
         if "filters" in request.data:
             for key, value in request.data["filters"].items():
@@ -484,8 +503,9 @@ class ClientService():
                     today_date = date.today()
                     born_year = today_date - relativedelta(years=request.data["filters"]["age"])
                     filters &= Q(user__date_of_birth=born_year)
-
+        print(filters, '-------filters-----')
         filtered_talent = TalentDetailsModel.objects.filter(filters)    
+        print(filtered_talent)
         talent_details_ids += [i.user_id for i in filtered_talent]
         users = UserModel.objects.filter(id__in=talent_details_ids)
         serializer = TalentListingDetailsSerializer(users, many = True)
@@ -633,3 +653,11 @@ class ClientService():
             booking.status = 3
             booking.save()
             return {"data": "", "message": "Booking declined successfully", "status": 200}
+
+    def tags_listing(self, request):
+        all_tags = []
+        tags = TalentDetailsModel.objects.values_list("tags")
+        for i in tags:
+            if i:
+                all_tags += i[0]
+        return {"data": all_tags, "message": "Tags list", "status": 200}
