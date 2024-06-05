@@ -149,12 +149,13 @@ class TalentService:
             Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
-            check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"]).first()
+            check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"], country_code= request.data["country_code"]).first()
             if check_user_mobile.profile_status >= 1:
                 return {"data": None, "message": "User with this phone number already exists", "status": 400}
             else:
                 check_user_mobile.delete()
             user.phone_no = request.data["phone_no"]
+            user.country_code = request.data["country_code"]
             user.otp = otp
         elif "email" in request.data:
             email = request.data["email"]
@@ -168,10 +169,10 @@ class TalentService:
         elif "phone_no" in request.data:
             phone_no = request.data["phone_no"]
             try:
-                user = UserModel.objects.get(phone_no=phone_no)
+                user = UserModel.objects.get(phone_no=phone_no, country_code= request.data["country_code"])
             except UserModel.DoesNotExist:
                 encoded_id = generate_encoded_id()
-                user = UserModel.objects.create(phone_no=phone_no, encoded_id=encoded_id, role=2)
+                user = UserModel.objects.create(phone_no=phone_no, country_code= request.data["country_code"], encoded_id=encoded_id, role=2)
             user.otp = otp
         user.otp_sent_time = datetime.now(tz=pytz.UTC)
         user.save()
@@ -182,7 +183,7 @@ class TalentService:
         if "phone_no" in request.data:
             otp = make_otp()
             try:
-                user = UserModel.objects.get(phone_no=request.data["phone_no"])
+                user = UserModel.objects.get(phone_no=request.data["phone_no"], country_code= request.data["country_code"])
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}
                 user.otp_sent_time = datetime.now(tz=pytz.UTC)
@@ -191,6 +192,8 @@ class TalentService:
                 return {"data": None, "message": "Otp sent to your phone number", "status": 200}
             except UserModel.DoesNotExist:
                 return {"data": None, "message": "User with this phone number not found", "status": 400}
+            except Exception as e:
+                return {"data": str(e), "message": "Something went wrong", "status": 400}
         elif "email" in request.data:
             try:
                 user = UserModel.objects.get(email = request.data["email"])
