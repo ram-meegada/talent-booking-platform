@@ -1,4 +1,5 @@
 # from tkinter.messagebox import NO
+from curses import start_color
 import pytz
 from threading import Thread
 from artist_app.utils import messages
@@ -359,7 +360,7 @@ class TalentService:
             startdate = datetime.today().date()
             time = datetime.now().time()
             upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,status=1, track_booking__in=[1, 2])\
-                                                                .exclude(date = startdate,time__lt = time)
+                                                                .exclude(date = startdate,time__lt = time).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -370,7 +371,7 @@ class TalentService:
             startdate = datetime.today().date()
             time = datetime.now().time()
             upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id, 
-                                                                  status=1).exclude(track_booking__in=[3,4,5,6]).exclude(date=startdate, time__lt=time)
+                                                                  status=1).exclude(track_booking__in=[3,4,5,6]).exclude(date=startdate, time__lt=time).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -380,7 +381,7 @@ class TalentService:
         startdate = datetime.today().date()
         try:
             accepted_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id, 
-                                                                  track_booking=3,  status=1)
+                                                                  track_booking=3,  status=1).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(accepted_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -391,7 +392,7 @@ class TalentService:
             enddate = datetime.today().date()  
             startdate = enddate - timedelta(days=6)
             time = datetime.now().time()
-            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate).exclude(date=enddate, time__gt = time)
+            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate).exclude(date=enddate, time__gt = time).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -399,7 +400,7 @@ class TalentService:
 
     def cancelled_bookings(self,request):
         try:
-            canceled_bookings = BookingTalentModel.objects.filter(status=3)
+            canceled_bookings = BookingTalentModel.objects.filter(status=3).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(canceled_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -535,13 +536,19 @@ class TalentService:
         return data    
     
     def get_slots_by_date(self, request):
+        startdate = (datetime.today() - timedelta(days=1)).date()
+        # print(startdate, '-------')
         date = request.data["date"]
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
         except OperationalSlotsModel.DoesNotExist:
             return {"data": None, "message": "No slots found", "status": 400}
-        slots = self.format_slots(all_user_slot.slots)    
-        return {"data": slots, "message": "Day slots fetched successfully", "status": 200}
+
+        slots = self.format_slots(all_user_slot.slots)
+        total_offers = BookingTalentModel.objects.filter(talent=request.user.id)
+        total_bookings = total_offers.filter(track_booking=3)
+        new_bookings = total_offers.filter(track_booking=3, date__gte=startdate)
+        return {"data": slots, "total_offers": total_offers.count(), "total_bookings": total_bookings.count(), "new_bookings": new_bookings.count(), "message": "Day slots fetched successfully", "status": 200}
 
     def format_slots(self, slots):
         for i in slots:
