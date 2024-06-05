@@ -1,4 +1,4 @@
-from tkinter.messagebox import NO
+# from tkinter.messagebox import NO
 import pytz
 from threading import Thread
 from artist_app.utils import messages
