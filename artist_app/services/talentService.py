@@ -358,7 +358,7 @@ class TalentService:
         try:
             startdate = datetime.today().date()
             time = datetime.now().time()
-            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,status=1)\
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,status=1, track_booking__in=[1, 2])\
                                                                 .exclude(date = startdate,time__lt = time)
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
@@ -447,7 +447,7 @@ class TalentService:
         check_slot_availability = self.find_time_in_slots(data, check_time)
         serializer = Clientserializer.ShowBookingDetailsSerializer(booking)
         serialized_data = serializer.data
-        print(serialized_data, '-------')
+        # print(serialized_data, '-------')
         for i in range(booking.duration):
             data[check_slot_availability]["booking_details"] = serialized_data
             check_slot_availability += 1
