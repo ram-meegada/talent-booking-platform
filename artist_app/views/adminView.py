@@ -511,6 +511,7 @@ class AddCustomerSupport(APIView):
         return Response(result, status=result["status"])
 
 class getCustomerSupport(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         result = admin_obj.get_customer_support(request)
         return Response(result, status=result["status"])
