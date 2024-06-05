@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 import pytz
 from threading import Thread
 from artist_app.utils import messages
@@ -159,8 +160,10 @@ class TalentService:
             user.otp = otp
         elif "email" in request.data:
             email = request.data["email"]
+            if UserModel.objects.filter(email = email, profile_status__gte=1).first():
+                return {"data": None, "message": "Email already taken", "status": 400}
             try:
-                user = UserModel.objects.get(email = email)
+                user = UserModel.objects.get(email = email, profile_status__lt=1)
             except UserModel.DoesNotExist:
                 encoded_id = generate_encoded_id()
                 user = UserModel.objects.create(email=email, encoded_id=encoded_id, role=2)
@@ -168,6 +171,8 @@ class TalentService:
             user.otp = otp
         elif "phone_no" in request.data:
             phone_no = request.data["phone_no"]
+            if UserModel.objects.filter(phone_no = phone_no, country_code= request.data["country_code"], profile_status__gte=1).first():
+                return {"data": None, "message": "Phone number already taken", "status": 400}
             try:
                 user = UserModel.objects.get(phone_no=phone_no, country_code= request.data["country_code"])
             except UserModel.DoesNotExist:
