@@ -8,6 +8,7 @@ from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from artist_app.serializers.adminSerializer import CategorySerializer, SubCategorySerializer
+from artist_app.models.contactUsModel import ContactUsModel
 
 class TalentListingSerializer(serializers.ModelSerializer):
     image = CreateUpdateUploadMediaSerializer()
@@ -109,11 +110,12 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
     final_price = serializers.SerializerMethodField()
     track_booking_label = serializers.SerializerMethodField()
+    service_price = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
         fields = ["id", "client", "talent", "offer_price", "final_price", "time", "duration", "date", "status", "track_booking", \
                   "track_booking_label",\
-                  "currency", "services", "created_at"]
+                  "currency", "services", "created_at", "service_price"]
     def get_status(self, obj):
         try:
             return obj.get_status_display()    
@@ -129,6 +131,15 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
             return round(float(obj.final_price), 2)
         except:
             return obj.final_price
+    def get_service_price(self, obj):
+        try:
+            val = ContactUsModel.objects.first()
+            # if obj.final_price is None:
+            #     return round(float(val.service_price), 2)
+            # else:
+            return round(float(val.service_price), 2)
+        except:
+            return None    
 
     
 class SlotsSerializer(serializers.ModelSerializer):
