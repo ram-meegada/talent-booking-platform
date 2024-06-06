@@ -210,6 +210,8 @@ class ClientService():
             try:
                 user = UserModel.objects.get(country_code= request.data["country_code"], \
                     phone_no=request.data["phone_no"])
+                if user.role != 1:
+                    return {"data":None,"message": "User does not exist", "status":400}    
                 if user.profile_status == 0:
                     return {"data": None, "message": "User with this phone number not found", "status": 400}
                 if not user.is_active:
@@ -226,6 +228,8 @@ class ClientService():
             try:
                 user = UserModel.objects.get(email = request.data["email"])
                 # print(user.profile_status, '----------')
+                if user.role != 1:
+                    return {"data":None,"message": "User does not exist", "status":400}
                 if user.profile_status == 0:
                     return {"data": None, "message": "User with this email not found", "status": 400}
                 if not user.is_active:
