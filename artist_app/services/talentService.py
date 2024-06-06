@@ -396,7 +396,7 @@ class TalentService:
             enddate = datetime.today().date()  
             startdate = enddate - timedelta(days=6)
             time = datetime.now().time()
-            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate).exclude(date=enddate, time__gt = time).order_by("-created_at")
+            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate, status=2).exclude(date=enddate, time__gt = time).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
