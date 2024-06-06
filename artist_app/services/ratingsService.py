@@ -41,7 +41,7 @@ class RatingService():
                     client = UserModel.objects.get(id=request.data["client"])
                     all_client_ratings = ReviewAndRatingsModel.objects.filter(client=request.data["client"]).\
                                                                         aggregate(avg_rating=Avg("rating"))
-                    client.average_rating = all_talent_ratings["avg_rating"]
+                    client.average_rating = all_client_ratings["avg_rating"]
                     client.save()
                 except:
                     pass

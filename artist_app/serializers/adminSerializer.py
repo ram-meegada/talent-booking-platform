@@ -606,4 +606,4 @@ class GetAllRatingDetails(serializers.ModelSerializer):
     talent = clientRatingSerializer()
     class Meta:
         model = ReviewAndRatingsModel
-        fields = ["id","client","talent","rating","review","created_at"]
+        fields = ["id","client","talent","rating","review","best_liked", "created_at"]

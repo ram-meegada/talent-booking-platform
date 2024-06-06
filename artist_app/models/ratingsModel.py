@@ -2,6 +2,7 @@ from django.db import models
 from artist_app.models.baseModel import BaseModel
 from artist_app.models.userModel import UserModel
 from artist_app.models.bookingTalentModel import BookingTalentModel
+from django.contrib.postgres.fields import ArrayField
 
 BEST_LIKED_CHOICES = [
 	(1, "Punctuality"),
@@ -17,7 +18,7 @@ GIVEN_CHOICES = [
 class ReviewAndRatingsModel(BaseModel):
     talent = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="ratings_talent_user")
     client = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    best_liked = models.IntegerField(choices=BEST_LIKED_CHOICES)
+    best_liked = ArrayField(models.CharField(max_length=100), default=list)
     review = models.TextField()
     rating = models.IntegerField()
 
