@@ -520,6 +520,8 @@ class TalentService:
         data = []
         for i in day_representations.keys():
             for j in slots:
+                j["start"] = j["start"][:5]
+                j["end"] = j["end"][:5]
                 if j["day"] == i:
                     data.append(j)
                     break
