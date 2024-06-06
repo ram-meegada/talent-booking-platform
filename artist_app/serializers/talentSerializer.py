@@ -128,7 +128,7 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
         try:
             return round(float(obj.final_price), 2)
         except:
-            return float(obj.final_price)
+            return obj.final_price
 
     
 class SlotsSerializer(serializers.ModelSerializer):
