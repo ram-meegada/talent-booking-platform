@@ -281,12 +281,15 @@ class TalentService:
                 sub_categories = []
                 tags = ""
                 for i in request.data["category"]:
-                    sub_categories += i["subcategory_id"]
-                    tags += i["subcategory_text"]    
-                tags_list = ["#"+i for i in tags.split(",")]
+                    if i["subcategory_id"]:
+                        sub_categories += i["subcategory_id"]
+                    else:
+                        tags += i["subcategory_text"]    
+                if tags:        
+                    tags_list = ["#"+i for i in tags.split(",")]
+                    talent_details.tags = tags_list
                 talent_details.categories = categories
                 talent_details.sub_categories = sub_categories
-                talent_details.tags = tags_list
                 talent_details.save()
                 if user.profile_status == 1:
                     user.profile_status = 2
