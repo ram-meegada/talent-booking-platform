@@ -107,6 +107,7 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
     client = UserSerializersForClientDetails()
     talent = UserSerializersForClientDetails()
     status = serializers.SerializerMethodField()
+    final_price = serializers.SerializerMethodField()
     track_booking_label = serializers.SerializerMethodField()
     class Meta:
         model = BookingTalentModel
@@ -123,6 +124,12 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
             return obj.get_track_booking_display()    
         except:
             obj.track_booking    
+    def get_final_price(self, obj):
+        try:
+            return round(float(obj.final_price), 2)
+        except:
+            return float(obj.final_price)
+
     
 class SlotsSerializer(serializers.ModelSerializer):
     class Meta:

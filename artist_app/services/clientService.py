@@ -630,7 +630,7 @@ class ClientService():
     def completed_bookings(self, request):
         try:
             completed_bookings = BookingTalentModel.objects.filter(client=request.user.id).\
-                                                            filter(Q(status=2) | Q(track_booking=4)).order_by("-created_at")
+                                                            filter(Q(status=2) | Q(track_booking=6)).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(completed_bookings, many=True)
             return {"data": serializer.data, "message": "Completed bookings fetched successfully", "status": 200}
         except Exception as e:
