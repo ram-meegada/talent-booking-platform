@@ -190,6 +190,8 @@ class TalentService:
             otp = make_otp()
             try:
                 user = UserModel.objects.get(phone_no=request.data["phone_no"], country_code= request.data["country_code"])
+                if user.role != 2:
+                    return {"data":None,"message": "User does not exist", "status":400}
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}
                 user.otp_sent_time = datetime.now(tz=pytz.UTC)
@@ -203,6 +205,8 @@ class TalentService:
         elif "email" in request.data:
             try:
                 user = UserModel.objects.get(email = request.data["email"])
+                if user.role != 2:
+                    return {"data":None,"message": "User does not exist", "status":400}
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}
             except UserModel.DoesNotExist:
