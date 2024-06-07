@@ -102,6 +102,8 @@ FILTER_KEYS = {
     "gender": "user__gender",
     "hair_color": "hair_color",
     "eye_color": "eye_color",
+    "height_feet": "height_feet",
+    "height_inches": "height_inches",
     "weight": "weight__range",
     "bust": "bust__range",
     "waist": "waist__range",

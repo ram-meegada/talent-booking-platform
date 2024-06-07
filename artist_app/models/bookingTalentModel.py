@@ -33,5 +33,8 @@ class BookingTalentModel(BaseModel):
 
     payment_completed = models.BooleanField(default=False)
 
+    client_marked_completed = models.BooleanField(default=False)
+    talent_marked_completed = models.BooleanField(default=False)
+
     class Meta:
         db_table = "bookingDetails"

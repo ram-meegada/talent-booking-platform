@@ -38,7 +38,7 @@ class UserModel(AbstractUser):
     age = models.IntegerField(blank=True, null=True)
 
     #decimal field
-    average_rating = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+    average_rating = models.DecimalField(max_digits=5, decimal_places=1, default=0)
 
     #foreign keys
     profile_picture = models.ForeignKey(UploadMediaModel, on_delete=models.SET_NULL, null=True)

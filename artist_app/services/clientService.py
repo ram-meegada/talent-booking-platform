@@ -507,25 +507,51 @@ class ClientService():
             return {"data": str(e), "message": messages.WENT_WRONG,"status":400}
 
     def filter_talent(self, request):
-        filters = Q()
-        talent_details_ids = []
-        if "search" in request.data and request.data["search"]["search_value"]:
-            filters = Q(user__name__icontains=request.data["search"]["search_value"])
-        if "filters" in request.data:
-            for key, value in request.data["filters"].items():
-                if key in FILTER_KEYS:
-                    filters &= Q(**{FILTER_KEYS[key]: value})
-                elif key == "age":
-                    today_date = date.today()
-                    born_year = today_date - relativedelta(years=request.data["filters"]["age"])
-                    filters &= Q(user__date_of_birth=born_year)
-        print(filters, '-------filters-----')
-        filtered_talent = TalentDetailsModel.objects.filter(filters)    
-        print(filtered_talent)
-        talent_details_ids += [i.user_id for i in filtered_talent]
-        users = UserModel.objects.filter(id__in=talent_details_ids)
-        serializer = TalentListingDetailsSerializer(users, many = True)
-        return {"data":serializer.data, "message": "Artists fetched based on filters", "status":200}
+        try:
+            filters = Q()
+            talent_details_ids = []
+            if "search" in request.data and request.data["search"]["search_value"]:
+                filters = Q(user__name__icontains=request.data["search"]["search_value"])
+            if "filters" in request.data:
+                for key, value in request.data["filters"].items():
+                    if key in FILTER_KEYS:
+                        filters &= Q(**{FILTER_KEYS[key]: value})
+                    elif key == "age":
+                        today_date = date.today()
+                        born_year = today_date - relativedelta(years=request.data["filters"]["age"])
+                        filters &= Q(user__date_of_birth=born_year)
+                if "date" in request.data["filters"]:
+                    try:
+                        slots_objs = OperationalSlotsModel.objects.filter(date=request.data["filters"]["date"])
+                        timings = {1: ["09:00", "10:00"], 2: ["11:00", "12:00"], 3: ["13:00", "14:00"], 4: ["15:00", "16:00"], 5: ["17:00", "18:00"]}
+                        all_timings = []
+                        available_slot_ids = []
+                        for i in request.data["filters"]["time"]:
+                            all_timings += timings[i]
+                        for i in slots_objs:
+                            for j in i.slots:
+                                if j["slot_time"] in all_timings and j["booking_details"] == {}:
+                                    available_slot_ids.append(i.id)
+                                    break
+                        slots_objs = slots_objs.filter(id__in=available_slot_ids).values_list("user_id")
+                        slots_ids = [i[0] for i in slots_objs] 
+                    except Exception as error:
+                        print(error, '-----')
+                        pass
+            filtered_talent = TalentDetailsModel.objects.filter(filters)
+            if "sort" in request.data:
+                if request.data["sort"]["sort_value"] == 1:
+                    filtered_talent = TalentDetailsModel.objects.filter(user__role=2)
+            talent_details_ids += [i.user_id for i in filtered_talent]
+            # if request.data["filters"]["date"]:
+            #     talent_details_ids += slots_ids
+            users = UserModel.objects.filter(id__in=talent_details_ids).filter(id__in=slots_ids)
+            if "sort" in request.data and request.data["sort"]["sort_value"] == 1:
+                users = users.order_by("-average_rating")
+            serializer = TalentListingDetailsSerializer(users, many = True)
+            return {"data":serializer.data, "message": "Artists fetched based on filters", "status":200}
+        except Exception as err:
+            return {"data": str(err), "message": "Something went wrong", "status": 400}
 
     def view_talent_all_details_by_id(self, request,id):
         try:
@@ -641,8 +667,14 @@ class ClientService():
             booking = BookingTalentModel.objects.get(id=booking_id)
         except BookingTalentModel.DoesNotExist:
             return {"data": None, "message": "Record not found", "status": 400}
-        booking.status = 2
-        booking.save()
+        if request.user.role == 1:    
+            booking.client_marked_completed = True
+        elif request.user.role == 2:
+            booking.talent_marked_completed = True
+        booking.save()    
+        if booking.client_marked_completed and booking.talent_marked_completed:
+            booking.status = 2
+            booking.save()
         return {"data": None, "message": "Booking marked as completed successfully", "status": 200}
 
     def cancelled_bookings(self, request):

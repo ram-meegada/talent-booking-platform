@@ -148,7 +148,10 @@ class TalentListingDetailsSerializer(serializers.ModelSerializer):
         else:
             return []    
     def get_rating(self, obj):
-        pass    
+        try:
+            return obj.average_rating
+        except:
+            return None
 
 class TalentDetailsBasedOnIOSOtherDetailsSubcategories(serializers.ModelSerializer):
     booking_method = serializers.SerializerMethodField()
