@@ -399,7 +399,7 @@ class TalentService:
             enddate = datetime.today().date()  
             startdate = enddate - timedelta(days=6)
             time = datetime.now().time()
-            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate, status=2).exclude(date=enddate, time__gt = time).order_by("-created_at")
+            past_bookings = BookingTalentModel.objects.filter(date__lte = enddate, status=2, talent=request.user.id).exclude(date=enddate, time__gt = time).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -407,7 +407,7 @@ class TalentService:
 
     def cancelled_bookings(self,request):
         try:
-            canceled_bookings = BookingTalentModel.objects.filter(status=3).order_by("-created_at")
+            canceled_bookings = BookingTalentModel.objects.filter(status=3, talent=request.user.id).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(canceled_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
