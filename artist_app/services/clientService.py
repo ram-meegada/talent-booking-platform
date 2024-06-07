@@ -545,7 +545,9 @@ class ClientService():
             talent_details_ids += [i.user_id for i in filtered_talent]
             # if request.data["filters"]["date"]:
             #     talent_details_ids += slots_ids
-            users = UserModel.objects.filter(id__in=talent_details_ids).filter(id__in=slots_ids)
+            users = UserModel.objects.filter(id__in=talent_details_ids)
+            if slots_ids:
+                users = users.filter(id__in=slots_ids)
             if "sort" in request.data and request.data["sort"]["sort_value"] == 1:
                 users = users.order_by("-average_rating")
             serializer = TalentListingDetailsSerializer(users, many = True)
