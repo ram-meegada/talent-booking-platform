@@ -88,9 +88,17 @@ class GetAllClientsDetailsSerializer(serializers.ModelSerializer):
 
 class ShowAdminDetialsByTokenSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
+    permissions = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id","username","country_code","email","phone_no","address","profile_picture"]
+        fields = ["id","username","country_code","email","phone_no","address","profile_picture", "permissions"]
+    def get_permissions(self, obj):
+        try:
+            permissions = PermissionModel.objects.filter(user=obj.id)
+            serializer = GetRolePermissionSubAdminSerializer(permissions, many=True)
+            return serializer.data
+        except:
+            return None    
 
     def get_address(self, obj):
         try:
