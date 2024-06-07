@@ -473,6 +473,21 @@ class ClientService():
         except Exception as e:
             return {"message":messages.WENT_WRONG,"status":400}
 
+    def All_categories_based_on_search(self, request):
+        try:
+            if "search" in request.data and request.data["search"] != "":
+                category = TalentCategoryModel.objects.filter(name__icontains = request.data["search"]).order_by("-created_at")
+            else:
+                category = TalentCategoryModel.objects.all().order_by("-created_at")
+            serializer = TalentListingSerializer(category, many=True)
+            data = []
+            for i in serializer.data:
+                if TalentSubCategoryModel.objects.filter(category=i["id"]):
+                    data.append(i)
+            return {"data": data,"status":200}
+        except Exception as e:
+            return {"message":messages.WENT_WRONG,"status":400}
+
 
     def all_sub_categories(self, request):
         try:

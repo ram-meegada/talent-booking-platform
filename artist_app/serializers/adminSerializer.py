@@ -432,12 +432,12 @@ class CreateModelStatusSerializer(serializers.ModelSerializer):
 class CreateRolePermissionSubAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = PermissionModel
-        fields = ['id','module','can_add_edit','can_view','can_be_delete']
+        fields = ['id','module', 'is_add', 'is_view', 'is_edit', 'is_delete']
 
 class GetRolePermissionSubAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = PermissionModel
-        fields = ['id','module', 'can_add_edit', 'can_view', 'can_be_delete']
+        fields = ['id','module', 'is_add', 'is_view', 'is_edit', 'is_delete']
 
 class GetSubAdminSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()

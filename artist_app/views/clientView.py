@@ -67,6 +67,11 @@ class ListingAllCategories(APIView):
         result = userservice.All_categories(request)
         return Response(result, status=result["status"])
 
+class ListingAllCategoriesBasedOnCategoryView(APIView):
+    def post(self, request):
+        result = userservice.All_categories_based_on_search(request)
+        return Response(result, status=result["status"])
+
 class ListingAllSubCategoriesBasedOnCategories(APIView):
     def post(self, request):
         result = userservice.all_sub_categories(request)

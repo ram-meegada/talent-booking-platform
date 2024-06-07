@@ -21,6 +21,7 @@ urlpatterns = [
 
     #################### category listing #####################
     path("category",clientView.ListingAllCategories.as_view()),
+    path("search-category", clientView.ListingAllCategoriesBasedOnCategoryView.as_view()),
     path("sub-categories",clientView.ListingAllSubCategoriesBasedOnCategories.as_view()),
 
     ############### booking #####################
