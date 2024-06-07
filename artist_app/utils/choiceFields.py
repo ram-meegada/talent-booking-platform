@@ -85,6 +85,8 @@ MODULE_CHOICES = [
     (8,"Report Management"),
     (9,"Manage Reviews"),
     (10,"Manage CMS"),
+    (11,"Setting"),
+    (12,"Logout"),
 ]
 
 MODULE_PATHS = {
@@ -98,6 +100,8 @@ MODULE_PATHS = {
     8: '/reports',
     9: '/review',
     10: '/cms',
+    11: '/setting',
+    12: ''
 }
 
 NOTIFICATION_TYPE_CHOICES = [
