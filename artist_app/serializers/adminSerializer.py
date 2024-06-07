@@ -15,6 +15,7 @@ from artist_app.serializers.Clientserializer import TalentBasicDetails
 from artist_app.models.contactUsModel import ContactUsModel
 from artist_app.models.notificationModel import NotificationModel
 from artist_app.models.ratingsModel import ReviewAndRatingsModel
+from artist_app.utils.choiceFields import MODULE_PATHS
 import uuid
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -435,9 +436,21 @@ class CreateRolePermissionSubAdminSerializer(serializers.ModelSerializer):
         fields = ['id','module', 'is_add', 'is_view', 'is_edit', 'is_delete']
 
 class GetRolePermissionSubAdminSerializer(serializers.ModelSerializer):
+    module_path = serializers.SerializerMethodField()
+    module_label = serializers.SerializerMethodField()
     class Meta:
         model = PermissionModel
-        fields = ['id','module', 'is_add', 'is_view', 'is_edit', 'is_delete']
+        fields = ['id','module', 'module_label', 'is_add', 'is_view', 'is_edit', 'is_delete', 'module_path']
+    def get_module_label(self, obj):
+        try:
+            return obj.get_module_display()
+        except:
+            return obj.module
+    def get_module_path(self, obj):
+        try:
+            return MODULE_PATHS[obj.module]
+        except:
+            return None
 
 class GetSubAdminSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()

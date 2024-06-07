@@ -87,6 +87,19 @@ MODULE_CHOICES = [
     (10,"Manage CMS"),
 ]
 
+MODULE_PATHS = {
+    1: '/dashboard',
+    2: '/customers',
+    3: '/artist',
+    4: '/category',
+    5: '/bookings',
+    6: '/revenue',
+    7: '/notification',
+    8: '/reports',
+    9: '/review',
+    10: '/cms',
+}
+
 NOTIFICATION_TYPE_CHOICES = [
     (1, "OFFER ACCEPTED"),
     (2, "OFFER CANCELLED BY TALENT"),
