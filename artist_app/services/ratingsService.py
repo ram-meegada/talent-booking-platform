@@ -5,6 +5,7 @@ from artist_app.utils import messages
 from artist_app.models.userModel import UserModel
 from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.db.models import Avg
+from datetime import datetime, timedelta
 
 class RatingService():
     def add_rating(self, request):
@@ -51,6 +52,21 @@ class RatingService():
     
     def get_talent_ratings(self, request, talent_id):
         ratings = ReviewAndRatingsModel.objects.filter(talent=talent_id)
+        # if "key" == 2:
+        #     date = datetime.now() - timedelta(days=7)
+        #     ratings = ratings.filter(created_at__gte=date)
+        # if "key" == 3:
+        #     pass    
+        serializer = GetRatingSerializer(ratings, many=True)
+        return {"data": serializer.data, "message": "Ratings fetched successfully", "status": 200}
+
+    def get_talent_ratings_by_key(self, request, talent_id):
+        ratings = ReviewAndRatingsModel.objects.filter(talent=talent_id)
+        if request.data["key"] == 2:
+            checking_date = datetime.now()-timedelta(days=7)
+            ratings = ratings.exclude(created_at__lt=checking_date)
+        if "key" == 3:
+            pass
         serializer = GetRatingSerializer(ratings, many=True)
         return {"data": serializer.data, "message": "Ratings fetched successfully", "status": 200}
 

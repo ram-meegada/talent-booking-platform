@@ -15,6 +15,11 @@ class GetUserRatingView(APIView):
         result = ratings_obj.get_talent_ratings(request, talent_id)
         return Response(result, status=result["status"])
 
+class GetUserRatingByKeyView(APIView):
+    def post(self, request, talent_id):
+        result = ratings_obj.get_talent_ratings_by_key(request, talent_id)
+        return Response(result, status=result["status"])
+
 class GetAllRatingView(APIView):
     def get(self, request):
         result = ratings_obj.get_all_ratings(self, request)
