@@ -571,6 +571,7 @@ class ClientService():
 
             return {"data": dict, "message": "Talent details fetched successfully", "status":200}
         except Exception as e:
+            print(e, '------------')
             return {"message": messages.WENT_WRONG, "status":400}
 
 

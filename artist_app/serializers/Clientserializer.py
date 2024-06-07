@@ -13,6 +13,7 @@ from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.db.models import Avg
 from datetime import date
 from artist_app.models.contactUsModel import ContactUsModel
+from artist_app.serializers.ratingsSerializer import GetRatingSerializer
 
 class CreateClientSerializers(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
@@ -240,11 +241,13 @@ class TalentBasicDetailsIOS(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     professional_details = serializers.SerializerMethodField()
     services = serializers.SerializerMethodField()
+    number_of_ratings = serializers.SerializerMethodField()
+    ratings = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
         fields = ["id", "first_name","last_name","profile_picture", "email", "experience","phone_no",\
                   "country_code","country", "name", "address",\
-                  "state", "profile_status", "professional_details", "services", "average_rating"]
+                  "state", "profile_status", "professional_details", "services", "average_rating", "number_of_ratings", "ratings"]
     def get_professional_details(self, obj):
         details = TalentDetailsModel.objects.filter(user=obj.id).first()
         if details:
@@ -260,12 +263,19 @@ class TalentBasicDetailsIOS(serializers.ModelSerializer):
             return details.services
         else:
             return []
-    # def get_services(self, obj):
-    #     details = TalentDetailsModel.objects.filter(user=obj.id).first()
-    #     if details:
-    #         return details.services
-    #     else:
-    #         return []
+    def get_number_of_ratings(self, obj):
+        try:
+            count_of_ratings = ReviewAndRatingsModel.objects.filter(talent=obj.id).count()
+            return count_of_ratings
+        except:
+            return 0    
+    def get_ratings(self, obj):
+        try:
+            ratings = ReviewAndRatingsModel.objects.filter(talent=obj.id)
+            serializer = GetRatingSerializer(ratings, many=True)    
+            return serializer.data
+        except:
+            return []
 
 
 class TalentBasicDetails(serializers.ModelSerializer):
