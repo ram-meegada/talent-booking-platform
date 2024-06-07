@@ -465,7 +465,7 @@ class GetSubAdminSerializer(serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id","name", "email", "phone_no","profile_picture", "permissions"]
+        fields = ["id","name", "email", "country_code", "phone_no","profile_picture", "permissions"]
     def get_permissions(self, obj):
         try:
             p = PermissionModel.objects.filter(user=obj.id)
@@ -478,7 +478,7 @@ class CreateSubAdminSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserModel
-        fields = ("id","name","email","phone_no","profile_picture",'role')
+        fields = ("id","name","email","country_code","phone_no","profile_picture",'role')
         extra_kwargs = {'role': {'default': 4}}
 
 class BookingsSerializer(serializers.ModelSerializer):
