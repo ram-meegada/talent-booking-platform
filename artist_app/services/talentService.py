@@ -259,7 +259,7 @@ class TalentService:
             Update profile details like categories, model status, portfolio, booking method
         """
         try:
-            print(request.data, '------payload-----')
+            # print(request.data, '------payload-----')
             #fetch details record and user record
             user = UserModel.objects.get(id=request.user.id)
             talent_details, created = TalentDetailsModel.objects.get_or_create(user_id=request.user.id)
@@ -547,9 +547,20 @@ class TalentService:
     def get_slots_by_date(self, request):
         startdate = (datetime.today() - timedelta(days=1)).date()
         # print(startdate, '-------')
+        present_time = datetime.now()
         date = request.data["date"]
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
+            for i in all_user_slot.slots:
+                if i["booking_details"] == {}:
+                    i["booking_details"]["is_available"] = True
+                else:
+                    i["booking_details"]["is_available"] = False
+                present_time_hour = datetime.strftime(present_time, "%H")    
+                if i["slot_time"][0:2] > present_time_hour:
+                    i["booking_details"]["is_available"] = True
+                else:
+                    i["booking_details"]["is_available"] = False
         except OperationalSlotsModel.DoesNotExist:
             return {"data": None, "message": "No slots found", "status": 400}
 
