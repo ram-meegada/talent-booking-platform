@@ -91,7 +91,7 @@ class ShowAdminDetialsByTokenSerializer(serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
-        fields = ["id","username","country_code","email","phone_no","address","profile_picture", "permissions"]
+        fields = ["id","username","country_code","email","phone_no", "role", "address","profile_picture", "permissions"]
     def get_permissions(self, obj):
         try:
             permissions = PermissionModel.objects.filter(user=obj.id)
@@ -472,7 +472,7 @@ class GetSubAdminSerializer(serializers.ModelSerializer):
             serializer = GetRolePermissionSubAdminSerializer(p, many=True)
             return serializer.data
         except:
-            return None  
+            return None
 
 class CreateSubAdminSerializer(serializers.ModelSerializer):
     
