@@ -662,11 +662,17 @@ class ClientService():
                 i["booking_details"]["is_available"] = True
             else:
                 i["booking_details"]["is_available"] = False
-            present_time_hour = datetime.strftime(present_time, "%H")    
-            if i["slot_time"][0:2] > present_time_hour:
-                i["booking_details"]["is_available"] = True
-            else:
-                i["booking_details"]["is_available"] = False 
+        if datetime.strptime(date, "%Y-%m-%d").date() < present_time.date():
+            for i in all_slots:
+                i["booking_details"]["is_available"] = False
+        elif datetime.strptime(date, "%Y-%m-%d").date() == present_time.date():
+            for i in all_user_slot.slots:
+                present_time_hour = datetime.strftime(present_time, "%H")    
+                if i["slot_time"][0:2] > present_time_hour:
+                    if i["booking_details"] == {}:
+                        i["booking_details"]["is_available"] = True
+                else:
+                    i["booking_details"]["is_available"] = False
         return {"data": all_slots, "message": "Day slots fetched successfully", "status": 200}
 
     def ongoing_bookings(self, request):
