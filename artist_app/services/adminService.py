@@ -1398,6 +1398,8 @@ class AdminService:
             return {"data": str(err), "message": "Something went wrong", "status": 400}
 
     def all_attribute_colours(self, request):
-        all_obj = ColourPreferencesModel.objects.filter(preference_type=request.data["type"]).values("id", "name", "is_active")
+        all_obj = ColourPreferencesModel.objects.filter(preference_type=request.data["type"]).values("id", "name", "preference_type", "is_active")
+        for i in all_obj:
+            i["type"] = i["preference_type"]  
         return {"data": all_obj, "message": "All hair colours fetched successfully", "status": 200}
 

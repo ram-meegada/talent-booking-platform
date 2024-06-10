@@ -26,6 +26,7 @@ from artist_app.utils.choiceFields import FILTER_KEYS
 from artist_app.serializers.Clientserializer import TalentBasicDetailsIOS
 from artist_app.services.talentService import TalentService
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count
 
 talent_obj = TalentService()
 
@@ -556,6 +557,12 @@ class ClientService():
             filtered_talent = TalentDetailsModel.objects.filter(filters)
             if "sort" in request.data:
                 if request.data["sort"]["sort_value"] == 1:
+                    sort_talents = TalentDetailsModel.objects.filter(categories__contained_by=request.data["sort"]["sub_categories"])
+                    sorted_talent_ids = sort_talents.values_list("user_id", flat=True)
+                    bookings_of_sorted_talent = BookingTalentModel.objects.filter(talent__in=sorted_talent_ids).annotate(talent_count=Count("id"))
+                    # add_count_to_bookings = bookings_of_sorted_talent.annotate(talent_count=Count("talent_id"))
+                    print(bookings_of_sorted_talent.values("id", "talent_id", "talent_count"))
+                if request.data["sort"]["sort_value"] == 2:
                     filtered_talent = TalentDetailsModel.objects.filter(user__role=2)
             talent_details_ids += [i.user_id for i in filtered_talent]
             # if request.data["filters"]["date"]:
