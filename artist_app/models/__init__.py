@@ -15,3 +15,4 @@ from .notificationModel import NotificationModel
 from .termAndConditionModel import TermAndConditionModel
 from .contactUsModel import ContactUsModel
 from .appNotificationModel import AppNotificationModel
+from .colourPreferencesModel import ColourPreferencesModel

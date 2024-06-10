@@ -563,7 +563,7 @@ class ClientService():
             users = UserModel.objects.filter(id__in=talent_details_ids)
             if "filters" in request.data and "date" in request.data["filters"]:
                 users = users.filter(id__in=slots_ids)
-            if "sort" in request.data and request.data["sort"]["sort_value"] == 1:
+            if "sort" in request.data and request.data["sort"]["sort_value"] == 2:
                 users = users.order_by("-average_rating")
             serializer = TalentListingDetailsSerializer(users, many = True)
             return {"data":serializer.data, "message": "Artists fetched based on filters", "status":200}
@@ -576,6 +576,7 @@ class ClientService():
             serializer = TalentBasicDetailsIOS(talent)
             other_details= TalentDetailsModel.objects.get(user_id=id)
             details = TalentDetailsBasedOnIOSSubcategories(other_details)
+            print(details.data, '-----details----------')
             dict={}
             l = []
             for i in details.data.values():

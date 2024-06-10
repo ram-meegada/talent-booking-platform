@@ -32,6 +32,7 @@ from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.http import HttpResponse
 import csv
 import calendar
+from artist_app.models.colourPreferencesModel import ColourPreferencesModel
 
 class AdminService:
     def add_category(self, request):
@@ -183,6 +184,8 @@ class AdminService:
     def admin_login(self, request):
         try:
                 user = UserModel.objects.get(email=request.data["email"])
+                if user.role != 3:
+                    return {"data": None, "message": "You don't have access to login", "status": 403}
                 if not check_password(request.data["password"], user.password):
                     return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}
         except UserModel.DoesNotExist:
@@ -1363,3 +1366,38 @@ class AdminService:
                         "message": messages.FETCH, 
                         "status":200
                     }
+
+    ########## Colour Preferences #############
+
+    def add_attribute_colour(self, request):
+        ColourPreferencesModel.objects.create(
+            name=request.data["name"],
+            preference_type=request.data["type"]
+        )
+        return {"data": request.data, "message": "Attribute colour added successfully", "status": 201}
+
+    def update_attribute_colour(self, request, id):
+        try:
+            obj = ColourPreferencesModel.objects.get(id=id)   
+            obj.name = request.data["name"]
+            obj.save()
+            return {"data": request.data, "message": "Attribute colour updated successfully", "status": 200}
+        except ColourPreferencesModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        except Exception as err:
+            return {"data": str(err), "message": "Something went wrong", "status": 400}
+    
+    def delete_attribute_colour(self, request, id):
+        try:
+            obj = ColourPreferencesModel.objects.get(id=id)   
+            obj.delete()
+            return {"data": None, "message": "Attribute colour deleted successfully", "status": 200}
+        except ColourPreferencesModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        except Exception as err:
+            return {"data": str(err), "message": "Something went wrong", "status": 400}
+
+    def all_attribute_colours(self, request):
+        all_obj = ColourPreferencesModel.objects.filter(preference_type=request.data["type"]).values("id", "name", "is_active")
+        return {"data": all_obj, "message": "All hair colours fetched successfully", "status": 200}
+

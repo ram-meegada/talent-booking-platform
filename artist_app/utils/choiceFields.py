@@ -3,6 +3,11 @@ GENDER_CHOICES = [
     (2, "FEMALE")
 ]
 
+PREFERENCE_TYPES = [
+    (1, "HAIR COLOUR"),
+    (2, "EYE COLOUR"),
+]
+
 EXPERIENCE_CHOICES = [
     (1, "0-6 months"),
     (2, "6 months to 1 year"),

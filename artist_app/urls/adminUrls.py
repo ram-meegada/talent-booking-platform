@@ -107,5 +107,16 @@ urlpatterns = [
     path("all-rating",adminView.GetALLRatingDetials.as_view()),
     path("export-rating-csv",adminView.ExportRatingCSVView.as_view()),
 
+    # colour preferences
+    path("add-attribute-colour", adminView.AddattributeColourView.as_view()),
+    path("update-attribute-colour/<int:id>", adminView.UpdateAttributeColourView.as_view()),
+    path("delete-attribute-colour/<int:id>", adminView.DeleteAttributeColourView.as_view()),
+    path("all-attribute-colours", adminView.AllAttributeColourView.as_view()),
+
+    # path("add-eye-colour", adminView.AddEyeColourView.as_view()),
+    # path("get-eye-colour/<int:id>", adminView.GetEyeColourView.as_view()),
+    # path("update-eye-colour/<int:id>", adminView.UpdateEyeColourView.as_view()),
+    # path("delete-eye-colour/<int:id>", adminView.DeleteEyeColourView.as_view()),
+    # path("all-eye-colours", adminView.AllEyeColourView.as_view()),
 
 ]

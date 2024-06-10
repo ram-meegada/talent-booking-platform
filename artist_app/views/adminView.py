@@ -603,11 +603,25 @@ class ExportRatingCSVView(APIView):
         # Return JSON response
         return JsonResponse(response_data)
 
+### colour preferences
         
+class AddattributeColourView(APIView):
+    def post(self, request):
+        result = admin_obj.add_attribute_colour(request)
+        return Response(result, status=result["status"])
 
+class UpdateAttributeColourView(APIView):
+    def put(self, request, id):
+        result = admin_obj.update_attribute_colour(request, id)
+        return Response(result, status=result["status"])
+    
+class DeleteAttributeColourView(APIView):
+    def delete(self, request, id):
+        result = admin_obj.delete_attribute_colour(request, id)
+        return Response(result, status=result["status"])
 
-
-
-
-
+class AllAttributeColourView(APIView):
+    def post(self, request):
+        result = admin_obj.all_attribute_colours(request)
+        return Response(result, status=result["status"])
 
