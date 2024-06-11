@@ -385,9 +385,11 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     def get_service_price(self, obj):
         try:
             val = ContactUsModel.objects.first()
-            if obj.final_price is None:
-                return round(float(val.service_price), 2)
-            else:
-                return round(((obj.final_price*float(val.service_price))/100),2)
+            print(val, '----------------')
+            return float(val.service_price)
+            # if obj.final_price is None:
+            #     return round(float(val.service_price), 2)
+            # else:
+            #     return round(((obj.final_price*float(val.service_price))/100),2)
         except:
             return None
