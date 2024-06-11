@@ -115,7 +115,7 @@ class BookedClientDetailSerializers(serializers.ModelSerializer):
         model = BookingTalentModel
         fields = ["id", "client", "talent", "offer_price", "final_price", "time", "duration", "date", "status", "track_booking", \
                   "track_booking_label",\
-                  "currency", "services", "created_at", "service_price"]
+                  "currency", "services", "created_at", "service_price", "booking_type"]
     def get_status(self, obj):
         try:
             return obj.get_status_display()    

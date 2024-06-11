@@ -2,7 +2,7 @@ from django.db import models
 from artist_app.models.baseModel import BaseModel
 from artist_app.models import TalentDetailsModel,ManageAddressModel, UserModel
 # from artist_app.models.
-from artist_app.utils.choiceFields import BOOKING_STATUS, TRACK_BOOKING
+from artist_app.utils.choiceFields import BOOKING_STATUS, TRACK_BOOKING, BOOKING_METHOD_CHOICES
 
 class BookingTalentModel(BaseModel):
     booking_id = models.IntegerField(blank=True, null=True)
@@ -35,6 +35,8 @@ class BookingTalentModel(BaseModel):
 
     client_marked_completed = models.BooleanField(default=False)
     talent_marked_completed = models.BooleanField(default=False)
+
+    booking_type = models.IntegerField(choices=BOOKING_METHOD_CHOICES, default=2)
 
     class Meta:
         db_table = "bookingDetails"
