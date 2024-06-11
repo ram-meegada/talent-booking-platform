@@ -357,7 +357,7 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
         model = BookingTalentModel
         fields = ["id", "talent", "client", "subcategories", "address", "date", "time", "duration", \
                   "status", "track_booking", "offer_price", "counter_offer_price", "final_price", "comment", \
-                  "services", "service_price", "rating_by_client", "rating_by_talent"]
+                  "services", "service_price", "rating_by_client", "rating_by_talent", "client_marked_completed", "talent_marked_completed"]
     def get_subcategories(self, obj):
         try:
             user_sub_cat = TalentDetailsModel.objects.filter(user_id=obj.talent_id).first()
