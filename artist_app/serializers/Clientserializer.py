@@ -1,4 +1,4 @@
-from time import timezone
+from datetime import datetime, timedelta
 from rest_framework import serializers
 from artist_app.models.userModel import UserModel
 from artist_app.models.manageAddressModel import ManageAddressModel
@@ -271,9 +271,11 @@ class TalentBasicDetailsIOS(serializers.ModelSerializer):
             return 0    
     def get_ratings(self, obj):
         try:
-            ratings = ReviewAndRatingsModel.objects.filter(talent=obj.id).order_by("-id")
-            serializer = GetRatingSerializer(ratings, many=True)    
-            return serializer.data
+            ratings = ReviewAndRatingsModel.objects.filter(talent=obj.id)
+            checking_date = datetime.now()-timedelta(days=7)
+            ratings = ratings.exclude(created_at__lt=checking_date).order_by("-id")
+            serializer = GetRatingSerializer(ratings, many=True)
+            return serializer.data[:10]
         except:
             return []
 
