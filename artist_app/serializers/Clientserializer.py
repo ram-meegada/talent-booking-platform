@@ -271,7 +271,7 @@ class TalentBasicDetailsIOS(serializers.ModelSerializer):
             return 0    
     def get_ratings(self, obj):
         try:
-            ratings = ReviewAndRatingsModel.objects.filter(talent=obj.id)
+            ratings = ReviewAndRatingsModel.objects.filter(talent=obj.id).order_by("-id")
             serializer = GetRatingSerializer(ratings, many=True)    
             return serializer.data
         except:
