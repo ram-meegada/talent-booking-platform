@@ -81,14 +81,14 @@ class TalentDetailsBasedOnSubcategories(serializers.ModelSerializer):
                  "booking_method","portfolio","cover_photo", "categories", "sub_categories"]
     def get_hair_color(self, obj):
         try:
-            return obj.get_hair_color_display()
+            return obj.hair_color.name
         except:
-            return obj.hair_color
+            return obj.hair_color_id
     def get_eye_color(self, obj):
         try:
-            return obj.get_eye_color_display()
+            return obj.eye_color.name
         except:
-            return obj.eye_color
+            return obj.eye_color_id
     def get_booking_method(self, obj):
         try:
             data = []
@@ -129,7 +129,7 @@ class TalentListingDetailsSerializer(serializers.ModelSerializer):
     profile_picture = CreateUpdateUploadMediaSerializer()
     class Meta:
         model = UserModel
-        fields = ["id", "first_name","last_name", "profile_picture", "email", \
+        fields = ["id", "first_name","last_name", "profile_picture", "email",
                   "name", "address",\
                   "rating", "profile_status", "sub_categories", "categories"]
     def get_sub_categories(self, obj):
@@ -209,9 +209,9 @@ class TalentDetailsBasedOnIOSSubcategories(serializers.ModelSerializer):
         fields =["gender","age","city","hair_color","eye_color","height","weight","bust","waist","hips"]
     def get_hair_color(self, obj):
         try:
-            return obj.get_hair_color_display()
+            return obj.hair_color.name
         except:
-            return obj.hair_color
+            return obj.hair_color_id
 
     def get_height(self,obj):
         return str(obj.height_feet)+"'"+str(obj.height_inches)
@@ -232,9 +232,9 @@ class TalentDetailsBasedOnIOSSubcategories(serializers.ModelSerializer):
 
     def get_eye_color(self, obj):
         try:
-            return obj.get_eye_color_display()
+            return obj.eye_color.name
         except:
-            return obj.eye_color
+            return obj.eye_color_id
     
 
 class TalentBasicDetailsIOS(serializers.ModelSerializer):

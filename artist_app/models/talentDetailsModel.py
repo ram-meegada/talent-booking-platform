@@ -5,6 +5,7 @@ from artist_app.models.userModel import UserModel
 from artist_app.models.uploadMediaModel import UploadMediaModel
 from django.contrib.postgres.fields import ArrayField
 from artist_app.utils.choiceFields import HAIR_COLOR_CHOICES, EYE_COLOR_CHOICES, BOOKING_METHOD_CHOICES
+from artist_app.models.colourPreferencesModel import ColourPreferencesModel
 
 class TalentDetailsModel(BaseModel):    
     #foreign keys
@@ -18,8 +19,8 @@ class TalentDetailsModel(BaseModel):
     height_inches = models.IntegerField(help_text="in inches", blank=True, null=True)
     weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-    hair_color = models.IntegerField(choices=HAIR_COLOR_CHOICES, default=0, blank=True, null=True)
-    eye_color = models.IntegerField(choices=EYE_COLOR_CHOICES, default=0, blank=True, null=True)
+    hair_color = models.ForeignKey(ColourPreferencesModel, on_delete=models.SET_NULL, blank=True, null=True, related_name="hair_colour_fk")
+    eye_color = models.ForeignKey(ColourPreferencesModel, on_delete=models.SET_NULL, blank=True, null=True, related_name="eye_colour_fk")
     booking_method = ArrayField(models.IntegerField(), default=list)
 
     #media

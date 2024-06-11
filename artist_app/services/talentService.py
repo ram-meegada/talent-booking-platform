@@ -247,11 +247,14 @@ class TalentService:
         NAME = request.data["first_name"] + " " + request.data["last_name"]
         if user.is_valid():
             user_obj = user.save(name=NAME)
-
+        else:
+            return {"data": user.errors, "message":"Something went wrong" ,"status": 400}
         model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
         model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=data["extra_details"])
         if model_details.is_valid():
             model_details.save(user_id=user_obj.id)
+        else:
+            return {"data": model_details.errors, "message":"Something went wrong" ,"status": 400}
         return {"data":None, "message":"Profile updated successfully" ,"status":200}
 
     def profile_setup_and_edit(self, request):

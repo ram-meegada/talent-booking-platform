@@ -26,7 +26,7 @@ from artist_app.utils.choiceFields import FILTER_KEYS
 from artist_app.serializers.Clientserializer import TalentBasicDetailsIOS
 from artist_app.services.talentService import TalentService
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count
+from django.db.models import When, Value, Case, IntegerField
 
 talent_obj = TalentService()
 
@@ -527,7 +527,7 @@ class ClientService():
             filters = Q()
             talent_details_ids = []
             if "search" in request.data and request.data["search"]["search_value"]:
-                filters = Q(user__name__icontains=request.data["search"]["search_value"])
+                filters = Q(user__name__icontains=request.data["search"]["search_value"]) & (Q(sub_categories__contained_by=request.data["search"].get("sub_categories", [])) | Q(sub_categories__contains=request.data["search"].get("sub_categories", [])))
             if "filters" in request.data:
                 for key, value in request.data["filters"].items():
                     if key in FILTER_KEYS:
@@ -557,16 +557,23 @@ class ClientService():
             filtered_talent = TalentDetailsModel.objects.filter(filters)
             if "sort" in request.data:
                 if request.data["sort"]["sort_value"] == 1:
-                    sort_talents = TalentDetailsModel.objects.filter(categories__contained_by=request.data["sort"]["sub_categories"])
-                    sorted_talent_ids = sort_talents.values_list("user_id", flat=True)
-                    bookings_of_sorted_talent = BookingTalentModel.objects.filter(talent__in=sorted_talent_ids).annotate(talent_count=Count("id"))
-                    # add_count_to_bookings = bookings_of_sorted_talent.annotate(talent_count=Count("talent_id"))
-                    print(bookings_of_sorted_talent.values("id", "talent_id", "talent_count"))
+                    all_booking_talents = BookingTalentModel.objects.all().values_list("talent_id", flat=True)
+                    set_of_all_talents = set(all_booking_talents)
+                    list_of_all_talents = list(all_booking_talents)
+                    get_talent_count = {i:list_of_all_talents.count(i) for i in set_of_all_talents}
+                    when_statements = [When(id=key, then=Value(value)) for key, value in get_talent_count.items()]
+                    talent_details_ids = TalentDetailsModel.objects.filter(Q(user__in=get_talent_count.keys()) & (Q(sub_categories__contained_by=request.data["sort"]["sub_categories"]) | Q(sub_categories__contains=request.data["sort"]["sub_categories"]))).values_list("user_id", flat=True)
+                    users = UserModel.objects.filter(id__in=talent_details_ids).annotate(
+                        talent_bookings_count=Case(
+                            *when_statements,
+                            output_field=IntegerField()
+                        ))
+                    users = users.order_by("-talent_bookings_count")        
+                    serializer = TalentListingDetailsSerializer(users, many = True)
+                    return {"data":serializer.data, "message": "Artists fetched based on filters", "status":200}
                 if request.data["sort"]["sort_value"] == 2:
-                    filtered_talent = TalentDetailsModel.objects.filter(user__role=2)
+                    filtered_talent = TalentDetailsModel.objects.filter(Q(user__role=2) & (Q(sub_categories__contained_by=request.data["sort"]["sub_categories"]) | Q(sub_categories__contains=request.data["sort"]["sub_categories"])))
             talent_details_ids += [i.user_id for i in filtered_talent]
-            # if request.data["filters"]["date"]:
-            #     talent_details_ids += slots_ids
             users = UserModel.objects.filter(id__in=talent_details_ids)
             if "filters" in request.data and "date" in request.data["filters"]:
                 users = users.filter(id__in=slots_ids)
