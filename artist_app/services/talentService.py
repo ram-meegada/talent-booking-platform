@@ -556,8 +556,11 @@ class TalentService:
     def get_slots_by_date(self, request):
         startdate = (datetime.today() - timedelta(days=1)).date()
         # print(startdate, '-------')
-        local_timezone = pytz.timezone(request.headers.get("timezone"))
-        present_time = datetime.now(tz=local_timezone)
+        # local_timezone = pytz.timezone(request.headers.get("timezone"))
+        if request.headers.get("timezone"):
+            present_time = datetime.now(tz=pytz.timezone(request.headers.get("timezone")))
+        else:
+            present_time = datetime.now()
         date = request.data["date"]
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)

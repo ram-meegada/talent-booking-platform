@@ -670,8 +670,12 @@ class ClientService():
     def get_slots_by_date(self, request):
         date = request.data["date"]
         user = request.data["user"]
-        local_timezone = pytz.timezone("Asia/kolkata")
-        present_time = datetime.now(tz=request.headers.get("timezone"))
+        # local_timezone = pytz.timezone("Asia/kolkata")
+        if request.headers.get("timezone"):
+            present_time = datetime.now(tz=pytz.timezone(request.headers.get("timezone")))
+        else:
+            present_time = datetime.now()
+
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=user, date=date)
         except OperationalSlotsModel.DoesNotExist:
