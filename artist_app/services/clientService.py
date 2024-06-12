@@ -671,7 +671,7 @@ class ClientService():
         date = request.data["date"]
         user = request.data["user"]
         local_timezone = pytz.timezone("Asia/kolkata")
-        present_time = datetime.now()
+        present_time = datetime.now(tz=request.headers.get("timezone"))
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=user, date=date)
         except OperationalSlotsModel.DoesNotExist:

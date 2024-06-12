@@ -556,8 +556,8 @@ class TalentService:
     def get_slots_by_date(self, request):
         startdate = (datetime.today() - timedelta(days=1)).date()
         # print(startdate, '-------')
-        local_timezone = pytz.timezone("Asia/kolkata")
-        present_time = datetime.now()
+        local_timezone = pytz.timezone(request.headers.get("timezone"))
+        present_time = datetime.now(tz=local_timezone)
         date = request.data["date"]
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
@@ -566,11 +566,6 @@ class TalentService:
                     i["booking_details"]["is_available"] = True
                 else:
                     i["booking_details"]["is_available"] = False
-                # present_time_hour = datetime.strftime(present_time, "%H")
-                # if i["slot_time"][0:2] > present_time_hour:
-                #     i["booking_details"]["is_available"] = True
-                # else:
-                #     i["booking_details"]["is_available"] = False
             if datetime.strptime(date, "%Y-%m-%d").date() < present_time.date():
                 for i in all_user_slot.slots:
                     i["booking_details"]["is_available"] = False
