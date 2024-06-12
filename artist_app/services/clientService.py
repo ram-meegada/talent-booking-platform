@@ -728,6 +728,7 @@ class ClientService():
         booking.save()    
         if booking.client_marked_completed and booking.talent_marked_completed:
             booking.status = 2
+            booking.track_booking = 6
             booking.save()
         return {"data": None, "message": "Booking marked as completed successfully", "status": 200}
 
@@ -767,3 +768,12 @@ class ClientService():
             if i:
                 all_tags += i[0]
         return {"data": all_tags, "message": "Tags list", "status": 200}
+    
+    def complete_payment(self, request, booking_id):
+        try:
+            booking = BookingTalentModel.objects.get(id=booking_id)
+        except BookingTalentModel.DoesNotExist:
+            return {"data": None, "message": "Record not found", "status": 400}
+        booking.payment_completed = True
+        booking.save()
+        return {"data": None, "message": "Payment successfully done", "status": 200}

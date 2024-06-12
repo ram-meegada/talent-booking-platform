@@ -162,3 +162,8 @@ class TagsListingView(APIView):
     def get(self, request):
         result = userservice.tags_listing(request)
         return Response(result,status=result["status"])
+
+class CompletePaymentView(APIView):
+    def get(self, request, booking_id):
+        result = userservice.complete_payment(request, booking_id)
+        return Response(result,status=result["status"])
