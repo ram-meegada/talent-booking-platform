@@ -556,6 +556,7 @@ class TalentService:
     def get_slots_by_date(self, request):
         startdate = (datetime.today() - timedelta(days=1)).date()
         # print(startdate, '-------')
+        local_timezone = pytz.timezone("Asia/kolkata")
         present_time = datetime.now()
         date = request.data["date"]
         try:
