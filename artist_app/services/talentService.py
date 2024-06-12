@@ -368,7 +368,7 @@ class TalentService:
         try:
             startdate = datetime.today().date()
             time = datetime.now().time()
-            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,status=1, track_booking__in=[1, 2])\
+            upcoming_bookings = BookingTalentModel.objects.filter(date__gte=startdate, talent=request.user.id,status=1, track_booking__in=[1, 2, 3])\
                                                                 .exclude(date = startdate,time__lt = time).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(upcoming_bookings, many=True)
             return {"data":serializer.data,"status":200}
@@ -402,7 +402,7 @@ class TalentService:
             startdate = enddate - timedelta(days=6)
             time = datetime.now().time()
             # .exclude(date=enddate, time__gt = time)
-            past_bookings = BookingTalentModel.objects.filter(Q(status=2) | Q(status=1, track_booking=3), talent=request.user.id).order_by("-created_at")
+            past_bookings = BookingTalentModel.objects.filter(Q(status=2) | Q(status=2, track_booking=6), talent=request.user.id).order_by("-created_at")
             serializer = talentSerializer.BookedClientDetailSerializers(past_bookings, many=True)
             return {"data":serializer.data,"status":200}
         except Exception as e:
@@ -566,7 +566,7 @@ class TalentService:
                     i["booking_details"]["is_available"] = True
                 else:
                     i["booking_details"]["is_available"] = False
-                present_time_hour = datetime.strftime(present_time, "%H")    
+                present_time_hour = datetime.strftime(present_time, "%H")
                 if i["slot_time"][0:2] > present_time_hour:
                     i["booking_details"]["is_available"] = True
                 else:
