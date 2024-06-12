@@ -222,41 +222,38 @@ class TalentService:
             return {"data": None, "message": messages.WRONG_PASSWORD, "status": 400}    
     
     def edit_artist_details_by_token(self, request):
-        data = {"user_details": {}, "extra_details": {}}
-        data["user_details"]["first_name"] = request.data["first_name"]
-        data["user_details"]["last_name"] = request.data["last_name"]
-        data["user_details"]["email"] = request.data["email"]
-        data["user_details"]["phone_no"] = request.data["phone_no"]
-        data["user_details"]["country_code"] = request.data["country_code"]
-        data["user_details"]["address"] = request.data["address"]
-        data["user_details"]["profile_picture"] = request.data["profile_picture"]
-
-        data["extra_details"]["bust"] = request.data["bust"]
-        data["extra_details"]["waist"] = request.data["waist"]
-        data["extra_details"]["hips"] = request.data["hips"]
-        data["extra_details"]["height_feet"] = request.data["height_feet"]
-        data["extra_details"]["height_inches"] = request.data["height_inches"]
-        data["extra_details"]["weight"] = request.data["weight"]
-        data["extra_details"]["hair_color"] = request.data["hair_color"] 
-        data["extra_details"]["eye_color"] = request.data["eye_color"] 
-        data["extra_details"]["portfolio"] = request.data["portfolio"]
-        data["extra_details"]["cover_photo"] = request.data["cover_photo"]
-        data["extra_details"]["categories"] = request.data["categories"]
-        data["extra_details"]["sub_categories"] = request.data["sub_categories"]
-        data["extra_details"]["services"] = request.data["services"]
+        NAME = ""
+        ########### user ##############
         user_obj = UserModel.objects.get(id=request.user.id)
-        user = adminSerializer.CreateUpdateTalentUserByAdminSerializer(user_obj, data=data["user_details"])
-        NAME = request.data["first_name"] + " " + request.data["last_name"]
-        if user.is_valid():
-            user_obj = user.save(name=NAME)
-        else:
-            return {"data": user.errors, "message":"Something went wrong" ,"status": 400}
+        if request.data.get("first_name"): user_obj.first_name = request.data.get("first_name")
+        if request.data.get("last_name"): user_obj.last_name = request.data.get("last_name")
+        if request.data.get("email"): user_obj.email = request.data.get("email")
+        if request.data.get("phone_no"): user_obj.phone_no = request.data.get("phone_no")
+        if request.data.get("country_code"): user_obj.country_code = request.data.get("country_code")
+        if request.data.get("address"): user_obj.address = request.data.get("address")
+        if request.data.get("profile_picture"): user_obj.profile_picture_id = request.data.get("profile_picture")
+        if request.data.get("first_name") and not request.data.get("last_name"): NAME = request.data["first_name"] + " " + request.user.last_name
+        if not request.data.get("first_name") and request.data.get("last_name"): NAME = request.user.first_name + " " + request.data.get("last_name")
+        if request.data.get("first_name") and request.data.get("last_name"): NAME = request.data.get("first_name") + " " + request.data.get("last_name")
+        if NAME:
+            user_obj.name = NAME
+        user_obj.save()    
+        ########## model objects  ################
         model_obj = TalentDetailsModel.objects.get(user_id=user_obj.id)    
-        model_details = adminSerializer.CreateModelStatusSerializer(model_obj, data=data["extra_details"])
-        if model_details.is_valid():
-            model_details.save(user_id=user_obj.id)
-        else:
-            return {"data": model_details.errors, "message":"Something went wrong" ,"status": 400}
+        if request.data.get("bust"): model_obj.bust = request.data.get("bust")
+        if request.data.get("waist"): model_obj.waist = request.data.get("waist")
+        if request.data.get("hips"): model_obj.hips = request.data.get("hips")
+        if request.data.get("height_feet"): model_obj.height_feet = request.data.get("height_feet")
+        if request.data.get("height_inches"): model_obj.height_inches = request.data.get("height_inches")
+        if request.data.get("weight"): model_obj.weight = request.data.get("weight")
+        if request.data.get("hair_color"): model_obj.hair_color_id = request.data.get("hair_color")
+        if request.data.get("eye_color"): model_obj.eye_color_id = request.data.get("eye_color")
+        if request.data.get("portfolio"): model_obj.portfolio = request.data.get("portfolio")
+        if request.data.get("cover_photo"): model_obj.cover_photo_id = request.data.get("cover_photo")
+        if request.data.get("categories"): model_obj.categories = request.data.get("categories")
+        if request.data.get("sub_categories"): model_obj.sub_categories = request.data.get("sub_categories")
+        if request.data.get("services"): model_obj.services = request.data.get("services")
+        model_obj.save()
         return {"data":None, "message":"Profile updated successfully" ,"status":200}
 
     def profile_setup_and_edit(self, request):
