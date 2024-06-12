@@ -13,6 +13,7 @@ from artist_app.models.ratingsModel import ReviewAndRatingsModel
 from django.db.models import Avg
 from datetime import date
 from artist_app.models.contactUsModel import ContactUsModel
+from artist_app.models.appNotificationModel import AppNotificationModel
 from artist_app.serializers.ratingsSerializer import GetRatingSerializer
 
 class CreateClientSerializers(serializers.ModelSerializer):
@@ -385,7 +386,6 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
     def get_service_price(self, obj):
         try:
             val = ContactUsModel.objects.first()
-            print(val, '----------------')
             return float(val.service_price)
             # if obj.final_price is None:
             #     return round(float(val.service_price), 2)
@@ -393,3 +393,9 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
             #     return round(((obj.final_price*float(val.service_price))/100),2)
         except:
             return None
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    booking_id = ShowBookingDetailsSerializer()
+    class Meta:
+        model = AppNotificationModel
+        fields = ["id", "user", "notification_type", "title", "booking_id"]

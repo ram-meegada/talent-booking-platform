@@ -124,3 +124,8 @@ class GetSlotsByDateView(APIView):
     def post(self, request):
         result = talent_service.get_slots_by_date(request)
         return Response(result, status=result["status"])
+
+class NotificationsView(APIView):
+    def get(self, request):
+        result = talent_service.notifications(request)
+        return Response(result, status=result["status"])

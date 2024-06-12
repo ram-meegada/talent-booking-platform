@@ -18,7 +18,9 @@ from artist_app.models.talentCategoryModel import TalentCategoryModel
 from artist_app.models.operationalSlotsModel import OperationalSlotsModel
 from artist_app.serializers.uploadMediaSerializer import CreateUpdateUploadMediaSerializer
 from django.db import IntegrityError
-from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer
+from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer, NotificationsSerializer
+from artist_app.models.appNotificationModel import AppNotificationModel
+from artist_app.utils.extraFunctions import add_notification_func
 
 class TalentService:    
     def user_signup(self, request):
@@ -426,6 +428,8 @@ class TalentService:
         booking.counter_offer_price = request.data["counter_offer_price"]
         booking.track_booking = 2
         booking.save()
+        # add notification
+        add_notification_func(booking.client_id, 2, f"You have a counter offer from {booking.talent.name}!", booking.id)
         return {"data": None, "message": "Counter offer sent successfully", "status": 200}
     
     def accept_offer(self, request):
@@ -438,6 +442,8 @@ class TalentService:
         booking.final_price = booking.offer_price
         booking.save()
         self.add_details_in_slot(booking, request.user.id)
+        # add notification
+        add_notification_func(booking.client_id, 1, f"Your booking has been accepted by {booking.talent.name}!", booking.id)
         return {"data": None, "message": "Offer accepted successfully", "status": 200}
 
     def decline_offer(self, request):
@@ -449,6 +455,8 @@ class TalentService:
         booking.track_booking = 4
         booking.status = 3
         booking.save()
+        # add notification
+        add_notification_func(booking.client_id, 2, f"Your booking has been declined by {booking.talent.name}!", booking.id)
         return {"data": None, "message": "Offer declined successfully", "status": 200}
 
     def add_details_in_slot(self, booking, talent_id):
@@ -584,3 +592,7 @@ class TalentService:
                     i["booking_details"] = {}
         return slots
                 
+    def notifications(self, request):
+        notifications = AppNotificationModel.objects.filter(user=request.user.id).order_by("-created_at")
+        serializer = NotificationsSerializer(notifications, many=True)
+        return {"data": serializer.data, "messages": "Notifications fetched successfully", "status": 200}

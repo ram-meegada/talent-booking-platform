@@ -27,6 +27,8 @@ from artist_app.serializers.Clientserializer import TalentBasicDetailsIOS
 from artist_app.services.talentService import TalentService
 from dateutil.relativedelta import relativedelta
 from django.db.models import When, Value, Case, IntegerField
+from artist_app.models.appNotificationModel import AppNotificationModel
+from artist_app.utils.extraFunctions import add_notification_func
 
 talent_obj = TalentService()
 
@@ -617,6 +619,8 @@ class ClientService():
             if serializer.is_valid():
                 booking_obj = serializer.save(status=1, track_booking=1)
                 self.generate_and_save_booking_id(booking_obj)
+                # add notification
+                add_notification_func(request.data["talent"], 2, f"You got an offer from {user_slots.user.name}!", booking_obj.id)
                 return {"data": serializer.data, "message": "Booking request sent to artist successfully", "status":200}
             else:
                 return{"message": serializer.errors, "status": 400}
@@ -714,8 +718,12 @@ class ClientService():
             return {"data": None, "message": "Record not found", "status": 400}
         if request.user.role == 1:    
             booking.client_marked_completed = True
+            # add notification
+            add_notification_func(booking.talent_id, 2, f"Booking marked as completed by {booking.client.name}!", booking.id)
         elif request.user.role == 2:
             booking.talent_marked_completed = True
+            # add notification
+            add_notification_func(booking.client_id, 2, f"Booking marked as completed by {booking.talent.name}!", booking.id)
         booking.save()    
         if booking.client_marked_completed and booking.talent_marked_completed:
             booking.status = 2
@@ -739,12 +747,16 @@ class ClientService():
             booking.track_booking = 3
             booking.final_price = booking.counter_offer_price
             booking.save()
+            # add notification
+            add_notification_func(booking.talent_id, 1, f"Your booking has been accepted by {booking.client.name}!", booking.id)
             return {"data": "", "message": "Payment for booking successfully done.", "status": 200}
         else:
             booking.track_booking = 5
             booking.cancellation_reason = request.data["cancellation_reason"]
             booking.status = 3
             booking.save()
+            # add notification
+            add_notification_func(booking.talent_id, 2, f"Your booking has been declined by {booking.client.name}!", booking.id)
             return {"data": "", "message": "Booking declined successfully", "status": 200}
 
     def tags_listing(self, request):
