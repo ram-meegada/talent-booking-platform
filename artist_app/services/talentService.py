@@ -9,7 +9,7 @@ from artist_app.models.uploadMediaModel import UploadMediaModel
 from artist_app.models.talentDetailsModel import TalentDetailsModel
 from artist_app.models.talentSubCategoryModel import TalentSubCategoryModel
 from artist_app.utils.sendOtp import make_otp, send_otp_via_mail, generate_encoded_id
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 from artist_app.models.bookingTalentModel import BookingTalentModel
@@ -21,6 +21,7 @@ from django.db import IntegrityError
 from artist_app.serializers.Clientserializer import ShowBookingDetailsSerializer, NotificationsSerializer
 from artist_app.models.appNotificationModel import AppNotificationModel
 from artist_app.utils.extraFunctions import add_notification_func
+from artist_app.utils.choiceFields import DEFAULT_SLOTS
 
 class TalentService:    
     def user_signup(self, request):
@@ -528,11 +529,14 @@ class TalentService:
             return {"data": str(error), "message": "Something went wrong", "status": 400}
 
     def fetch_weekly_timings(self, request):
+        today_date = date.today()
         day_representations = {"Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, 
                                "Friday": 4, "Saturday": 5, "Sunday": 6}
-        all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id)[:7]
+        all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id, date__gte=today_date)
         serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
         slots = list(serializer.data)
+        all_available_days = [i["day"] for i in slots]
+        check_missing_dates = [i for i in day_representations.keys() if i not in all_available_days]
         data = []
         for i in day_representations.keys():
             for j in slots:
@@ -541,6 +545,33 @@ class TalentService:
                 if j["day"] == i:
                     data.append(j)
                     break
+        for missing_day in check_missing_dates:
+            missing_date = today_date
+            while True:
+                if missing_date.weekday() == day_representations[missing_day]:
+                    break
+                else:
+                    missing_date += timedelta(days=1)
+            add_new_slot = OperationalSlotsModel.objects.create(
+                user_id=request.user.id,
+                day=missing_day,
+                date=missing_date,
+                start="09:00",
+                end="06:00",
+                is_active=False,
+                slots=DEFAULT_SLOTS
+            )
+            data.append(
+                {
+                    "id": add_new_slot.id,
+                    "user": request.user.id,
+                    "day": missing_day,
+                    "start": "09:00",
+                    "end": "06:00",
+                    "date": missing_date,
+                    "is_active": False
+                }
+            )
         return {"data": data, "message": "Weekly timings fetched successfully", "status": 200}
     
     def generate_day_slots(self, start, end):
@@ -568,6 +599,8 @@ class TalentService:
         date = request.data["date"]
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
+            if all_user_slot.is_active is False:
+                return {"data": None, "message": "No slots found", "status": 400}
             for i in all_user_slot.slots:
                 if i["booking_details"] == {}:
                     i["booking_details"]["is_available"] = True

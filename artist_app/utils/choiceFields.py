@@ -137,3 +137,46 @@ FILTER_KEYS = {
     "rating": "user__average_rating__gte",
     "booking_method": "booking_method__overlap"
     }
+
+DEFAULT_SLOTS = [
+  {
+    "slot_time": "09:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "10:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "11:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "12:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "13:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "14:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "15:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "16:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "17:00",
+    "booking_details": {}
+  },
+  {
+    "slot_time": "18:00",
+    "booking_details": {}
+  }
+]
