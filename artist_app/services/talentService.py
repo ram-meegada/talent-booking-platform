@@ -492,6 +492,7 @@ class TalentService:
 ################################# slots #################################
 
     def add_slots(self, request):
+        print(request.data, '=============rquesy------')
         day_representations = {0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 
                                4: "Friday", 5: "Saturday", 6: "Sunday"}
         try:
@@ -529,51 +530,54 @@ class TalentService:
             return {"data": str(error), "message": "Something went wrong", "status": 400}
 
     def fetch_weekly_timings(self, request):
-        today_date = date.today()
-        day_representations = {"Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, 
-                               "Friday": 4, "Saturday": 5, "Sunday": 6}
-        all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id, date__gte=today_date)
-        serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
-        slots = list(serializer.data)
-        all_available_days = [i["day"] for i in slots]
-        check_missing_dates = [i for i in day_representations.keys() if i not in all_available_days]
-        data = []
-        for i in day_representations.keys():
-            for j in slots:
-                j["start"] = j["start"][:5]
-                j["end"] = j["end"][:5]
-                if j["day"] == i:
-                    data.append(j)
-                    break
-        for missing_day in check_missing_dates:
-            missing_date = today_date
-            while True:
-                if missing_date.weekday() == day_representations[missing_day]:
-                    break
-                else:
-                    missing_date += timedelta(days=1)
-            add_new_slot = OperationalSlotsModel.objects.create(
-                user_id=request.user.id,
-                day=missing_day,
-                date=missing_date,
-                start="09:00",
-                end="06:00",
-                is_active=False,
-                slots=DEFAULT_SLOTS
-            )
-            data.append(
-                {
-                    "id": add_new_slot.id,
-                    "user": request.user.id,
-                    "day": missing_day,
-                    "start": "09:00",
-                    "end": "06:00",
-                    "date": missing_date,
-                    "is_active": False
-                }
-            )
-        data_sorted = sorted(data, key=lambda v:datetime.strptime(v["date"], "%Y-%m-%d").date())    
-        return {"data": data_sorted, "message": "Weekly timings fetched successfully", "status": 200}
+        try:
+            today_date = date.today()
+            day_representations = {"Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, 
+                                "Friday": 4, "Saturday": 5, "Sunday": 6}
+            all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id, date__gte=today_date)
+            serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
+            slots = list(serializer.data)
+            all_available_days = [i["day"] for i in slots]
+            check_missing_dates = [i for i in day_representations.keys() if i not in all_available_days]
+            data = []
+            for i in day_representations.keys():
+                for j in slots:
+                    j["start"] = j["start"][:5]
+                    j["end"] = j["end"][:5]
+                    if j["day"] == i:
+                        data.append(j)
+                        break
+            for missing_day in check_missing_dates:
+                missing_date = today_date
+                while True:
+                    if missing_date.weekday() == day_representations[missing_day]:
+                        break
+                    else:
+                        missing_date += timedelta(days=1)
+                add_new_slot = OperationalSlotsModel.objects.create(
+                    user_id=request.user.id,
+                    day=missing_day,
+                    date=missing_date,
+                    start="09:00",
+                    end="06:00",
+                    is_active=False,
+                    slots=DEFAULT_SLOTS
+                )
+                data.append(
+                    {
+                        "id": add_new_slot.id,
+                        "user": request.user.id,
+                        "day": missing_day,
+                        "start": "09:00",
+                        "end": "06:00",
+                        "date": missing_date,
+                        "is_active": False
+                    }
+                )
+            data_sorted = sorted(data, key=lambda v:datetime.strptime(v["date"], "%Y-%m-%d").date())    
+            return {"data": data_sorted, "message": "Weekly timings fetched successfully", "status": 200}
+        except Exception as err:
+            return {"data": str(err), "message": "Something went wrong", "status": 400}
     
     def generate_day_slots(self, start, end):
         data = []
@@ -619,7 +623,7 @@ class TalentService:
                     else:
                         i["booking_details"]["is_available"] = False    
         except OperationalSlotsModel.DoesNotExist:
-            return {"data": None, "message": "No slots found", "status": 400}
+            return {"data": None, "message": "No slots found", "status": 200}
 
         slots = self.format_slots(all_user_slot.slots)
         total_offers = BookingTalentModel.objects.filter(talent=request.user.id)
