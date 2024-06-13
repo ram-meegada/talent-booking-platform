@@ -9,6 +9,7 @@ urlpatterns = [
     path("send-otp", talentView.SendEmailOrPhoneView.as_view()),
     path("verify-otp", talentView.VerifyMailOrPhoneView.as_view()),
     path("resend-otp", talentView.ResendOtpView.as_view()),
+    path("otp-to-user", talentView.ResendOtpAfterLoginView.as_view()),
 
     path("update-profile", talentView.ProfileSetUpAndUpdateView.as_view()),
     path("edit-profile", talentView.EditProfileByTokenView.as_view()),

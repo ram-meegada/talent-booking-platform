@@ -6,6 +6,9 @@ urlpatterns = [
     path("verify-otp", clientView.VerifyOtpViaMailView.as_view()),
     path("log-in", clientView.LogInView.as_view()),
     path("resend-otp", clientView.ResendOtpView.as_view()),
+
+    path("otp-to-user", talentView.ResendOtpAfterLoginView.as_view()),
+
     path("edit-profile", clientView.EditClientDetailsByTokenView.as_view()),
     path("change-password", adminView.ChangePasswordByTokenView.as_view()),
     path("profile-details", clientView.clientDetailsbyTokenView.as_view()),

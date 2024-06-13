@@ -76,6 +76,11 @@ class TalentService:
                 return {"data": None, "message": "Please verify your phone number and email", "status": 200}
         else:
             keys = list(serializer.errors.keys())
+            try:
+                if serializer.errors[keys[0]][0] == "user model with this phone no already exists.":
+                    return {"data": None, "message": f"User with this phone no already exists.", "status": 400}
+            except:
+                pass        
             return {"data": None, "message": f"{keys[0]}: {serializer.errors[keys[0]][0]}", "status": 400}
         
     def verify_otp(self, request):
@@ -651,3 +656,15 @@ class TalentService:
         notifications = AppNotificationModel.objects.filter(user=request.user.id).order_by("-created_at")
         serializer = NotificationsSerializer(notifications, many=True)
         return {"data": serializer.data, "messages": "Notifications fetched successfully", "status": 200}
+
+    def resend_otp_after_login(self, request):
+        otp = make_otp()
+        phone_no = request.data["phone_no"]
+        try:
+            user = UserModel.objects.get(phone_no=phone_no, country_code= request.data["country_code"])
+        except UserModel.DoesNotExist:
+            return {"data": None, "message": "Phone number does not exist", "status": 400}
+        user.otp = otp
+        user.otp_sent_time = datetime.now(tz=pytz.UTC)
+        user.save()
+        return {"data": "", "message": "Otp resent successfully", "status": 200}

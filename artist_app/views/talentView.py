@@ -56,6 +56,12 @@ class ResendOtpView(APIView):
         result = talent_service.resend_otp(request)
         return Response(result, status=result["status"])
 
+class ResendOtpAfterLoginView(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        result = talent_service.resend_otp_after_login(request)
+        return Response(result, status=result["status"])
+
 class TalentUserDetailsView(APIView):
     def get(self, request):
         result = talent_service.user_details_by_token(request)

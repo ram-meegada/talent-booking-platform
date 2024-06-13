@@ -206,7 +206,7 @@ class ClientService():
             user.otp = otp
         user.otp_sent_time = datetime.now(tz=pytz.UTC)
         user.save()
-        return {"data": "", "message": "Otp resent successfully", "status": 200}
+        return {"data": "", "message": "Otp sent successfully", "status": 200}
     
     def login(self, request):
         give_token = False

@@ -28,6 +28,7 @@ class UserModel(AbstractUser):
     otp_phone_no_verification = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
     is_deleted = models.BooleanField(default = False)
+    is_registered = models.BooleanField(default = False)
 
     #Integer fields
     role = models.IntegerField(choices=ROLE_CHOICE, blank=True, null=True)
