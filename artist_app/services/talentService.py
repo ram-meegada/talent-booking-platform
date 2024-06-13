@@ -560,7 +560,7 @@ class TalentService:
                     day=missing_day,
                     date=missing_date,
                     start="09:00",
-                    end="06:00",
+                    end="18:00",
                     is_active=False,
                     slots=DEFAULT_SLOTS
                 )
