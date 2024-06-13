@@ -681,7 +681,7 @@ class ClientService():
         except OperationalSlotsModel.DoesNotExist:
             return {"data": [], "message": "No slots found", "status": 200}
         if all_user_slot.is_active is False:
-                return {"data": None, "message": "No slots found", "status": 400}    
+                return {"data": [], "message": "No slots found", "status": 200}    
         all_slots = talent_obj.format_slots(all_user_slot.slots)    
         for i in all_slots:
             if i["booking_details"] == {}:

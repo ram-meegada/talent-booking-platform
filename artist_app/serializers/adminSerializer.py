@@ -277,14 +277,14 @@ class GetArtistDetailsByIdSerializer(serializers.ModelSerializer):
         return obj.user.date_of_birth
     def get_hair_color(self, obj):
         try:
-            return obj.hair_color.name
-        except:
             return obj.hair_color_id
+        except:
+            return None
     def get_eye_color(self, obj):
         try:
-            return obj.eye_color.name
-        except:
             return obj.eye_color_id
+        except:
+            return None
     def get_experience(self, obj):
         return obj.user.experience
     def get_profile_picture(self, obj):
