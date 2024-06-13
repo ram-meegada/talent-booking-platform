@@ -218,9 +218,9 @@ class TalentService:
             if verify_password:
                 if user.profile_status >= 1:
                     give_token = True
-                if user.verification_status == 0:
+                if user.verification_status == 0 and user.profile_status == 5:
                     return {"data": None, "message": "Your account is not yet verified. Please contact to admin.", "status": 400}
-                if user.verification_status == 2:
+                if user.verification_status == 2 and user.profile_status == 5:
                     return {"data": None, "message": "Your account is rejected by admin.", "status": 400}
                 serializer = talentSerializer.GetTalentUserSerializer(user, context = {"give_token": give_token})
                 return {"data": serializer.data, "message": "Logged In successfully", "status": 200}

@@ -215,8 +215,8 @@ class ClientService():
                     phone_no=request.data["phone_no"])
                 if user.role != 1:
                     return {"data":None,"message": "User does not exist", "status":400}    
-                if user.profile_status == 0:
-                    return {"data": None, "message": "User with this phone number not found", "status": 400}
+                # if user.profile_status == 0:
+                #     return {"data": None, "message": "User with this phone number not found", "status": 400}
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}    
                 user.otp_sent_time = datetime.now(tz=pytz.UTC)
