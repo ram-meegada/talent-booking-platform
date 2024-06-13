@@ -154,7 +154,7 @@ class TalentService:
             Thread(target=send_otp_via_mail, args=[request.data["email"], otp]).start()
         elif "encoded_id" in request.data and "phone_no" in request.data:
             user = UserModel.objects.get(encoded_id = request.data["encoded_id"])
-            check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"], country_code= request.data["country_code"]).first()
+            check_user_mobile = UserModel.objects.filter(phone_no=request.data["phone_no"]).first()
             if check_user_mobile and  check_user_mobile.profile_status >= 1:
                 return {"data": None, "message": "User with this phone number already exists", "status": 400}
             elif check_user_mobile and check_user_mobile.profile_status < 1:
