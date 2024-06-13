@@ -535,6 +535,7 @@ class TalentService:
             day_representations = {"Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, 
                                 "Friday": 4, "Saturday": 5, "Sunday": 6}
             all_user_slot = OperationalSlotsModel.objects.filter(user=request.user.id, date__gte=today_date)
+            print(all_user_slot, '-------all_user_slot----------')
             serializer = talentSerializer.SlotsSerializer(all_user_slot, many=True)
             slots = list(serializer.data)
             all_available_days = [i["day"] for i in slots]
@@ -570,11 +571,16 @@ class TalentService:
                         "day": missing_day,
                         "start": "09:00",
                         "end": "06:00",
-                        "date": missing_date,
+                        "date": add_new_slot.date,
                         "is_active": False
                     }
                 )
-            data_sorted = sorted(data, key=lambda v:datetime.strptime(v["date"], "%Y-%m-%d").date())    
+            try:
+                data_sorted = sorted(data, key=lambda v:datetime.strptime(v["date"], "%Y-%m-%d").date())    
+            except TypeError as type_err:
+                data_sorted = sorted(data, key=lambda v:v["date"])
+            except Exception as err:
+                return {"data": None, "message": "Something went wrong", "status": 400}
             return {"data": data_sorted, "message": "Weekly timings fetched successfully", "status": 200}
         except Exception as err:
             return {"data": str(err), "message": "Something went wrong", "status": 400}
@@ -605,7 +611,7 @@ class TalentService:
         try:
             all_user_slot = OperationalSlotsModel.objects.get(user=request.user.id, date=date)
             if all_user_slot.is_active is False:
-                return {"data": None, "message": "No slots found", "status": 400}
+                return {"data": [], "message": "No slots found", "status": 200}
             for i in all_user_slot.slots:
                 if i["booking_details"] == {}:
                     i["booking_details"]["is_available"] = True
