@@ -152,6 +152,8 @@ class ClientService():
             else:
                 return {"data": None, "message": messages.WRONG_OTP, "status": 400}
         user.save()
+        if user.profile_status == 1:
+            give_token = True
         if user.profile_status == 0 and user.otp_email_verification and user.otp_phone_no_verification:
             # user.profile_status = 1
             user.save()
@@ -211,12 +213,11 @@ class ClientService():
         if "phone_no" in request.data:
             otp = make_otp()
             try:
-                user = UserModel.objects.get(country_code= request.data["country_code"], \
-                    phone_no=request.data["phone_no"])
+                user = UserModel.objects.get(country_code= request.data["country_code"], phone_no=request.data["phone_no"])
                 if user.role != 1:
                     return {"data":None,"message": "User does not exist", "status":400}    
-                # if user.profile_status == 0:
-                #     return {"data": None, "message": "User with this phone number not found", "status": 400}
+                if user.profile_status == 0:
+                    return {"data": None, "message": "User with this phone number not found", "status": 400}
                 if not user.is_active:
                     return {"data":None,"message":messages.BLOCK,"status":400}    
                 user.otp_sent_time = datetime.now(tz=pytz.UTC)
