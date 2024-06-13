@@ -570,7 +570,7 @@ class TalentService:
                         "user": request.user.id,
                         "day": missing_day,
                         "start": "09:00",
-                        "end": "06:00",
+                        "end": "18:00",
                         "date": add_new_slot.date,
                         "is_active": False
                     }
