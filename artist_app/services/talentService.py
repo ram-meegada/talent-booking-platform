@@ -175,8 +175,8 @@ class TalentService:
             user.otp = otp
         elif "phone_no" in request.data:
             phone_no = request.data["phone_no"]
-            if UserModel.objects.filter(phone_no = phone_no, country_code= request.data["country_code"], profile_status__gte=1).first():
-                return {"data": None, "message": "Phone number already taken", "status": 400}
+            # if UserModel.objects.filter(phone_no = phone_no, country_code= request.data["country_code"], profile_status__gte=1).first():
+            #     return {"data": None, "message": "Phone number already taken", "status": 400}
             try:
                 user = UserModel.objects.get(phone_no=phone_no, country_code= request.data["country_code"])
             except UserModel.DoesNotExist:
