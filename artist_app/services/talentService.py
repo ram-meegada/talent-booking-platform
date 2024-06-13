@@ -431,7 +431,7 @@ class TalentService:
         booking.track_booking = 2
         booking.save()
         # add notification
-        add_notification_func(booking.client_id, 2, f"You have a counter offer from {booking.talent.name}!", booking.id)
+        add_notification_func(booking.client_id, 1, f"You have a counter offer from {booking.talent.name}!", booking.id)
         return {"data": None, "message": "Counter offer sent successfully", "status": 200}
     
     def accept_offer(self, request):
@@ -445,7 +445,7 @@ class TalentService:
         booking.save()
         self.add_details_in_slot(booking, request.user.id)
         # add notification
-        add_notification_func(booking.client_id, 1, f"Your booking has been accepted by {booking.talent.name}!", booking.id)
+        add_notification_func(booking.client_id, 2, f"Your booking has been accepted by {booking.talent.name}!", booking.id)
         return {"data": None, "message": "Offer accepted successfully", "status": 200}
 
     def decline_offer(self, request):
@@ -572,7 +572,8 @@ class TalentService:
                     "is_active": False
                 }
             )
-        return {"data": data, "message": "Weekly timings fetched successfully", "status": 200}
+        data_sorted = sorted(data, key=lambda v:datetime.strptime(v["date"], "%Y-%m-%d").date())    
+        return {"data": data_sorted, "message": "Weekly timings fetched successfully", "status": 200}
     
     def generate_day_slots(self, start, end):
         data = []

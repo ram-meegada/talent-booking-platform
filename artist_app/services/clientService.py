@@ -782,4 +782,6 @@ class ClientService():
             return {"data": None, "message": "Record not found", "status": 400}
         booking.payment_completed = True
         booking.save()
+        # add notification
+        add_notification_func(booking.talent_id, 2, f"You received payment from {booking.client.name}!", booking.id)
         return {"data": None, "message": "Payment successfully done", "status": 200}
