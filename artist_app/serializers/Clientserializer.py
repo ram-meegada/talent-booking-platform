@@ -396,6 +396,19 @@ class ShowBookingDetailsSerializer(serializers.ModelSerializer):
 
 class NotificationsSerializer(serializers.ModelSerializer):
     booking_id = ShowBookingDetailsSerializer()
+    sent_date = serializers.SerializerMethodField()
+    sent_time = serializers.SerializerMethodField()
     class Meta:
         model = AppNotificationModel
-        fields = ["id", "user", "notification_type", "title", "booking_id"]
+        fields = ["id", "user", "notification_type", "title", "booking_id", "sent_date", "sent_time"]
+    def get_sent_date(self, obj):
+        try:
+            return obj.created_at.date()
+        except:
+            return obj.created_at
+    def get_sent_time(self, obj):
+        try:
+            return obj.created_at.time()
+        except:
+            return obj.created_at
+            
